@@ -1,0 +1,11 @@
+Chép file nghe vào thư mục theo chương, ví dụ:
+
+tai-lieu-nghe/
+  chuong-1/
+    bai-1.mp4
+    bai-2.mp3
+  chuong-2/
+    bai-1.mp4
+
+Sau đó sao chép data/nghe/MAU-BAI-NGHE.js, điền đường dẫn file và
+thêm tên file dữ liệu mới vào data/nghe/danh-sach-nghe.js.

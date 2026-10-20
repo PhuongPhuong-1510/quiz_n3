@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Học liệu tiếng Nhật</title>
+  <style>
+    :root {
+      --paper: #f7f3ed;
+      --card: #fffdfa;
+      --ink: #20231f;
+      --soft: #77736d;
+      --line: #e4ded5;
+      --red: #a84940;
+      --red-soft: #fff0ec;
+      --green: #39775d;
+      --green-soft: #edf8f1;
+      --blue: #3d5773;
+      --shadow: 0 14px 38px rgba(48, 39, 31, .09);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 10px 12px 50px;
+      background:
+        radial-gradient(circle at 10% 0, rgba(168,73,64,.08), transparent 28rem),
+        var(--paper);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    button, select { font: inherit; }
+    .wrap { width: min(1080px, 100%); margin: 0 auto; }
+    .content-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      width: fit-content;
+      max-width: 100%;
+      margin: 0 auto 10px;
+      padding: 3px;
+      gap: 2px;
+      border: 1px solid #e4e0d9;
+      border-radius: 11px;
+      background: #f1efeb;
+    }
+    .content-tab {
+      min-width: 105px;
+      padding: 7px 12px;
+      border-radius: 8px;
+      color: #77736d;
+      text-align: center;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 750;
+    }
+    .content-tab.active {
+      color: #7d4944;
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(49,42,36,.09);
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 10px;
+      padding: 12px 16px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255,253,250,.92);
+      box-shadow: 0 6px 20px rgba(48,39,31,.05);
+    }
+    h1 { margin: 0; font-family: Georgia, "Yu Mincho", serif; font-size: clamp(19px, 3vw, 27px); }
+    .seal { display: inline-grid; width: 42px; height: 42px; margin-right: 9px; place-items: center; border-radius: 5px; background: var(--red); color: white; font-size: 18px; }
+    .subtitle { color: var(--soft); font-size: 12px; text-align: right; }
+    .picker {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 10px;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--card);
+    }
+    .picker label { display: grid; gap: 5px; color: var(--soft); font-size: 11px; font-weight: 750; text-transform: uppercase; letter-spacing: .06em; }
+    select {
+      width: 100%;
+      min-height: 40px;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      color: var(--ink);
+    }
+    .card {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+    .empty { padding: 55px 20px; color: var(--soft); text-align: center; line-height: 1.7; }
+    .item-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .item-head h2 { margin: 0 0 4px; font-family: Georgia, "Yu Mincho", serif; font-size: 21px; }
+    .meta { color: var(--soft); font-size: 12px; }
+    .button, button.button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 8px 13px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .button.primary { border-color: var(--blue); background: var(--blue); color: white; }
+    .viewer { width: 100%; height: min(70vh, 720px); border: 1px solid var(--line); border-radius: 9px; background: white; }
+    .viewer-image { display: block; max-width: 100%; max-height: 72vh; margin: auto; object-fit: contain; }
+    .file-fallback { padding: 45px 20px; border: 1px dashed var(--line); border-radius: 9px; color: var(--soft); text-align: center; }
+    .reading-layout { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr); gap: 14px; align-items: start; }
+    .reading-pane, .question-pane { padding: 14px; border: 1px solid var(--line); border-radius: 10px; background: white; }
+    .reading-text {
+      max-height: 62vh;
+      overflow: auto;
+      margin: 0;
+      padding-right: 7px;
+      font-family: "Yu Mincho", "Noto Serif JP", serif;
+      font-size: 14px;
+      line-height: 1.9;
+      letter-spacing: .02em;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    .translation { margin-top: 12px; padding: 12px; border-left: 3px solid var(--green); background: var(--green-soft); font-size: 13px; line-height: 1.7; white-space: pre-wrap; }
+    [hidden] { display: none !important; }
+    .question-pane h3 { margin: 0 0 10px; font-size: 15px; }
+    .question { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed var(--line); }
+    .question:last-child { border-bottom: 0; }
+    .question-title { margin: 0 0 8px; font-size: 13px; line-height: 1.55; font-weight: 750; }
+    .choice { display: flex; gap: 8px; padding: 5px 6px; border-radius: 6px; font-size: 12.5px; line-height: 1.45; cursor: pointer; }
+    .choice:hover { background: #f7f4ef; }
+    .choice.correct { background: var(--green-soft); color: var(--green); }
+    .choice.wrong { background: var(--red-soft); color: var(--red); }
+    .question-result { margin-top: 7px; font-size: 12px; line-height: 1.5; }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .score { align-self: center; color: var(--soft); font-size: 12px; font-weight: 750; }
+    .player-box { padding: 16px; border: 1px solid var(--line); border-radius: 11px; background: white; }
+    audio { width: 100%; margin-bottom: 12px; }
+    .player-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .player-controls .speed { display: flex; align-items: center; gap: 7px; margin-left: auto; color: var(--soft); font-size: 12px; }
+    .player-controls select { width: auto; min-height: 38px; }
+    .player-status { min-height: 20px; margin-top: 9px; color: var(--soft); font-size: 12px; }
+    .transcript { width: 100%; margin-top: 12px; padding: 13px; border: 1px solid var(--line); border-radius: 9px; background: #faf8f4; font-size: 13px; line-height: 1.75; white-space: pre-wrap; }
+    @media (max-width: 760px) {
+      .content-tabs { width: 100%; }
+      .content-tab { flex: 1 1 calc(33.333% - 4px); min-width: 0; padding-inline: 5px; }
+      header { align-items: flex-start; }
+      .subtitle { display: none; }
+      .picker, .reading-layout { grid-template-columns: 1fr; }
+      .card { padding: 12px; }
+      .reading-text { max-height: none; font-size: 13px; line-height: 1.8; }
+      .player-controls .speed { width: 100%; margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <nav class="content-tabs" aria-label="Chọn phần luyện tập">
+      <a class="content-tab" href="./form_luyen_ngu_phap_3_buoc_romaji.html?phan=tuvung">Từ vựng</a>
+      <a class="content-tab" href="./form_luyen_ngu_phap_3_buoc_romaji.html?phan=cau">Dịch câu</a>
+      <a class="content-tab" href="./form_luyen_ngu_phap_3_buoc_romaji.html?phan=nguphap">Ngữ pháp</a>
+      <a class="content-tab" data-section="tailieu" href="?phan=tailieu">Xem tài liệu</a>
+      <a class="content-tab" data-section="doctruyen" href="?phan=doctruyen">Đọc hiểu</a>
+      <a class="content-tab" data-section="nghe" href="?phan=nghe">Nghe</a>
+    </nav>
+
+    <header>
+      <h1><span class="seal" id="sectionSeal">資</span><span id="sectionTitle">Xem tài liệu</span></h1>
+      <div class="subtitle" id="sectionSubtitle">Tài liệu được sắp xếp theo chương và bài</div>
+    </header>
+
+    <section class="picker" aria-label="Chọn chương và bài">
+      <label>Chương
+        <select id="chapterSelect"></select>
+      </label>
+      <label>Bài
+        <select id="itemSelect"></select>
+      </label>
+    </section>
+
+    <main id="content" class="card"></main>
+  </div>
+
+  <script src="./data/hoc-lieu-data.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const requestedSection = params.get("phan");
+    const section = ["tailieu", "doctruyen", "nghe"].includes(requestedSection)
+      ? requestedSection
+      : "tailieu";
+
+    const sectionInfo = {
+      tailieu: {
+        seal: "資", title: "Xem tài liệu",
+        subtitle: "Tài liệu được sắp xếp theo chương và bài",
+        sets: (window.DOCUMENT_SETS || []).slice().sort((a, b) =>
+          String(a.name).localeCompare(String(b.name), "vi", { numeric: true })
+        ), itemKey: "lessons"
+      },
+      doctruyen: {
+        seal: "読", title: "Đọc hiểu",
+        subtitle: "Đọc bài, xem bản dịch và tự chấm câu hỏi",
+        sets: (window.READING_SETS || []).slice().sort((a, b) =>
+          String(a.name).localeCompare(String(b.name), "vi", { numeric: true })
+        ), itemKey: "readings"
+      },
+      nghe: {
+        seal: "聴", title: "Luyện nghe",
+        subtitle: "Nghe theo chương, bài và điều chỉnh tốc độ",
+        sets: (window.LISTENING_SETS || []).slice().sort((a, b) =>
+          String(a.name).localeCompare(String(b.name), "vi", { numeric: true })
+        ), itemKey: "tracks"
+      }
+    };
+
+    const config = sectionInfo[section];
+    const chapterSelect = document.getElementById("chapterSelect");
+    const itemSelect = document.getElementById("itemSelect");
+    const content = document.getElementById("content");
+    let activeAudio = null;
+
+    document.querySelector(`[data-section="${section}"]`).classList.add("active");
+    document.getElementById("sectionSeal").textContent = config.seal;
+    document.getElementById("sectionTitle").textContent = config.title;
+    document.getElementById("sectionSubtitle").textContent = config.subtitle;
+
+    function clearElement(element) {
+      while (element.firstChild) element.removeChild(element.firstChild);
+    }
+
+    function option(value, label) {
+      const element = document.createElement("option");
+      element.value = value;
+      element.textContent = label;
+      return element;
+    }
+
+    function stopCurrentAudio() {
+      if (!activeAudio) return;
+      activeAudio.pause();
+      activeAudio.currentTime = 0;
+      activeAudio = null;
+    }
+
+    function renderSelectors() {
+      clearElement(chapterSelect);
+      if (!config.sets.length) {
+        chapterSelect.append(option("", "Chưa có dữ liệu"));
+        chapterSelect.disabled = true;
+        itemSelect.disabled = true;
+        clearElement(itemSelect);
+        itemSelect.append(option("", "Chưa có bài"));
+        renderEmpty();
+        return;
+      }
+      config.sets.forEach((set, index) => chapterSelect.append(option(index, set.name || `Chương ${index + 1}`)));
+      chapterSelect.disabled = false;
+      renderItemOptions();
+    }
+
+    function renderItemOptions() {
+      stopCurrentAudio();
+      clearElement(itemSelect);
+      const set = config.sets[Number(chapterSelect.value) || 0];
+      const items = set?.[config.itemKey] || [];
+      if (!items.length) {
+        itemSelect.append(option("", "Chưa có bài"));
+        itemSelect.disabled = true;
+        renderEmpty();
+        return;
+      }
+      items.forEach((item, index) => {
+        const label = [item.lesson, item.title].filter(Boolean).join(" — ") || `Bài ${index + 1}`;
+        itemSelect.append(option(index, label));
+      });
+      itemSelect.disabled = false;
+      renderCurrentItem();
+    }
+
+    function currentItem() {
+      const set = config.sets[Number(chapterSelect.value) || 0];
+      return set?.[config.itemKey]?.[Number(itemSelect.value) || 0] || null;
+    }
+
+    function makeHeader(item) {
+      const head = document.createElement("div");
+      head.className = "item-head";
+      const text = document.createElement("div");
+      const title = document.createElement("h2");
+      title.textContent = item.title || "Chưa đặt tên";
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      meta.textContent = [config.sets[Number(chapterSelect.value) || 0]?.name, item.lesson].filter(Boolean).join(" · ");
+      text.append(title, meta);
+      head.appendChild(text);
+      return head;
+    }
+
+    function renderEmpty() {
+      clearElement(content);
+      const box = document.createElement("div");
+      box.className = "empty";
+      box.textContent = section === "nghe"
+        ? "Chưa có bài nghe. Chép MP3/MP4 vào tai-lieu-nghe rồi tạo file dữ liệu từ MAU-BAI-NGHE.js."
+        : "Chưa có dữ liệu trong phần này.";
+      content.appendChild(box);
+    }
+
+    function renderCurrentItem() {
+      stopCurrentAudio();
+      const item = currentItem();
+      if (!item) { renderEmpty(); return; }
+      if (section === "tailieu") renderDocument(item);
+      else if (section === "doctruyen") renderReading(item);
+      else renderListening(item);
+    }
+
+    function inferDocumentType(item) {
+      if (item.type) return item.type.toLowerCase();
+      const extension = String(item.file || "").split(".").pop().toLowerCase();
+      if (extension === "pdf") return "pdf";
+      if (["png", "jpg", "jpeg", "gif", "webp", "svg"].includes(extension)) return "image";
+      if (["txt", "md"].includes(extension)) return "text";
+      return "file";
+    }
+
+    function renderDocument(item) {
+      clearElement(content);
+      const head = makeHeader(item);
+      const open = document.createElement("a");
+      open.className = "button primary";
+      open.href = item.file;
+      open.target = "_blank";
+      open.rel = "noopener";
+      open.textContent = "Mở riêng ↗";
+      head.appendChild(open);
+      content.appendChild(head);
+
+      const type = inferDocumentType(item);
+      if (type === "image") {
+        const image = document.createElement("img");
+        image.className = "viewer-image";
+        image.src = item.file;
+        image.alt = item.title || "Tài liệu";
+        content.appendChild(image);
+      } else if (type === "pdf" || type === "text") {
+        const frame = document.createElement("iframe");
+        frame.className = "viewer";
+        frame.src = item.file;
+        frame.title = item.title || "Tài liệu";
+        content.appendChild(frame);
+      } else {
+        const fallback = document.createElement("div");
+        fallback.className = "file-fallback";
+        fallback.textContent = "Định dạng này sẽ được mở bằng ứng dụng phù hợp trên máy. Hãy bấm “Mở riêng”.";
+        content.appendChild(fallback);
+      }
+    }
+
+    function renderReading(item) {
+      clearElement(content);
+      content.appendChild(makeHeader(item));
+      const layout = document.createElement("div");
+      layout.className = "reading-layout";
+      const readingPane = document.createElement("section");
+      readingPane.className = "reading-pane";
+      const passage = document.createElement("p");
+      passage.className = "reading-text";
+      passage.lang = "ja";
+      passage.textContent = item.passage || "Chưa có nội dung bài đọc.";
+      readingPane.appendChild(passage);
+
+      if (item.translation) {
+        const actions = document.createElement("div");
+        actions.className = "actions";
+        const toggle = document.createElement("button");
+        toggle.type = "button";
+        toggle.className = "button";
+        toggle.textContent = "Xem bản dịch";
+        const translation = document.createElement("div");
+        translation.className = "translation";
+        translation.hidden = true;
+        translation.textContent = item.translation;
+        toggle.addEventListener("click", () => {
+          translation.hidden = !translation.hidden;
+          toggle.textContent = translation.hidden ? "Xem bản dịch" : "Ẩn bản dịch";
+        });
+        actions.appendChild(toggle);
+        readingPane.append(actions, translation);
+      }
+
+      const questionPane = document.createElement("section");
+      questionPane.className = "question-pane";
+      const questions = Array.isArray(item.questions) ? item.questions : [];
+      if (!questions.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "Bài đọc này không có câu hỏi.";
+        questionPane.appendChild(empty);
+      } else {
+        const heading = document.createElement("h3");
+        heading.textContent = `Câu hỏi (${questions.length})`;
+        questionPane.appendChild(heading);
+        const questionElements = [];
+        questions.forEach((question, questionIndex) => {
+          const box = document.createElement("div");
+          box.className = "question";
+          const title = document.createElement("p");
+          title.className = "question-title";
+          title.textContent = `${questionIndex + 1}. ${question.prompt}`;
+          box.appendChild(title);
+          const choices = [];
+          (question.choices || []).forEach((choiceText, choiceIndex) => {
+            const label = document.createElement("label");
+            label.className = "choice";
+            const radio = document.createElement("input");
+            radio.type = "radio";
+            radio.name = `question-${questionIndex}`;
+            radio.value = choiceIndex;
+            const caption = document.createElement("span");
+            caption.textContent = choiceText;
+            label.append(radio, caption);
+            box.appendChild(label);
+            choices.push(label);
+          });
+          const result = document.createElement("div");
+          result.className = "question-result";
+          box.appendChild(result);
+          questionPane.appendChild(box);
+          questionElements.push({ box, choices, result });
+        });
+
+        const actions = document.createElement("div");
+        actions.className = "actions";
+        const check = document.createElement("button");
+        check.type = "button";
+        check.className = "button primary";
+        check.textContent = "Kiểm tra đáp án";
+        const reset = document.createElement("button");
+        reset.type = "button";
+        reset.className = "button";
+        reset.textContent = "Làm lại";
+        const score = document.createElement("span");
+        score.className = "score";
+
+        check.addEventListener("click", () => {
+          let correctCount = 0;
+          questions.forEach((question, questionIndex) => {
+            const state = questionElements[questionIndex];
+            state.choices.forEach((label) => label.classList.remove("correct", "wrong"));
+            const selected = state.box.querySelector('input[type="radio"]:checked');
+            const answerIndex = Number(question.answer);
+            if (!selected) {
+              state.result.textContent = "Bạn chưa chọn đáp án.";
+              state.result.style.color = "var(--red)";
+              return;
+            }
+            const selectedIndex = Number(selected.value);
+            const isCorrect = selectedIndex === answerIndex;
+            if (isCorrect) correctCount++;
+            state.choices[selectedIndex]?.classList.add(isCorrect ? "correct" : "wrong");
+            state.choices[answerIndex]?.classList.add("correct");
+            state.result.textContent = `${isCorrect ? "Đúng." : "Sai."}${question.explanation ? ` ${question.explanation}` : ""}`;
+            state.result.style.color = isCorrect ? "var(--green)" : "var(--red)";
+          });
+          score.textContent = `Kết quả: ${correctCount}/${questions.length}`;
+        });
+
+        reset.addEventListener("click", () => {
+          questionElements.forEach((state) => {
+            state.box.querySelectorAll('input[type="radio"]').forEach((radio) => { radio.checked = false; });
+            state.choices.forEach((label) => label.classList.remove("correct", "wrong"));
+            state.result.textContent = "";
+          });
+          score.textContent = "";
+        });
+        actions.append(check, reset, score);
+        questionPane.appendChild(actions);
+      }
+      layout.append(readingPane, questionPane);
+      content.appendChild(layout);
+    }
+
+    function renderListening(item) {
+      clearElement(content);
+      const head = makeHeader(item);
+      const open = document.createElement("a");
+      open.className = "button";
+      open.href = item.file;
+      open.target = "_blank";
+      open.rel = "noopener";
+      open.textContent = "Mở file ↗";
+      head.appendChild(open);
+      content.appendChild(head);
+
+      const playerBox = document.createElement("div");
+      playerBox.className = "player-box";
+      const audio = document.createElement("audio");
+      audio.controls = true;
+      audio.preload = "metadata";
+      audio.src = item.file;
+      activeAudio = audio;
+
+      const controls = document.createElement("div");
+      controls.className = "player-controls";
+      const play = document.createElement("button");
+      play.className = "button primary";
+      play.type = "button";
+      play.textContent = "▶ Phát";
+      const pause = document.createElement("button");
+      pause.className = "button";
+      pause.type = "button";
+      pause.textContent = "Ⅱ Tạm dừng";
+      const stop = document.createElement("button");
+      stop.className = "button";
+      stop.type = "button";
+      stop.textContent = "■ Dừng";
+      const rewind = document.createElement("button");
+      rewind.className = "button";
+      rewind.type = "button";
+      rewind.textContent = "↶ Lùi 10 giây";
+      const speedWrap = document.createElement("label");
+      speedWrap.className = "speed";
+      speedWrap.textContent = "Tốc độ";
+      const speed = document.createElement("select");
+      [0.5, 0.75, 1, 1.25, 1.5].forEach((rate) => speed.append(option(rate, `${rate}×`)));
+      speed.value = "1";
+      speedWrap.appendChild(speed);
+      controls.append(play, pause, stop, rewind, speedWrap);
+
+      const status = document.createElement("div");
+      status.className = "player-status";
+      play.addEventListener("click", async () => {
+        try { await audio.play(); status.textContent = "Đang phát"; }
+        catch (error) { status.textContent = "Không mở được file. Hãy kiểm tra đường dẫn hoặc định dạng âm thanh."; }
+      });
+      pause.addEventListener("click", () => { audio.pause(); status.textContent = "Đã tạm dừng"; });
+      stop.addEventListener("click", () => { audio.pause(); audio.currentTime = 0; status.textContent = "Đã dừng và trở về đầu"; });
+      rewind.addEventListener("click", () => { audio.currentTime = Math.max(0, audio.currentTime - 10); });
+      speed.addEventListener("change", () => { audio.playbackRate = Number(speed.value); status.textContent = `Tốc độ ${speed.value}×`; });
+      audio.addEventListener("error", () => { status.textContent = "Không tìm thấy hoặc không đọc được file âm thanh."; });
+      playerBox.append(audio, controls, status);
+      content.appendChild(playerBox);
+
+      const extraActions = document.createElement("div");
+      extraActions.className = "actions";
+      [["transcript", "Xem lời thoại"], ["translation", "Xem bản dịch"]].forEach(([key, label]) => {
+        if (!item[key]) return;
+        const toggle = document.createElement("button");
+        toggle.type = "button";
+        toggle.className = "button";
+        toggle.textContent = label;
+        const text = document.createElement("div");
+        text.className = "transcript";
+        text.hidden = true;
+        text.textContent = item[key];
+        toggle.addEventListener("click", () => {
+          text.hidden = !text.hidden;
+          toggle.textContent = text.hidden ? label : `Ẩn ${label.replace("Xem ", "")}`;
+        });
+        extraActions.append(toggle, text);
+      });
+      if (extraActions.childElementCount) content.appendChild(extraActions);
+    }
+
+    chapterSelect.addEventListener("change", renderItemOptions);
+    itemSelect.addEventListener("change", renderCurrentItem);
+    renderSelectors();
+  </script>
+</body>
+</html>

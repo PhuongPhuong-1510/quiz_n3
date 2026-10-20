@@ -1,0 +1,61 @@
+HƯỚNG DẪN NẠP DỮ LIỆU
+
+data/
+├── danh-sach-data.js              Danh sách tổng, thường không cần sửa
+├── HUONG-DAN.txt
+├── tu-vung/
+│   ├── danh-sach-tu-vung.js       Danh sách riêng của từ vựng
+│   ├── MAU-BO-TU.js
+│   └── các file từ vựng hiện có
+├── cau-vi-du/
+│   ├── danh-sach-cau-vi-du.js     Danh sách riêng của câu ví dụ
+│   └── MAU-CAU-VI-DU.js
+└── ngu-phap/
+    ├── danh-sach-ngu-phap.js      Danh sách riêng của ngữ pháp
+    └── MAU-NGU-PHAP.js
+
+Các phần bổ sung:
+data/tai-lieu/                     Danh sách tài liệu PDF, ảnh, TXT
+data/doc-hieu/                     Bài đọc, bản dịch, câu hỏi và đáp án
+data/nghe/                         Danh sách bài nghe MP3/MP4
+tai-lieu-chuong/                   Nơi chép file tài liệu thật
+tai-lieu-nghe/                     Nơi chép file nghe thật
+
+THÊM TỪ VỰNG
+1. Sao chép tu-vung/MAU-BO-TU.js và đổi tên.
+2. Điền kanji, kana, romaji, meaning và type.
+3. Thêm tên file vào tu-vung/danh-sach-tu-vung.js.
+
+THÊM CÂU VÍ DỤ
+1. Sao chép cau-vi-du/MAU-CAU-VI-DU.js và đổi tên.
+2. Điền kanji, hiragana, romaji và meaning.
+3. Thêm tên file vào cau-vi-du/danh-sach-cau-vi-du.js.
+
+THÊM NGỮ PHÁP
+1. Sao chép ngu-phap/MAU-NGU-PHAP.js và đổi tên.
+2. Điền structure, meaning, note và examples.
+3. direction "ja-vi": hiện câu Nhật, nhập Romaji và nghĩa Việt.
+4. direction "vi-romaji": hiện câu Việt, nhập câu bằng Romaji.
+   Dữ liệu cũ ghi "vi-ja" vẫn được ứng dụng hỗ trợ.
+5. Thêm tên file vào ngu-phap/danh-sach-ngu-phap.js.
+
+Sau khi lưu, tải lại trang. Không cần sửa HTML hoặc danh-sach-data.js.
+
+THÊM TÀI LIỆU
+1. Chép file vào tai-lieu-chuong/chuong-x/.
+2. Sao chép data/tai-lieu/MAU-TAI-LIEU.js và đổi tên.
+3. Điền tên chương, bài, đường dẫn file và loại file.
+4. Thêm tên file dữ liệu vào data/tai-lieu/danh-sach-tai-lieu.js.
+
+THÊM BÀI ĐỌC
+1. Sao chép data/doc-hieu/MAU-BAI-DOC.js và đổi tên.
+2. Điền passage và translation.
+3. Nếu không cần câu hỏi, đặt questions: [].
+4. Nếu có câu hỏi, answer bắt đầu từ 0 (0=A, 1=B, 2=C, 3=D).
+5. Thêm tên file vào data/doc-hieu/danh-sach-doc-hieu.js.
+
+THÊM BÀI NGHE
+1. Chép MP3/MP4 vào tai-lieu-nghe/chuong-x/.
+2. Sao chép data/nghe/MAU-BAI-NGHE.js và đổi tên.
+3. Điền đường dẫn file; transcript và translation có thể để trống.
+4. Thêm tên file vào data/nghe/danh-sach-nghe.js.

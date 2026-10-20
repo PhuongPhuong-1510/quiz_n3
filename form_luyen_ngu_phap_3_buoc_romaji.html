@@ -1,0 +1,5041 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>語彙練習 — Từ vựng Bài 1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --paper: #f6f1e6;
+      --paper-deep: #efe7d6;
+      --ink: #2a2622;
+      --ink-soft: #6b6257;
+      --seal-red: #ab3324;
+      --seal-red-soft: #ab332422;
+      --aizome: #2f4a5e;
+      --aizome-soft: #2f4a5e1f;
+      --moss: #55704a;
+      --moss-soft: #55704a1e;
+      --line: #d8cdb6;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Work Sans", sans-serif;
+      min-height: 100vh;
+    }
+
+    body {
+      background-image:
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      background-size: 34px 34px;
+      background-position: -1px -1px;
+      background-attachment: fixed;
+    }
+
+    .wrap {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 28px 20px 80px;
+    }
+
+    header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 22px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    header h1 {
+      font-family: "Shippori Mincho", serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: 0.02em;
+    }
+
+    header h1 .jp {
+      color: var(--seal-red);
+    }
+
+    .stats {
+      display: flex;
+      gap: 14px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 13px;
+      color: var(--ink-soft);
+    }
+
+    .stats b {
+      color: var(--ink);
+    }
+
+    .mode-select {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .mode-btn {
+      font-family: "Work Sans", sans-serif;
+      font-weight: 600;
+      font-size: 12.5px;
+      padding: 8px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--ink-soft);
+      cursor: pointer;
+      flex: none;
+      transition: all 0.15s ease;
+    }
+
+    .mode-btn:active {
+      transform: scale(0.98);
+    }
+
+    .mode-btn.active {
+      background: var(--aizome);
+      border-color: var(--aizome);
+      color: #fff;
+    }
+
+    .mode-btn:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+
+    .mode-clear {
+      font-size: 12px;
+      color: var(--ink-soft);
+      text-decoration: underline;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px 2px;
+      flex: none;
+    }
+
+    .mode-clear:hover {
+      color: var(--seal-red);
+    }
+
+    .daily-select {
+      margin-bottom: 16px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: #fffdf8;
+    }
+
+    .daily-select label {
+      color: var(--ink-soft);
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .daily-select-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 9px;
+    }
+
+    .day-checklist {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 6px 12px;
+      max-height: 210px;
+      overflow-y: auto;
+      padding: 9px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: var(--paper);
+    }
+
+    .day-check-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      min-width: 0;
+      padding: 5px 6px;
+      color: var(--ink);
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .day-check-option:first-child {
+      grid-column: 1 / -1;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line);
+      font-weight: 700;
+    }
+
+    .day-check-option input {
+      flex: none;
+      margin-top: 2px;
+      accent-color: var(--aizome);
+    }
+
+    .day-check-option span {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .daily-select .daily-count {
+      color: var(--ink-soft);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .progress-track {
+      height: 4px;
+      background: var(--paper-deep);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 26px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--aizome);
+      width: 0%;
+      transition: width 0.35s ease;
+    }
+
+    .card {
+      background: #fffdf8;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 40px 28px 32px;
+      position: relative;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      bottom: 14px;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    .kanji-display {
+      text-align: center;
+      font-family: "Shippori Mincho", serif;
+      font-weight: 700;
+      font-size: clamp(48px, 16vw, 88px);
+      line-height: 1;
+      color: var(--ink);
+      margin: 6px 0 8px;
+      letter-spacing: 0.03em;
+    }
+
+    .type-display {
+      text-align: center;
+      font-size: 13px;
+      color: var(--ink-soft);
+      margin-bottom: 28px;
+      font-weight: 500;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 16px;
+      font-family: "JetBrains Mono", monospace;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: var(--paper);
+      color: var(--ink);
+      outline: none;
+      transition:
+        border-color 0.15s ease,
+        background 0.15s ease;
+    }
+
+    .field input:focus {
+      border-color: var(--aizome);
+      background: #fffdf8;
+    }
+
+    .field input.correct {
+      border-color: var(--moss);
+      background: var(--moss-soft);
+    }
+
+    .field input.wrong {
+      border-color: var(--seal-red);
+      background: var(--seal-red-soft);
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    button {
+      font-family: "Work Sans", sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 12px 18px;
+      border-radius: 4px;
+      border: 1px solid var(--ink);
+      background: var(--ink);
+      color: var(--paper);
+      cursor: pointer;
+      flex: 1;
+      transition:
+        transform 0.1s ease,
+        opacity 0.15s ease;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    button.secondary {
+      background: transparent;
+      color: var(--ink);
+      border-color: var(--line);
+      flex: 0 0 auto;
+    }
+
+    button:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+
+    .result {
+      margin-top: 22px;
+      padding: 18px 18px 16px;
+      border-radius: 4px;
+      border-left: 4px solid var(--line);
+      background: var(--paper-deep);
+      display: none;
+      animation: rise 0.25s ease;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .result.show {
+      display: block;
+    }
+
+    .result.ok {
+      border-left-color: var(--moss);
+    }
+
+    .result.bad {
+      border-left-color: var(--seal-red);
+    }
+
+    .result-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .seal {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Shippori Mincho", serif;
+      font-weight: 700;
+      font-size: 15px;
+      flex-shrink: 0;
+      border: 2px solid currentColor;
+    }
+
+    .seal.ok {
+      color: var(--moss);
+    }
+
+    .seal.bad {
+      color: var(--seal-red);
+    }
+
+    .result-head span.msg {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .result.ok .msg {
+      color: var(--moss);
+    }
+
+    .result.bad .msg {
+      color: var(--seal-red);
+    }
+
+    .answer-grid {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 6px 12px;
+      font-size: 14px;
+    }
+
+    .answer-grid dt {
+      color: var(--ink-soft);
+      font-weight: 600;
+    }
+
+    .answer-grid dd {
+      margin: 0;
+      font-family: "JetBrains Mono", monospace;
+    }
+
+    .accept-meaning-button {
+      width: 100%;
+      margin-top: 14px;
+      background: transparent;
+      color: var(--moss);
+      border-color: var(--moss);
+    }
+
+    .accept-meaning-button[hidden] {
+      display: none;
+    }
+
+    .missed-panel {
+      margin-top: 22px;
+    }
+
+    .missed-panel h2 {
+      font-family: "Shippori Mincho", serif;
+      font-size: 16px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 8px;
+    }
+
+    .missed-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px dashed var(--line);
+      font-size: 14px;
+    }
+
+    .missed-item .k {
+      font-family: "Shippori Mincho", serif;
+      font-size: 20px;
+      margin-right: 10px;
+    }
+
+    .done-screen {
+      text-align: center;
+      padding: 30px 10px;
+    }
+
+    .done-screen .big {
+      font-family: "Shippori Mincho", serif;
+      font-size: 42px;
+      color: var(--seal-red);
+      margin-bottom: 6px;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--ink-soft);
+      font-size: 12px;
+      margin-top: 30px;
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 30px 18px 24px;
+      }
+    }
+
+    /* ================================================================
+         GIAO DIỆN MỚI — Sổ tay Nhật Bản hiện đại
+         Chỉ thay đổi phần nhìn, không ảnh hưởng logic học bên dưới.
+         ================================================================ */
+    :root {
+      --paper: #fff8ee;
+      --paper-deep: #f8ead9;
+      --ink: #243047;
+      --ink-soft: #6f7482;
+      --seal-red: #ef6a67;
+      --seal-red-soft: #fff0ed;
+      --aizome: #334b72;
+      --aizome-soft: #e8eef8;
+      --moss: #399174;
+      --moss-soft: #e6f6ef;
+      --line: #eadac8;
+      --sun: #f7bd5b;
+      --white: #fffefa;
+      --shadow: 0 18px 50px rgba(73, 52, 37, 0.12);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--paper);
+      background-image:
+        radial-gradient(circle at 8% 8%,
+          rgba(247, 189, 91, 0.22),
+          transparent 25rem),
+        radial-gradient(circle at 92% 22%,
+          rgba(239, 106, 103, 0.16),
+          transparent 28rem),
+        radial-gradient(circle at 50% 100%,
+          rgba(57, 145, 116, 0.12),
+          transparent 32rem);
+      background-size: auto;
+      background-attachment: fixed;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      z-index: -1;
+      border-radius: 50%;
+      opacity: 0.5;
+      filter: blur(1px);
+    }
+
+    body::before {
+      width: 190px;
+      height: 190px;
+      top: -75px;
+      right: -55px;
+      border: 22px solid rgba(239, 106, 103, 0.12);
+    }
+
+    body::after {
+      width: 110px;
+      height: 110px;
+      bottom: 35px;
+      left: -50px;
+      background: rgba(51, 75, 114, 0.08);
+    }
+
+    .wrap {
+      max-width: 760px;
+      padding-top: 38px;
+    }
+
+    header {
+      align-items: center;
+      margin-bottom: 22px;
+      padding: 20px 22px;
+      border: 1px solid rgba(234, 218, 200, 0.9);
+      border-radius: 20px;
+      background: rgba(255, 254, 250, 0.82);
+      box-shadow: 0 8px 30px rgba(73, 52, 37, 0.07);
+      backdrop-filter: blur(12px);
+    }
+
+    .brand-kicker {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--seal-red);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    header h1 {
+      font-size: clamp(20px, 4vw, 27px);
+      line-height: 1.2;
+    }
+
+    header h1 .jp {
+      display: inline-flex;
+      width: 44px;
+      height: 44px;
+      margin-right: 8px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      color: white;
+      background: linear-gradient(145deg, #f17b71, #df5559);
+      box-shadow: 0 7px 18px rgba(239, 106, 103, 0.28);
+      font-size: 18px;
+    }
+
+    .stats {
+      gap: 8px;
+    }
+
+    .stats span {
+      padding: 8px 11px;
+      border-radius: 12px;
+      background: var(--aizome-soft);
+    }
+
+    .stats span:first-child {
+      color: var(--moss);
+      background: var(--moss-soft);
+    }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin: 17px 3px 8px;
+      color: var(--ink-soft);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    .mode-select {
+      gap: 9px;
+      margin-bottom: 12px;
+      padding: 7px;
+      border: 1px solid rgba(234, 218, 200, 0.9);
+      border-radius: 16px;
+      background: rgba(255, 254, 250, 0.78);
+      box-shadow: 0 7px 24px rgba(73, 52, 37, 0.06);
+    }
+
+    .mode-btn {
+      min-height: 42px;
+      border: 0;
+      border-radius: 11px;
+      color: var(--ink-soft);
+      background: transparent;
+    }
+
+    .mode-btn:hover:not(:disabled) {
+      color: var(--aizome);
+      background: var(--aizome-soft);
+      transform: translateY(-1px);
+    }
+
+    .mode-btn.active {
+      color: white;
+      background: linear-gradient(135deg, #405b86, #293f63);
+      box-shadow: 0 7px 18px rgba(51, 75, 114, 0.25);
+    }
+
+    .mode-clear {
+      margin: auto 8px;
+      color: var(--seal-red);
+      text-decoration: none;
+    }
+
+    .daily-select {
+      padding: 13px 15px;
+      border: 1px solid rgba(234, 218, 200, 0.95);
+      border-radius: 16px;
+      background: rgba(255, 254, 250, 0.88);
+      box-shadow: 0 7px 24px rgba(73, 52, 37, 0.06);
+    }
+
+    .daily-select label::before {
+      content: "📚";
+      margin-right: 6px;
+    }
+
+    .daily-select select {
+      border: 0;
+      border-radius: 10px;
+      background: var(--paper);
+      font-weight: 600;
+    }
+
+    .daily-count {
+      padding: 6px 9px;
+      border-radius: 20px;
+      color: #9b6825 !important;
+      background: #fff0ce;
+      font-weight: 700;
+    }
+
+    .progress-track {
+      height: 9px;
+      margin: 20px 3px 24px;
+      border: 2px solid rgba(255, 255, 255, 0.8);
+      border-radius: 20px;
+      background: #eadfce;
+      box-shadow: inset 0 1px 3px rgba(73, 52, 37, 0.1);
+    }
+
+    .progress-fill {
+      position: relative;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--sun), var(--seal-red));
+      box-shadow: 0 0 12px rgba(239, 106, 103, 0.35);
+    }
+
+    .card {
+      overflow: hidden;
+      padding: 44px 38px 36px;
+      border: 1px solid rgba(234, 218, 200, 0.9);
+      border-radius: 24px;
+      background: rgba(255, 254, 250, 0.96);
+      box-shadow: var(--shadow);
+    }
+
+    .card::before {
+      inset: 10px;
+      border: 1px solid rgba(239, 106, 103, 0.18);
+      border-radius: 18px;
+    }
+
+    .card::after {
+      content: "日本語";
+      position: absolute;
+      top: 18px;
+      right: 22px;
+      color: rgba(51, 75, 114, 0.18);
+      font:
+        700 10px "JetBrains Mono",
+        monospace;
+      letter-spacing: 0.14em;
+    }
+
+    .kanji-display {
+      margin: 16px 0 12px;
+      color: var(--aizome);
+      text-shadow: 0 5px 0 rgba(51, 75, 114, 0.07);
+      animation: cardWordIn 0.32s ease both;
+    }
+
+    @keyframes cardWordIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.98);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .type-display {
+      display: table;
+      margin: 0 auto 30px;
+      padding: 5px 10px;
+      border-radius: 20px;
+      color: #9b6825;
+      background: #fff0ce;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+    }
+
+    .field label {
+      margin-left: 3px;
+      color: var(--aizome);
+    }
+
+    .field input {
+      padding: 15px 16px;
+      border: 2px solid #eadfce;
+      border-radius: 12px;
+      background: #fffaf3;
+    }
+
+    .field input:hover {
+      border-color: #d7c5b2;
+    }
+
+    .field input:focus {
+      border-color: var(--aizome);
+      background: white;
+      box-shadow: 0 0 0 4px rgba(51, 75, 114, 0.1);
+    }
+
+    .field input.correct {
+      border-color: var(--moss);
+      box-shadow: 0 0 0 4px rgba(57, 145, 116, 0.09);
+    }
+
+    .field input.wrong {
+      border-color: var(--seal-red);
+      box-shadow: 0 0 0 4px rgba(239, 106, 103, 0.09);
+    }
+
+    .actions button {
+      min-height: 48px;
+      border: 0;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #405b86, #293f63);
+      box-shadow: 0 8px 18px rgba(51, 75, 114, 0.2);
+    }
+
+    .actions button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 11px 23px rgba(51, 75, 114, 0.28);
+    }
+
+    .actions button.secondary {
+      border: 2px solid #ddd0c0;
+      color: var(--aizome);
+      background: white;
+      box-shadow: none;
+    }
+
+    .result {
+      border: 0;
+      border-radius: 14px;
+      background: #f7f2e9;
+    }
+
+    .result.ok {
+      background: var(--moss-soft);
+    }
+
+    .result.bad {
+      background: var(--seal-red-soft);
+    }
+
+    .seal {
+      background: rgba(255, 255, 255, 0.65);
+    }
+
+    .answer-grid {
+      padding-top: 10px;
+      border-top: 1px dashed rgba(111, 116, 130, 0.25);
+    }
+
+    .missed-item {
+      border-radius: 8px;
+      transition: background 0.15s ease;
+    }
+
+    .missed-item:hover {
+      background: rgba(255, 255, 255, 0.6);
+    }
+
+    footer {
+      opacity: 0.7;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 3px solid rgba(247, 189, 91, 0.65);
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 600px) {
+      .wrap {
+        padding: 18px 12px 60px;
+      }
+
+      header {
+        align-items: flex-start;
+        padding: 16px;
+      }
+
+      .stats {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .stats span {
+        flex: 1;
+        text-align: center;
+      }
+
+      .daily-select {
+        align-items: stretch;
+        flex-wrap: wrap;
+      }
+
+      .daily-select label {
+        width: 100%;
+      }
+
+      .daily-select select {
+        flex: 1;
+      }
+
+      .card {
+        padding: 38px 20px 26px;
+        border-radius: 20px;
+      }
+
+      .kanji-display {
+        font-size: clamp(48px, 18vw, 76px);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* Editorial Nhật tối giản: giấy, mực và đỏ son. */
+    :root {
+      --paper: #f2efe8;
+      --paper-deep: #e8e3da;
+      --ink: #20221f;
+      --ink-soft: #77766f;
+      --seal-red: #a43b2d;
+      --seal-red-soft: #f3e6e2;
+      --aizome: #20221f;
+      --aizome-soft: #ebe8e1;
+      --moss: #39705c;
+      --moss-soft: #e4eee8;
+      --line: #d7d1c6;
+      --white: #faf9f5;
+      --shadow: 0 20px 60px rgba(25, 24, 21, 0.07);
+    }
+
+    body {
+      background: var(--paper);
+    }
+
+    body::before,
+    body::after {
+      display: none;
+    }
+
+    .wrap {
+      max-width: 900px;
+      padding: 42px 28px 80px;
+    }
+
+    header {
+      align-items: flex-end;
+      margin-bottom: 46px;
+      padding: 0 0 22px;
+      border: 0;
+      border-bottom: 1px solid var(--ink);
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+
+    .brand-kicker {
+      margin: 0 0 10px 53px;
+      color: var(--ink-soft);
+      font-size: 9px;
+      letter-spacing: 0.24em;
+    }
+
+    .brand-kicker+span {}
+
+    header h1 {
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+    }
+
+    header h1 .jp {
+      width: 42px;
+      height: 42px;
+      margin-right: 8px;
+      border-radius: 1px;
+      background: var(--seal-red);
+      box-shadow: none;
+      font-size: 17px;
+    }
+
+    .stats {
+      gap: 22px;
+      padding-bottom: 5px;
+    }
+
+    .stats span,
+    .stats span:first-child {
+      padding: 0;
+      color: var(--ink-soft);
+      background: transparent;
+    }
+
+    .stats b {
+      margin-left: 3px;
+      color: var(--ink);
+      font-size: 15px;
+    }
+
+    .section-label {
+      margin: 24px 0 8px;
+      color: #96928a;
+      font-size: 9px;
+      letter-spacing: 0.19em;
+    }
+
+    .mode-select {
+      gap: 0;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .mode-btn {
+      min-height: 40px;
+      padding: 10px 18px 12px;
+      border-radius: 0;
+      color: var(--ink-soft);
+      background: transparent;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .mode-btn:hover:not(:disabled) {
+      color: var(--ink);
+      background: transparent;
+      transform: none;
+    }
+
+    .mode-btn.active {
+      color: var(--ink);
+      background: transparent;
+      box-shadow: inset 0 -2px 0 var(--seal-red);
+    }
+
+    .mode-clear {
+      margin-left: auto;
+      padding: 10px 4px;
+      color: #9b8b84;
+      font-size: 11px;
+      text-decoration: none;
+    }
+
+    .mode-clear:hover {
+      color: var(--seal-red);
+    }
+
+    .daily-select {
+      display: grid;
+      grid-template-columns: 150px 1fr auto;
+      gap: 18px;
+      margin: 0;
+      padding: 0 0 12px;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .daily-select label {
+      align-self: center;
+      color: var(--ink-soft);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .daily-select label::before {
+      display: none;
+    }
+
+    .daily-select select {
+      padding: 9px 30px 9px 0;
+      border: 0;
+      border-radius: 0;
+      color: var(--ink);
+      background: transparent;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .daily-count {
+      align-self: center;
+      padding: 0;
+      color: var(--ink-soft) !important;
+      background: transparent;
+      font-weight: 500;
+    }
+
+    .progress-track {
+      height: 2px;
+      margin: 32px 0 28px;
+      border: 0;
+      border-radius: 0;
+      background: #dcd6cc;
+      box-shadow: none;
+    }
+
+    .progress-fill {
+      border-radius: 0;
+      background: var(--seal-red);
+      box-shadow: none;
+    }
+
+    .card {
+      padding: 54px 62px 46px;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      background: var(--white);
+      box-shadow: var(--shadow);
+    }
+
+    .card::before {
+      display: none;
+    }
+
+    .card::after {
+      top: 24px;
+      right: 28px;
+      color: #bbb7af;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+    }
+
+    .kanji-display {
+      margin: 18px 0 12px;
+      color: var(--ink);
+      text-shadow: none;
+      font-weight: 500;
+    }
+
+    .type-display {
+      margin-bottom: 42px;
+      padding: 0;
+      border-radius: 0;
+      color: var(--seal-red);
+      background: transparent;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+    }
+
+    .field {
+      margin-bottom: 22px;
+    }
+
+    .field label {
+      margin: 0 0 8px;
+      color: var(--ink-soft);
+      font-size: 9px;
+      letter-spacing: 0.16em;
+    }
+
+    .field input {
+      padding: 13px 0;
+      border: 0;
+      border-bottom: 1px solid #aaa69e;
+      border-radius: 0;
+      background: transparent;
+      font-size: 16px;
+    }
+
+    .field input:hover {
+      border-color: var(--ink);
+    }
+
+    .field input:focus {
+      border-color: var(--ink);
+      background: transparent;
+      box-shadow: inset 0 -1px 0 var(--ink);
+    }
+
+    .field input.correct {
+      border-color: var(--moss);
+      background: transparent;
+      box-shadow: inset 0 -1px 0 var(--moss);
+    }
+
+    .field input.wrong {
+      border-color: var(--seal-red);
+      background: transparent;
+      box-shadow: inset 0 -1px 0 var(--seal-red);
+    }
+
+    .actions {
+      margin-top: 34px;
+    }
+
+    .actions button {
+      min-height: 46px;
+      border-radius: 1px;
+      background: var(--ink);
+      box-shadow: none;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+    }
+
+    .actions button:hover:not(:disabled) {
+      background: #343732;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .actions button.secondary {
+      border: 1px solid var(--line);
+      color: var(--ink-soft);
+      background: transparent;
+    }
+
+    .result,
+    .result.ok,
+    .result.bad {
+      border-radius: 1px;
+      background: #efebe4;
+    }
+
+    .result.ok {
+      border-left-color: var(--moss);
+    }
+
+    .result.bad {
+      border-left-color: var(--seal-red);
+    }
+
+    .seal {
+      background: transparent;
+    }
+
+    footer {
+      margin-top: 38px;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+    }
+
+    @media (max-width: 600px) {
+      .wrap {
+        padding: 24px 16px 60px;
+      }
+
+      header {
+        margin-bottom: 34px;
+        padding-bottom: 18px;
+      }
+
+      .brand-kicker {
+        margin-left: 0;
+      }
+
+      .stats {
+        width: auto;
+      }
+
+      .stats span {
+        text-align: left;
+      }
+
+      .mode-select {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+      }
+
+      .mode-btn {
+        min-width: max-content;
+        padding-inline: 13px;
+      }
+
+      .daily-select {
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+      }
+
+      .daily-select label {
+        grid-column: 1/-1;
+      }
+
+      .card {
+        padding: 46px 24px 32px;
+      }
+
+      .kanji-display {
+        font-size: clamp(46px, 17vw, 70px);
+      }
+    }
+
+    .card {
+      position: relative;
+    }
+
+    button.star-button {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 46px;
+      height: 46px;
+      padding: 0;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: var(--paper);
+      color: #9a7b28;
+      font-size: 25px;
+      line-height: 1;
+      flex: none;
+      z-index: 2;
+    }
+
+    button.star-button:hover {
+      background: #fff5c7;
+      border-color: #c49a2c;
+    }
+
+    button.star-button.active {
+      background: #f4c84a;
+      border-color: #b78b18;
+      color: #4d3900;
+    }
+
+    button.skip-button {
+      top: 68px;
+      color: var(--ink-soft);
+      font-size: 20px;
+    }
+
+    button.skip-button.active {
+      background: var(--seal-red-soft);
+      border-color: var(--seal-red);
+      color: var(--seal-red);
+    }
+
+    .skipped-screen {
+      padding: 28px;
+    }
+
+    .skipped-screen h2 {
+      margin: 0 0 6px;
+      font-family: "Shippori Mincho", serif;
+    }
+
+    .skipped-screen>p {
+      margin: 0 0 20px;
+      color: var(--ink-soft);
+    }
+
+    .skipped-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .skipped-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: center;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.55);
+      text-align: left;
+    }
+
+    .skipped-word {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 6px 12px;
+    }
+
+    .skipped-word .k {
+      font-family: "Shippori Mincho", serif;
+      font-size: 23px;
+    }
+
+    .skipped-word .reading {
+      font-family: "JetBrains Mono", monospace;
+      color: var(--ink-soft);
+    }
+
+    .skipped-word .meaning {
+      flex-basis: 100%;
+      font-size: 14px;
+    }
+
+    button.restore-button {
+      flex: none;
+      padding: 9px 12px;
+      background: transparent;
+      color: var(--ink);
+      border-color: var(--line);
+    }
+
+    @media (max-width: 560px) {
+      .skipped-screen {
+        padding: 22px 16px;
+      }
+
+      .skipped-row {
+        grid-template-columns: 1fr;
+      }
+
+      button.restore-button {
+        width: 100%;
+      }
+    }
+
+    /* Bộ chọn nhiều phần: đặt cuối để ghi đè giao diện select cũ. */
+    .daily-select {
+      display: block;
+      padding: 12px 0;
+    }
+
+    .daily-select-head {
+      display: flex;
+    }
+
+    .daily-select-head>label {
+      width: auto;
+    }
+
+    .day-checklist {
+      display: grid;
+    }
+
+    .daily-select .day-check-option {
+      width: auto;
+      align-self: auto;
+      white-space: normal;
+    }
+
+    .daily-select .day-check-option::before {
+      display: none;
+      content: none;
+    }
+
+    @media (max-width: 600px) {
+      .daily-select-head {
+        align-items: flex-start;
+      }
+
+      .day-checklist {
+        grid-template-columns: 1fr;
+        max-height: 260px;
+      }
+    }
+
+    .daily-select {
+      padding: 0;
+      border-bottom: 0;
+    }
+
+    .day-picker-toggle {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto 28px;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      min-height: 54px;
+      padding: 10px 12px 10px 16px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.55);
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .day-picker-toggle:hover,
+    .day-picker-toggle[aria-expanded="true"] {
+      border-color: #9d8f84;
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    .day-picker-title {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .day-picker-toggle .daily-count {
+      padding: 0;
+      color: var(--ink-soft) !important;
+      background: transparent;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .day-picker-chevron {
+      font-size: 22px;
+      line-height: 1;
+      text-align: center;
+      transition: transform 0.18s ease;
+    }
+
+    .day-picker-toggle[aria-expanded="true"] .day-picker-chevron {
+      transform: rotate(180deg);
+    }
+
+    .day-picker-panel {
+      margin-top: 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.62);
+      overflow: hidden;
+    }
+
+    .day-picker-panel[hidden] {
+      display: none;
+    }
+
+    .day-picker-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--line);
+      color: var(--ink-soft);
+      font-size: 12px;
+    }
+
+    .day-picker-actions button,
+    .day-group-select {
+      min-height: 32px;
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      color: var(--ink);
+      background: transparent;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .day-picker-actions button:hover,
+    .day-group-select:hover {
+      border-color: var(--aizome);
+      color: var(--aizome);
+      background: var(--aizome-soft);
+    }
+
+    .day-picker-actions button:disabled,
+    .day-group-select:disabled {
+      color: var(--ink-soft);
+      background: transparent;
+      opacity: 0.55;
+      cursor: default;
+    }
+
+    .day-picker-panel .day-checklist {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0;
+      max-height: 360px;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+    }
+
+    .day-group {
+      min-width: 0;
+      padding: 12px 14px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .day-group:nth-child(odd) {
+      border-right: 1px solid var(--line);
+    }
+
+    .day-group-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 5px;
+    }
+
+    .day-group-title {
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .day-group .day-check-option {
+      display: grid;
+      grid-template-columns: 18px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 8px;
+      min-height: 36px;
+      padding: 5px 3px;
+      border-bottom: 1px solid rgba(216, 204, 191, 0.55);
+    }
+
+    .day-group .day-check-option:last-child {
+      border-bottom: 0;
+    }
+
+    .day-check-name {
+      overflow: hidden;
+      color: var(--ink-soft);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .day-check-count {
+      color: #94877e;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 700px) {
+      .day-picker-panel .day-checklist {
+        grid-template-columns: 1fr;
+        max-height: 420px;
+      }
+
+      .day-group:nth-child(odd) {
+        border-right: 0;
+      }
+
+      .day-picker-toggle {
+        grid-template-columns: minmax(0, 1fr) 24px;
+      }
+
+      .day-picker-toggle .daily-count {
+        grid-column: 1;
+        grid-row: 2;
+      }
+
+      .day-picker-chevron {
+        grid-column: 2;
+        grid-row: 1 / 3;
+      }
+    }
+
+    /* Bộ chọn mở rộng tốt cho nhiều chương/bài. */
+    .day-picker-panel {
+      position: relative;
+    }
+
+    .day-picker-tools {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .day-picker-tools input {
+      min-width: 0;
+      height: 38px;
+      padding: 8px 11px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      color: var(--ink);
+      background: #fff;
+      font: inherit;
+      font-size: 13px;
+    }
+
+    .day-picker-tools input:focus {
+      border-color: var(--aizome);
+      outline: 2px solid rgba(44, 69, 105, 0.12);
+    }
+
+    .day-picker-tools button,
+    .day-picker-footer button {
+      min-height: 38px;
+      padding: 7px 12px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      color: var(--ink);
+      background: #fff;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .day-picker-panel .day-checklist {
+      display: block;
+      max-height: 330px;
+      overflow-y: auto;
+    }
+
+    .day-group {
+      padding: 0;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .day-group:nth-child(odd) {
+      border-right: 0;
+    }
+
+    .day-group>summary {
+      display: grid;
+      grid-template-columns: 18px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 8px;
+      min-height: 46px;
+      padding: 8px 12px;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .day-group>summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .day-group>summary::before {
+      content: "›";
+      font-size: 20px;
+      line-height: 1;
+      transition: transform 0.15s ease;
+    }
+
+    .day-group[open]>summary::before {
+      transform: rotate(90deg);
+    }
+
+    .day-group-summary {
+      min-width: 0;
+    }
+
+    .day-group-summary strong,
+    .day-group-summary small {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .day-group-summary strong {
+      font-size: 13px;
+    }
+
+    .day-group-summary small {
+      margin-top: 2px;
+      color: var(--ink-soft);
+      font-size: 11px;
+    }
+
+    .day-group-select {
+      min-height: 30px;
+    }
+
+    .day-group-items {
+      padding: 0 12px 8px 38px;
+      background: rgba(255, 255, 255, 0.42);
+    }
+
+    .day-empty-search {
+      padding: 28px 16px;
+      color: var(--ink-soft);
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .day-picker-footer {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      align-items: center;
+      gap: 8px;
+      padding: 10px;
+      border-top: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .day-picker-footer span {
+      color: var(--ink-soft);
+      font-size: 12px;
+    }
+
+    .day-picker-footer .picker-apply {
+      border-color: var(--aizome);
+      color: #fff;
+      background: var(--aizome);
+    }
+
+    .day-picker-footer button:disabled {
+      opacity: 0.45;
+      cursor: default;
+    }
+
+    @media (max-width: 520px) {
+      .day-picker-tools {
+        grid-template-columns: 1fr;
+      }
+
+      .day-picker-footer {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .day-picker-footer span {
+        grid-column: 1 / -1;
+      }
+
+      .day-group-items {
+        padding-left: 18px;
+      }
+    }
+    .batch-settings {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: -6px 0 16px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fffdf8;
+    }
+
+    .batch-settings label { font-weight: 700; white-space: nowrap; }
+    .batch-settings input {
+      width: 82px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      font: inherit;
+    }
+    .batch-all-button {
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: white;
+      color: var(--ink);
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .batch-all-button.active {
+      border-color: var(--seal-red);
+      background: var(--seal-red);
+      color: white;
+    }
+    .batch-settings span { color: var(--ink-soft); font-size: 12px; }
+
+    @media (max-width: 620px) {
+      .batch-settings { flex-wrap: wrap; }
+      .batch-settings span { width: 100%; }
+    }
+
+    @media not all {
+    /* ---------- Refined study-room theme (disabled) ---------- */
+    :root {
+      --luxury-wine: #8f2f24;
+      --luxury-wine-dark: #682019;
+      --luxury-gold: #b58a3a;
+      --luxury-paper: #fbf9f4;
+      --luxury-canvas: #f1ede5;
+      --luxury-ink: #25231f;
+      --luxury-muted: #777168;
+      --luxury-line: #ded7ca;
+      --luxury-shadow: 0 18px 50px rgba(55, 43, 30, .09);
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 8% 0%, rgba(181, 138, 58, .08), transparent 28%),
+        linear-gradient(180deg, #f7f4ee 0%, var(--luxury-canvas) 100%);
+      color: var(--luxury-ink);
+    }
+
+    .wrap {
+      width: min(1120px, calc(100% - 40px));
+      margin: 32px auto 52px;
+    }
+
+    header {
+      position: relative;
+      margin-bottom: 28px;
+      padding: 24px 28px;
+      border: 1px solid rgba(222, 215, 202, .9);
+      border-radius: 22px;
+      background: rgba(251, 249, 244, .88);
+      box-shadow: 0 10px 34px rgba(55, 43, 30, .06);
+      backdrop-filter: blur(12px);
+    }
+
+    header::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 5px;
+      border-radius: 22px 0 0 22px;
+      background: linear-gradient(var(--luxury-wine), var(--luxury-gold));
+    }
+
+    header h1 { margin: 0; letter-spacing: -.025em; }
+    header h1 .jp {
+      display: inline-grid;
+      place-items: center;
+      width: 54px;
+      height: 54px;
+      margin-right: 14px;
+      border-radius: 14px;
+      background: var(--luxury-wine);
+      color: #fffaf0;
+      font-size: 21px;
+      box-shadow: 0 8px 20px rgba(143, 47, 36, .22);
+    }
+    .brand-kicker {
+      margin: 0 0 8px 70px;
+      color: var(--luxury-gold);
+      letter-spacing: .26em;
+    }
+    .stats {
+      gap: 8px;
+      padding: 6px;
+      border: 1px solid var(--luxury-line);
+      border-radius: 13px;
+      background: #fff;
+    }
+    .stats span {
+      min-width: 88px;
+      padding: 8px 12px;
+      border-radius: 9px;
+      background: #f7f3ec;
+      text-align: center;
+    }
+
+    .section-label {
+      margin: 24px 0 9px;
+      color: var(--luxury-muted);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .2em;
+    }
+
+    .mode-select {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px;
+      border: 1px solid var(--luxury-line);
+      border-radius: 15px;
+      background: rgba(251, 249, 244, .9);
+    }
+    .mode-btn {
+      min-height: 42px;
+      padding: 10px 18px;
+      border: 0 !important;
+      border-radius: 10px !important;
+      color: var(--luxury-muted);
+      background: transparent !important;
+      font-weight: 700;
+      transition: color .2s ease, background .2s ease, box-shadow .2s ease, transform .2s ease;
+    }
+    .mode-btn:hover:not(:disabled) {
+      color: var(--luxury-wine);
+      background: rgba(143, 47, 36, .06) !important;
+    }
+    .mode-btn.active {
+      color: #fff !important;
+      background: var(--luxury-wine) !important;
+      box-shadow: 0 7px 17px rgba(143, 47, 36, .2);
+    }
+    .mode-clear {
+      margin-left: auto;
+      padding: 9px 13px;
+      border-radius: 9px;
+      color: #a05d54;
+    }
+
+    .daily-select,
+    .batch-settings {
+      margin: 0 0 10px;
+      border: 1px solid var(--luxury-line);
+      border-radius: 15px;
+      background: rgba(251, 249, 244, .94);
+      box-shadow: none;
+    }
+    .day-picker-toggle {
+      min-height: 58px;
+      padding: 0 18px;
+    }
+    .day-picker-title { font-size: 15px; font-weight: 800; }
+    .daily-count {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #f0e8db;
+      color: var(--luxury-wine) !important;
+      font-weight: 700;
+    }
+    .batch-settings {
+      display: grid;
+      grid-template-columns: auto 100px auto 1fr;
+      gap: 12px;
+      padding: 13px 16px;
+    }
+    .batch-settings input,
+    .batch-all-button {
+      height: 42px;
+      border-color: var(--luxury-line);
+      background: #fff;
+    }
+    .batch-all-button.active {
+      border-color: var(--luxury-wine);
+      background: var(--luxury-wine);
+    }
+
+    .day-picker-panel {
+      margin-top: 10px;
+      padding: 14px;
+      border: 1px solid var(--luxury-line);
+      border-radius: 16px;
+      background: #fffdf9;
+      box-shadow: var(--luxury-shadow);
+    }
+    .day-picker-tools {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) auto auto;
+      gap: 8px;
+    }
+    .day-picker-tools input,
+    .day-picker-tools button,
+    .day-picker-footer button,
+    .day-group-select {
+      border: 1px solid var(--luxury-line);
+      border-radius: 9px;
+      background: #fff;
+    }
+    #btnDeselectAllDays { color: var(--luxury-wine); }
+    .day-check-option { border-radius: 9px; }
+    .day-check-option:hover { background: #f6f0e7; }
+    .picker-apply {
+      border-color: var(--luxury-wine) !important;
+      background: var(--luxury-wine) !important;
+      color: white !important;
+    }
+
+    .progress-track {
+      height: 5px;
+      margin: 24px 2px 30px;
+      border-radius: 999px;
+      background: #ddd6ca;
+    }
+    .progress-fill {
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--luxury-wine), #c17455, var(--luxury-gold));
+    }
+
+    .card {
+      position: relative;
+      padding: 46px 74px 52px;
+      border: 1px solid var(--luxury-line);
+      border-radius: 24px;
+      background: rgba(253, 252, 248, .96);
+      box-shadow: var(--luxury-shadow);
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 74px;
+      height: 3px;
+      border-radius: 0 0 4px 4px;
+      background: var(--luxury-gold);
+      transform: translateX(-50%);
+    }
+    .kanji-display {
+      margin: 22px 0 2px;
+      color: #1f201d;
+      font-size: clamp(64px, 8vw, 96px);
+      line-height: 1.15;
+    }
+    .type-display {
+      color: var(--luxury-wine);
+      font-weight: 700;
+      letter-spacing: .12em;
+    }
+    .field { margin-top: 28px; }
+    .field label {
+      color: var(--luxury-muted);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .18em;
+    }
+    .field input {
+      padding: 13px 2px;
+      border-width: 0 0 1px;
+      border-radius: 0;
+      border-color: #bdb5a8;
+      background: transparent;
+      font-size: 18px;
+    }
+    .field input:focus {
+      border-color: var(--luxury-wine);
+      box-shadow: 0 2px 0 rgba(143, 47, 36, .12);
+    }
+    .actions { gap: 10px; margin-top: 34px; }
+    .actions button {
+      min-height: 50px;
+      border-radius: 11px;
+      font-weight: 800;
+    }
+    #btnCheck {
+      background: var(--luxury-ink);
+      box-shadow: 0 8px 20px rgba(37, 35, 31, .14);
+    }
+    #btnNext:not(:disabled) { border-color: var(--luxury-wine); color: var(--luxury-wine); }
+    .star-button {
+      border-color: var(--luxury-line);
+      background: #f8f5ee;
+      box-shadow: none;
+    }
+
+    footer { margin-top: 34px; color: #aaa297; letter-spacing: .12em; }
+
+    @media (max-width: 760px) {
+      .wrap { width: min(100% - 22px, 1120px); margin-top: 12px; }
+      header { padding: 20px; }
+      header h1 { font-size: 28px; }
+      header h1 .jp { width: 45px; height: 45px; margin-right: 8px; }
+      .brand-kicker { margin-left: 54px; }
+      .stats { width: 100%; margin-top: 18px; }
+      .stats span { flex: 1; min-width: 0; padding-inline: 6px; }
+      .mode-select { overflow-x: auto; align-items: stretch; }
+      .mode-btn { flex: 0 0 auto; padding-inline: 13px; }
+      .mode-clear { margin-left: 0; white-space: nowrap; }
+      .batch-settings { grid-template-columns: 1fr 90px auto; }
+      .batch-settings span { grid-column: 1 / -1; }
+      .day-picker-tools { grid-template-columns: 1fr 1fr; }
+      .day-picker-tools input { grid-column: 1 / -1; }
+      .card { padding: 38px 24px 34px; border-radius: 18px; }
+      .kanji-display { margin-top: 28px; }
+    }
+
+    /* ---------- Minimal interface ---------- */
+    body {
+      background: #f5f5f3;
+      color: #20211f;
+    }
+    .wrap {
+      width: min(980px, calc(100% - 32px));
+      margin: 24px auto 40px;
+    }
+    header {
+      margin-bottom: 24px;
+      padding: 20px 0;
+      border: 0;
+      border-bottom: 1px solid #d8d8d4;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+    header::before { display: none; }
+    header h1 { font-size: 32px; }
+    header h1 .jp {
+      width: auto;
+      height: auto;
+      margin-right: 10px;
+      border-radius: 0;
+      background: transparent;
+      color: #20211f;
+      font-size: inherit;
+      box-shadow: none;
+    }
+    .brand-kicker {
+      margin: 0 0 5px;
+      color: #85857f;
+      letter-spacing: .16em;
+    }
+    .stats {
+      gap: 18px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+    }
+    .stats span {
+      min-width: auto;
+      padding: 0;
+      background: transparent;
+    }
+    .section-label {
+      margin: 20px 0 8px;
+      color: #777771;
+      font-size: 10px;
+      letter-spacing: .14em;
+    }
+    .mode-select {
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid #dcdcd7;
+      border-radius: 10px;
+      background: #fff;
+    }
+    .mode-btn {
+      min-height: 38px;
+      padding: 8px 14px;
+      border-radius: 7px !important;
+      color: #686862;
+      box-shadow: none !important;
+    }
+    .mode-btn:hover:not(:disabled) {
+      color: #20211f;
+      background: #f2f2ef !important;
+    }
+    .mode-btn.active {
+      color: #fff !important;
+      background: #292a27 !important;
+      box-shadow: none;
+    }
+    .mode-clear { color: #8a514b; }
+    .daily-select,
+    .batch-settings {
+      border-color: #dcdcd7;
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: none;
+    }
+    .day-picker-toggle { min-height: 52px; padding: 0 14px; }
+    .daily-count {
+      padding: 0;
+      background: transparent;
+      color: #686862 !important;
+    }
+    .batch-settings {
+      grid-template-columns: auto 90px auto 1fr;
+      padding: 10px 14px;
+    }
+    .batch-settings input,
+    .batch-all-button {
+      height: 38px;
+      border-color: #d7d7d2;
+      border-radius: 7px;
+      box-shadow: none;
+    }
+    .batch-all-button.active {
+      border-color: #292a27;
+      background: #292a27;
+    }
+    .day-picker-panel {
+      border-color: #dcdcd7;
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .07);
+    }
+    .picker-apply {
+      border-color: #292a27 !important;
+      background: #292a27 !important;
+    }
+    #btnDeselectAllDays { color: #555650; }
+    .progress-track {
+      height: 3px;
+      margin: 20px 0 24px;
+      background: #deded9;
+    }
+    .progress-fill { background: #292a27; }
+    .card {
+      padding: 38px 56px 42px;
+      border-color: #d8d8d3;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: none;
+    }
+    .card::before { display: none; }
+    .kanji-display {
+      margin: 10px 0 0;
+      font-size: clamp(58px, 7vw, 82px);
+    }
+    .type-display { color: #777771; }
+    .field { margin-top: 24px; }
+    .field input:focus {
+      border-color: #292a27;
+      box-shadow: none;
+    }
+    .actions { margin-top: 28px; }
+    .actions button { min-height: 46px; border-radius: 7px; }
+    #btnCheck { background: #292a27; box-shadow: none; }
+    #btnNext:not(:disabled) { border-color: #777771; color: #292a27; }
+    .star-button { background: #fff; }
+    button.star-button.active {
+      border-color: #777771;
+      background: #ecece8;
+      color: #292a27;
+    }
+    button.skip-button.active {
+      border-color: #aaa9a3;
+      background: #f0f0ed;
+      color: #555650;
+    }
+    footer { margin-top: 26px; }
+
+    @media (max-width: 760px) {
+      .wrap { width: min(100% - 20px, 980px); margin-top: 8px; }
+      header { padding: 16px 2px; }
+      header h1 { font-size: 27px; }
+      header h1 .jp { width: auto; height: auto; }
+      .brand-kicker { margin-left: 0; }
+      .stats { gap: 10px; }
+      .batch-settings { grid-template-columns: 1fr 86px auto; }
+      .card { padding: 32px 20px; }
+    }
+    }
+
+    @media not all {
+    /* Compact study setup (disabled) */
+    .daily-select {
+      margin-bottom: 0;
+      padding: 0;
+      border-radius: 10px 10px 0 0;
+      background: #fff;
+    }
+    .day-picker-toggle {
+      min-height: 54px;
+      padding: 0 16px;
+    }
+    .day-picker-panel {
+      margin: 0;
+      padding: 12px;
+      border-width: 1px 0 0;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .day-picker-tools {
+      display: grid;
+      grid-template-columns: minmax(180px, 1fr) auto auto;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .day-picker-tools input,
+    .day-picker-tools button {
+      width: auto;
+      min-height: 40px;
+      margin: 0;
+    }
+    .day-checklist {
+      max-height: 330px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: auto;
+    }
+    .day-group { border-bottom: 1px solid var(--line); }
+    .day-group:last-child { border-bottom: 0; }
+    .day-group summary { min-height: 48px; padding: 6px 10px; }
+    .day-group-items { padding: 4px 10px 10px 32px; }
+    .day-picker-footer {
+      padding: 10px 0 0;
+      border-top: 0;
+    }
+    .batch-settings {
+      display: grid;
+      grid-template-columns: auto 84px auto minmax(180px, 1fr);
+      align-items: center;
+      gap: 10px;
+      margin: -1px 0 16px;
+      padding: 10px 16px;
+      border-radius: 0 0 10px 10px;
+      background: #fff;
+    }
+    .batch-settings label { font-size: 13px; }
+    .batch-settings input {
+      width: 84px;
+      height: 38px;
+      padding: 7px 10px;
+    }
+    .batch-all-button {
+      width: auto !important;
+      min-width: 88px;
+      height: 38px;
+      padding: 7px 13px;
+    }
+    .batch-settings span {
+      overflow: hidden;
+      color: var(--ink-soft);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 680px) {
+      .day-picker-tools { grid-template-columns: 1fr 1fr; }
+      .day-picker-tools input { grid-column: 1 / -1; }
+      .batch-settings { grid-template-columns: 1fr 80px auto; }
+      .batch-settings span {
+        grid-column: 1 / -1;
+        white-space: normal;
+      }
+    }
+    }
+
+    /* Small, unobtrusive batch-size control. */
+    .batch-settings {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 14px;
+    }
+    .batch-settings label {
+      flex: 0 0 auto;
+      font-size: 13px;
+    }
+    .batch-settings input {
+      flex: 0 0 64px;
+      width: 64px;
+      height: 34px;
+      padding: 5px 9px;
+      border-radius: 7px;
+      font-size: 14px;
+    }
+    .batch-settings .batch-all-button {
+      flex: 0 0 auto;
+      width: auto;
+      min-width: 72px;
+      height: 34px;
+      padding: 5px 12px;
+      border-radius: 7px;
+      font-size: 13px;
+    }
+    .batch-settings span {
+      flex: 1 1 auto;
+      min-width: 0;
+      font-size: 12px;
+    }
+
+    @media (max-width: 620px) {
+      .batch-settings { gap: 8px; }
+      .batch-settings span {
+        flex-basis: 100%;
+        margin-top: 2px;
+      }
+    }
+
+    /* Compact vocabulary picker. */
+    .day-picker-toggle {
+      min-height: 48px;
+      padding: 0 14px;
+    }
+    .day-picker-title { font-size: 14px; }
+    .daily-count { font-size: 12px; }
+    .day-picker-panel {
+      padding: 10px 12px 0;
+      box-shadow: none;
+    }
+    .day-picker-tools {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .day-picker-tools input {
+      flex: 1 1 auto;
+      min-width: 160px;
+      height: 36px;
+      padding: 6px 10px;
+      font-size: 13px;
+    }
+    .day-picker-tools button {
+      flex: 0 0 auto;
+      width: auto;
+      min-height: 36px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    #btnDeselectAllDays {
+      border-color: transparent;
+      background: transparent;
+      color: var(--ink-soft);
+    }
+    #btnDeselectAllDays:hover:not(:disabled) {
+      border-color: var(--line);
+      background: #fff;
+      color: var(--seal-red);
+    }
+    .day-checklist { max-height: 310px; }
+    .day-group > summary {
+      min-height: 44px;
+      padding: 5px 10px;
+    }
+    .day-group-summary strong { font-size: 13px; }
+    .day-group-summary small { font-size: 11px; }
+    .day-group-select {
+      min-height: 30px;
+      padding: 4px 9px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .day-picker-footer {
+      min-height: 52px;
+      padding: 8px 0;
+    }
+    .day-picker-footer button {
+      min-height: 34px;
+      padding: 6px 11px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+
+    @media (max-width: 620px) {
+      .day-picker-tools { flex-wrap: wrap; }
+      .day-picker-tools input { flex-basis: 100%; }
+      .day-picker-tools button { flex: 1 1 auto; }
+    }
+
+    .retry-setting {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin: -6px 0 16px;
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+    }
+    .retry-setting-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .retry-setting-text strong { font-size: 13px; }
+    .retry-setting-text small { color: var(--ink-soft); font-size: 12px; }
+    .retry-toggle {
+      flex: 0 0 auto;
+      min-width: 72px;
+      min-height: 36px;
+      padding: 6px 13px;
+      border: 1px solid #aaa;
+      border-radius: 999px;
+      background: #f2f2ef;
+      color: var(--ink-soft);
+      font-weight: 800;
+    }
+    .retry-toggle.active {
+      border-color: var(--seal-red);
+      background: var(--seal-red);
+      color: #fff;
+    }
+    @media (max-width: 620px) {
+      .retry-setting { align-items: flex-start; }
+      .retry-setting-text small { line-height: 1.4; }
+    }
+    .content-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 0 0 18px;
+    }
+    .content-tab {
+      padding: 11px 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--ink-soft);
+      text-align: center;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .content-tab.active {
+      border-color: var(--seal-red);
+      background: var(--seal-red);
+      color: #fff;
+    }
+    body.content-sentence .kanji-display,
+    body.content-grammar .kanji-display {
+      max-width: 820px;
+      margin-inline: auto;
+      font-size: clamp(21px, 3.2vw, 34px);
+      line-height: 1.65;
+      letter-spacing: .02em;
+      overflow-wrap: anywhere;
+      text-align: left;
+    }
+    body.content-grammar .kanji-display { font-size: clamp(19px, 3vw, 30px); }
+    .grammar-context {
+      max-width: 820px;
+      margin: 0 auto 14px;
+      padding: 10px 14px;
+      border-left: 4px solid var(--seal-red);
+      border-radius: 6px;
+      background: #fff8f3;
+      line-height: 1.55;
+    }
+    .grammar-context strong { display: block; font-size: 16px; }
+    .grammar-context span { display: block; margin-top: 3px; color: var(--ink-soft); font-size: 13px; }
+    .listen-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 10px 0 14px;
+    }
+    .listen-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 38px;
+      padding: 7px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .listen-button:hover:not(:disabled) { border-color: var(--seal-red); color: var(--seal-red); }
+    .listen-button.speaking { border-color: var(--seal-red); background: #fff4ee; color: var(--seal-red); }
+    .listen-button:disabled { cursor: not-allowed; opacity: .45; }
+    .voice-status { color: var(--ink-soft); font-size: 11px; }
+    @media (max-width: 620px) {
+      .content-tabs { gap: 5px; }
+      .content-tab { padding: 9px 5px; font-size: 12px; }
+      body.content-sentence .kanji-display,
+      body.content-grammar .kanji-display { font-size: 20px; line-height: 1.6; }
+    }
+
+    /* Giao diện gọn: nút mảnh, màu dịu và nhóm thiết lập theo chức năng. */
+    .content-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      width: fit-content;
+      max-width: 100%;
+      margin: 0 auto 18px;
+      padding: 3px;
+      gap: 2px;
+      border: 1px solid #e4e0d9;
+      border-radius: 11px;
+      background: #f5f3ef;
+    }
+    .content-tab {
+      min-width: 105px;
+      padding: 7px 13px;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: #77736d;
+      font-size: 12px;
+    }
+    .content-tab.active {
+      background: #fff;
+      color: #7d4944;
+      box-shadow: 0 1px 4px rgba(49, 42, 36, .08);
+    }
+    .section-label { margin-bottom: 7px; color: #8a857e; font-size: 11px; letter-spacing: .06em; }
+    .mode-select { gap: 6px; margin-bottom: 14px; }
+    .mode-btn {
+      min-height: 34px;
+      padding: 6px 11px;
+      border: 1px solid #dedad3;
+      border-radius: 8px;
+      background: #fbfaf8;
+      color: #716d67;
+      font-size: 12px;
+      font-weight: 650;
+      box-shadow: none;
+    }
+    .mode-btn:hover:not(:disabled) { border-color: #c9b9b2; background: #fff; color: #654b47; }
+    .mode-btn.active {
+      border-color: #d8bbb3;
+      background: #f8eeeb;
+      color: #7d4944;
+      box-shadow: none;
+    }
+    .mode-clear {
+      min-height: 32px;
+      padding: 5px 8px;
+      border: 0;
+      background: transparent;
+      color: #9a7771;
+      font-size: 11px;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .study-settings {
+      display: grid;
+      grid-template-columns: minmax(250px, 1.35fr) minmax(220px, 1fr) minmax(220px, 1fr);
+      gap: 8px;
+      margin: 6px 0 16px;
+      padding: 12px;
+      border: 1px solid #e5e1da;
+      border-radius: 12px;
+      background: rgba(255,255,255,.62);
+    }
+    .study-settings > .section-label { grid-column: 1 / -1; margin: 0 0 1px; }
+    .study-settings .daily-select,
+    .study-settings .batch-settings,
+    .study-settings .retry-setting,
+    .study-settings .auto-speech-setting {
+      min-width: 0;
+      margin: 0;
+      border: 1px solid #e7e3dc;
+      border-radius: 9px;
+      background: #fff;
+      box-shadow: none;
+    }
+    .study-settings .day-picker-toggle { min-height: 48px; padding: 8px 11px; border: 0; background: transparent; }
+    .study-settings .day-picker-title { font-size: 12px; font-weight: 650; }
+    .study-settings .daily-count { font-size: 11px; }
+    .study-settings .batch-settings {
+      display: grid;
+      grid-template-columns: 1fr 58px auto;
+      align-content: center;
+      gap: 5px;
+      padding: 8px 10px;
+    }
+    .study-settings .batch-settings label { font-size: 11px; font-weight: 650; }
+    .study-settings .batch-settings input { min-height: 30px; padding: 4px 6px; border-color: #dedad3; font-size: 12px; }
+    .study-settings .batch-all-button { min-height: 30px; padding: 4px 7px; border-color: #dedad3; background: #faf9f7; color: #716d67; font-size: 11px; }
+    .study-settings .batch-settings span { grid-column: 1 / -1; font-size: 10px; line-height: 1.35; }
+    .study-settings .retry-setting,
+    .study-settings .auto-speech-setting { align-items: center; padding: 8px 10px; }
+    .study-settings .retry-setting-text strong { font-size: 11px; font-weight: 650; }
+    .study-settings .retry-setting-text small { font-size: 10px; line-height: 1.35; }
+    .study-settings .retry-toggle {
+      min-width: 48px;
+      min-height: 28px;
+      padding: 4px 8px;
+      border-color: #d7d2ca;
+      background: #f3f1ed;
+      color: #817c75;
+      font-size: 10px;
+    }
+    .study-settings .retry-toggle.active { border-color: #d7bab2; background: #f4e6e2; color: #7d4944; }
+    .study-settings .auto-speech-setting { display: flex; justify-content: space-between; gap: 10px; }
+    @media (min-width: 1101px) {
+      .study-settings { grid-template-columns: minmax(250px, 1.35fr) repeat(3, minmax(180px, 1fr)); }
+    }
+    .card { position: relative; }
+    .card-tools {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 2;
+      display: flex;
+      gap: 5px;
+    }
+    .card-tools button.star-button,
+    .card-tools .listen-button {
+      position: static;
+      display: inline-grid;
+      place-items: center;
+      width: 31px;
+      min-width: 31px;
+      height: 31px;
+      min-height: 31px;
+      margin: 0;
+      padding: 0;
+      border: 1px solid #e1ddd6;
+      border-radius: 8px;
+      background: rgba(255,255,255,.86);
+      color: #827d76;
+      font-size: 15px;
+      box-shadow: none;
+    }
+    .card-tools button.star-button.active { border-color: #d9bdb5; background: #f8eeeb; color: #8a514b; }
+    .card-tools .voice-status {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+    @media (max-width: 850px) {
+      .study-settings { grid-template-columns: 1fr 1fr; }
+      .study-settings .daily-select { grid-column: 1 / -1; }
+    }
+    @media (max-width: 620px) {
+      .content-tabs { width: 100%; }
+      .content-tab { flex: 1 1 calc(33.333% - 4px); min-width: 0; padding-inline: 6px; }
+      .study-settings { grid-template-columns: 1fr; padding: 9px; }
+      .study-settings .daily-select { grid-column: auto; }
+      .mode-select { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 2px; }
+      .mode-btn { flex: 0 0 auto; }
+      .card-tools { top: 9px; right: 9px; }
+    }
+
+    /* Bản siêu gọn: ưu tiên hiển thị trọn bài trong một màn hình. */
+    body { padding: 10px 12px; }
+    .wrap { max-width: 980px; }
+    header {
+      min-height: 0;
+      margin-bottom: 9px;
+      padding: 8px 12px;
+      border-radius: 10px;
+    }
+    header h1 { font-size: clamp(17px, 2.1vw, 23px); line-height: 1.15; }
+    header h1 .jp { font-size: 1.08em; }
+    .brand-kicker { display: none; }
+    .stats { gap: 6px; }
+    .stats span { padding: 4px 7px; font-size: 10px; }
+    .content-tabs { margin-bottom: 8px; }
+    .content-tab { padding-block: 6px; }
+    .section-label { margin: 4px 0 5px; font-size: 10px; }
+    .mode-select {
+      display: flex;
+      flex-wrap: wrap;
+      overflow: visible;
+      gap: 4px;
+      margin-bottom: 8px;
+      padding: 0;
+    }
+    .mode-btn { min-height: 29px; padding: 4px 9px; border-radius: 7px; font-size: 11px; }
+    .mode-clear { min-height: 28px; padding-block: 3px; font-size: 10px; }
+    .study-settings {
+      grid-template-columns: minmax(230px, 1.4fr) minmax(190px, .9fr) minmax(190px, .9fr);
+      gap: 5px;
+      margin: 4px 0 8px;
+      padding: 6px;
+      border-radius: 9px;
+    }
+    .study-settings > .section-label { display: none; }
+    .study-settings .daily-select,
+    .study-settings .batch-settings,
+    .study-settings .retry-setting { border-radius: 7px; }
+    .study-settings .day-picker-toggle { min-height: 42px; padding: 5px 9px; }
+    .study-settings .day-picker-title { font-size: 11px; }
+    .study-settings .batch-settings {
+      grid-template-columns: 1fr 48px auto;
+      min-height: 42px;
+      padding: 5px 7px;
+    }
+    .study-settings .batch-settings label,
+    .study-settings .retry-setting-text strong { font-size: 10px; }
+    .study-settings .batch-settings input,
+    .study-settings .batch-all-button { min-height: 26px; height: 26px; }
+    .study-settings .batch-settings span,
+    .study-settings .retry-setting-text small { display: none; }
+    .study-settings .retry-setting { min-height: 42px; padding: 5px 7px; }
+    .study-settings .retry-toggle { min-width: 42px; min-height: 25px; }
+    .progress-track { height: 4px; margin: 6px 0 8px; }
+    .card {
+      min-height: 0;
+      padding: 34px 24px 18px;
+      border-radius: 12px;
+    }
+    .kanji-display { margin-bottom: 2px; line-height: 1.25; }
+    body.content-vocab .kanji-display { font-size: clamp(42px, 7vw, 66px); }
+    body.content-sentence .kanji-display,
+    body.content-grammar .kanji-display { font-size: clamp(18px, 2.6vw, 27px); line-height: 1.45; }
+    .type-display { margin-bottom: 7px; font-size: 11px; }
+    .vocab-hints { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; margin: 0 0 12px; }
+    .vocab-hints[hidden] { display: none; }
+    .vocab-hints button {
+      padding: 6px 11px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: var(--paper);
+      color: var(--ink);
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .vocab-hints button:hover:not(:disabled),
+    .vocab-hints button[aria-pressed="true"] { border-color: var(--aizome); background: #edf2f1; }
+    .vocab-hints button:disabled { cursor: default; opacity: 0.7; }
+    .vocab-hint-value { flex-basis: 100%; text-align: center; color: var(--ink); font-size: 16px; font-weight: 600; }
+    .vocab-hint-value[hidden] { display: none; }
+    .grammar-context { margin-bottom: 7px; padding: 6px 9px; line-height: 1.35; }
+    .grammar-context strong { font-size: 13px; }
+    .grammar-context span { margin-top: 1px; font-size: 10px; }
+    .field { margin-bottom: 7px; }
+    .field label { margin-bottom: 3px; font-size: 10px; }
+    .field input { min-height: 37px; padding: 7px 10px; font-size: 14px; }
+    .actions { gap: 7px; margin-top: 9px; }
+    .actions button { min-height: 34px; padding: 6px 13px; font-size: 12px; }
+    .result { margin-top: 9px; padding: 9px 11px; }
+    footer { margin-top: 7px; font-size: 9px; }
+    @media (max-width: 700px) {
+      body { padding: 7px; }
+      .study-settings { grid-template-columns: 1fr 1fr; }
+      .study-settings .daily-select { grid-column: 1 / -1; }
+      .mode-select { flex-wrap: wrap; overflow: visible; }
+      .mode-btn { flex: 1 1 auto; }
+      .card { padding: 34px 13px 14px; }
+    }
+    @media (max-width: 430px) {
+      header { align-items: center; }
+      .stats span { padding: 3px 5px; }
+      .study-settings { grid-template-columns: 1fr; }
+      .study-settings .daily-select { grid-column: auto; }
+      .study-settings .batch-settings span,
+      .study-settings .retry-setting-text small { display: none; }
+      body.content-vocab .kanji-display { font-size: 42px; }
+    }
+    @media (max-height: 800px) and (min-width: 701px) {
+      footer { display: none; }
+      .answer-grid { gap: 3px 8px; }
+      .answer-grid dt, .answer-grid dd { padding-block: 2px; font-size: 11px; }
+      .result-head { margin-bottom: 5px; }
+    }
+
+    /* Nới nhịp dọc vừa phải để giao diện bớt sít nhưng vẫn vừa một màn hình. */
+    @media (min-width: 701px) and (min-height: 801px) {
+      header { margin-bottom: 13px; padding-block: 11px; }
+      .content-tabs { margin-bottom: 12px; }
+      .section-label { margin-top: 7px; margin-bottom: 7px; }
+      .mode-select { margin-bottom: 11px; }
+      .mode-btn { min-height: 32px; padding-block: 5px; }
+      .study-settings { gap: 7px; margin-block: 7px 12px; padding: 9px; }
+      .study-settings .day-picker-toggle { min-height: 48px; padding-block: 8px; }
+      .study-settings .batch-settings,
+      .study-settings .retry-setting { min-height: 48px; padding-block: 8px; }
+      .progress-track { margin-block: 9px 12px; }
+      .card { padding: 43px 30px 25px; }
+      .kanji-display { margin-bottom: 5px; }
+      .type-display { margin-bottom: 10px; }
+      .grammar-context { margin-bottom: 11px; padding-block: 8px; }
+      .field { margin-bottom: 10px; }
+      .field label { margin-bottom: 5px; }
+      .field input { min-height: 42px; padding-block: 9px; }
+      .actions { margin-top: 13px; }
+      .actions button { min-height: 39px; }
+      footer { margin-top: 11px; }
+    }
+
+    /* Chế độ nhớ công thức: tương thích giao diện và chế độ học cũ. */
+    .grammar-recall[hidden] { display: none !important; }
+    .grammar-recall { max-width: 740px; margin: 8px auto 20px; }
+    .grammar-recall-progress { color: var(--ink-soft); font-size: 12px; font-weight: 600; margin-bottom: 12px; }
+    .grammar-recall-question { font-size: clamp(16px, 2.2vw, 20px); line-height: 1.6; margin-bottom: 17px; white-space: pre-line; overflow-wrap: anywhere; }
+    .grammar-recall-label { display: block; font-size: 11px; font-weight: 700; letter-spacing: .09em; color: var(--ink-soft); margin-bottom: 7px; }
+    .grammar-recall input { width: 100%; min-height: 44px; padding: 12px; border: 1px solid var(--line); border-radius: 4px; background: #fff; color: var(--ink); font-size: 16px; }
+    .grammar-recall input:focus { border-color: var(--aizome); outline: 2px solid rgba(51,75,114,.1); }
+    .grammar-recall input.correct { border-color: var(--moss); }
+    .grammar-recall input.wrong { border-color: var(--seal-red); }
+    .grammar-recall-feedback { min-height: 26px; margin-top: 10px; font-size: 13px; line-height: 1.55; white-space: pre-line; overflow-wrap: anywhere; }
+    .grammar-recall-feedback.bad { color: var(--seal-red); }
+    .grammar-recall-feedback.good { color: var(--moss); }
+    .grammar-recall-reveal { display: block; width: fit-content; max-width: 100%; flex: none; margin-top: 7px; padding: 7px 0; min-height: 0; border: 0; background: transparent; color: var(--ink-soft); text-decoration: underline; font-size: 12px; box-shadow: none; }
+    .grammar-recall-reveal:hover { color: var(--seal-red); }
+    .grammar-recall-review { white-space: pre-line; overflow-wrap: anywhere; }
+    .grammar-recall-accept[hidden] { display:none !important; }
+    .grammar-recall-accept { width:100%; min-height:38px; padding:8px; margin-top:10px; border:1px solid var(--moss); border-radius:5px; background:var(--moss-soft); color:var(--moss); font-size:13px; }
+    body.content-grammar .kanji-display { overflow-wrap:anywhere; }
+    .grammar-recall-question { white-space:pre-line; }
+    @media (max-width: 620px) { .grammar-recall-question { font-size: 16px; } }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <nav class="content-tabs" aria-label="Chọn phần luyện tập">
+      <a class="content-tab" data-content="vocab" href="?phan=tuvung">Từ vựng</a>
+      <a class="content-tab" data-content="sentence" href="?phan=cau">Dịch câu</a>
+      <a class="content-tab" data-content="grammar" href="?phan=nguphap">Ngữ pháp</a>
+      <a class="content-tab" href="./hoc-lieu.html?phan=tailieu">Xem tài liệu</a>
+      <a class="content-tab" href="./hoc-lieu.html?phan=doctruyen">Đọc hiểu</a>
+      <a class="content-tab" href="./hoc-lieu.html?phan=nghe">Nghe</a>
+    </nav>
+    <header>
+      <h1>
+        <small class="brand-kicker">Mỗi ngày một chút tiến bộ</small>
+        <span class="jp">語彙</span> Từ vựng Nhật Bản
+      </h1>
+      <div class="stats">
+        <span>Đúng: <b id="statCorrect">0</b></span>
+        <span>Sai: <b id="statWrong">0</b></span>
+        <span>Đã làm: <b id="statAnswered">0</b>/<b id="statTotal">0</b></span>
+      </div>
+    </header>
+
+    <div id="vocabStudyModes">
+    <div class="section-label">Chọn cách luyện</div>
+    <div class="mode-select" id="studyModeSelect">
+      <button type="button" class="mode-btn active" data-study-mode="recognize">
+        Nhận mặt Kanji
+      </button>
+      <button type="button" class="mode-btn" data-study-mode="meaningToRomaji">
+        Nghĩa → Romaji
+      </button>
+      <button type="button" class="mode-btn" data-study-mode="kanaToMeaning">
+        Kana → Nghĩa Việt
+      </button>
+    </div>
+    </div>
+
+    <div id="grammarStudyModes" hidden>
+      <div class="section-label">Chọn kỹ năng ngữ pháp</div>
+      <div class="mode-select">
+        <button type="button" class="mode-btn active" data-grammar-mode="ja-vi">
+          Nhật → Romaji + nghĩa Việt
+        </button>
+        <button type="button" class="mode-btn" data-grammar-mode="vi-romaji">
+          Việt → Romaji
+        </button>
+        <button type="button" class="mode-btn" data-grammar-mode="recall">
+          Nhật → Nghĩa → Cách chia → Áp dụng
+        </button>
+      </div>
+    </div>
+
+    <section class="study-settings" aria-label="Thiết lập lượt học">
+    <div class="section-label" id="contentSetLabel">Thiết lập lượt học</div>
+    <div class="daily-select">
+      <button type="button" class="day-picker-toggle" id="dayPickerToggle"
+        aria-expanded="false" aria-controls="dayPickerPanel">
+        <span class="day-picker-title">Bộ từ luyện tập</span>
+        <strong class="daily-count" id="dailyCount"></strong>
+        <span class="day-picker-chevron" aria-hidden="true">⌄</span>
+      </button>
+      <div class="day-picker-panel" id="dayPickerPanel" hidden>
+        <div class="day-picker-tools">
+          <input type="search" id="daySearch" placeholder="Tìm chương, bài hoặc trang..."
+            autocomplete="off" aria-label="Tìm phần từ vựng">
+          <button type="button" id="btnSelectAllDays">Chọn tất cả</button>
+          <button type="button" id="btnDeselectAllDays">Bỏ chọn tất cả</button>
+        </div>
+        <div class="day-checklist" id="dayChecklist" role="group"
+          aria-label="Chọn các phần từ vựng"></div>
+        <div class="day-picker-footer">
+          <span id="draftSelectionCount"></span>
+          <button type="button" class="picker-cancel" id="btnCancelDays">Hủy</button>
+          <button type="button" class="picker-apply" id="btnApplyDays">Áp dụng</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="batch-settings">
+      <label for="batchSize">Số từ mỗi lượt</label>
+      <input type="number" id="batchSize" min="1" step="1" inputmode="numeric" />
+      <button type="button" class="batch-all-button" id="btnBatchAll">Tất cả</button>
+      <span id="batchHint">Nhập số từ bạn muốn hoàn thành trong một lượt.</span>
+    </div>
+
+    <div class="retry-setting">
+      <div class="retry-setting-text">
+        <strong>Viết lại từ trả lời sai</strong>
+        <small id="retryHint">ON: từ sai sẽ được hỏi lại ngay cho đến khi đúng.</small>
+      </div>
+      <button type="button" class="retry-toggle active" id="btnRetryToggle"
+        role="switch" aria-checked="true">ON</button>
+    </div>
+    <div class="retry-setting auto-speech-setting">
+      <div class="retry-setting-text">
+        <strong>Tự động phát âm trước khi chấm</strong>
+        <small id="autoSpeechHint">OFF: chấm đáp án ngay sau khi gửi.</small>
+      </div>
+      <button type="button" class="retry-toggle" id="btnAutoSpeechToggle"
+        role="switch" aria-checked="false">OFF</button>
+    </div>
+    </section>
+
+    <div class="section-label">Phạm vi ôn tập</div>
+    <div class="mode-select" id="modeSelect">
+      <button type="button" class="mode-btn active" id="modeAll">
+        Luyện tất cả
+      </button>
+      <button type="button" class="mode-btn" id="modeWrong">
+        Từ hay sai (<span id="wrongCountBadge">0</span>)
+      </button>
+      <button type="button" class="mode-btn" id="modeImportant">
+        ★ Từ hay quên (<span id="importantCountBadge">0</span>)
+      </button>
+      <button type="button" class="mode-btn" id="modeSkipped">
+        Đã bỏ qua (<span id="skippedCountBadge">0</span>)
+      </button>
+      <button type="button" class="mode-clear" id="btnClearWrong">
+        Xoá ds từ sai
+      </button>
+    </div>
+
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div id="quizArea">
+      <div class="card">
+        <div class="card-tools" aria-label="Công cụ của câu hiện tại">
+          <button type="button" class="listen-button" id="btnListen" aria-label="Nghe phát âm tiếng Nhật"
+            title="Nghe tiếng Nhật">🔊</button>
+          <button type="button" class="star-button" id="btnImportantStar" aria-label="Đánh dấu từ hay quên"
+            title="Đánh dấu từ này là từ hay quên">☆</button>
+          <button type="button" class="star-button skip-button" id="btnStar" aria-label="Bỏ qua từ này"
+            title="Từ này dễ — bỏ qua trong các lượt học">⊘</button>
+          <small class="voice-status" id="voiceStatus">Đang tìm giọng Nhật…</small>
+        </div>
+        <div class="kanji-display" id="kanjiDisplay">語彙</div>
+        <div class="type-display" id="typeDisplay">(N)</div>
+        <div class="vocab-hints" id="vocabHints" hidden>
+          <button type="button" id="btnHintKana" aria-pressed="false">Gợi ý Hiragana</button>
+          <button type="button" id="btnHintMeaning" aria-pressed="false">Gợi ý nghĩa</button>
+          <div class="vocab-hint-value" id="vocabHintValue" role="status" hidden></div>
+        </div>
+        <div class="grammar-context" id="grammarContext" hidden></div>
+
+        <!-- Chế độ nhớ chủ động: không tiết lộ cấu trúc trước khi trả lời. -->
+        <section class="grammar-recall" id="grammarRecall" hidden aria-label="Luyện nhớ ngữ pháp">
+          <div class="grammar-recall-progress" id="grammarRecallProgress"></div>
+          <div class="grammar-recall-question" id="grammarRecallQuestion"></div>
+          <label class="grammar-recall-label" id="grammarRecallLabel" for="inputGrammarRecall">Nhập đáp án</label>
+          <input type="text" id="inputGrammarRecall" autocomplete="off" autocapitalize="off"
+            spellcheck="false" placeholder="Có thể nhập chữ Nhật hoặc Romaji..." />
+          <div class="grammar-recall-feedback" id="grammarRecallFeedback" role="status" aria-live="polite"></div>
+          <button type="button" class="grammar-recall-reveal" id="btnRecallReveal">Xem đáp án bước này</button>
+          <button type="button" class="grammar-recall-accept" id="btnRecallAcceptMeaning" hidden>✓ Nghĩa mình nhập vẫn đúng</button>
+        </section>
+
+        <div class="field" id="readingField">
+          <label for="inputReading">Cách đọc (romaji)</label>
+          <input type="text" id="inputReading" autocomplete="off" placeholder="vd: hajime" spellcheck="false" />
+        </div>
+
+        <div class="field" id="meaningField">
+          <label for="inputMeaning">Nghĩa (tiếng Việt)</label>
+          <input type="text" id="inputMeaning" autocomplete="off" placeholder="vd: lúc đầu" spellcheck="false" />
+        </div>
+
+        <div class="actions">
+          <button id="btnCheck">Kiểm tra</button>
+          <button id="btnNext" class="secondary" disabled>
+            Từ tiếp theo →
+          </button>
+        </div>
+
+        <div class="result" id="resultBox">
+          <div class="result-head">
+            <div class="seal" id="resultSeal">✓</div>
+            <span class="msg" id="resultMsg"></span>
+          </div>
+          <dl class="answer-grid">
+            <dt>Từ</dt>
+            <dd id="ansWord"></dd>
+            <dt>Kana</dt>
+            <dd id="ansKana"></dd>
+            <dt>Romaji</dt>
+            <dd id="ansRomaji"></dd>
+            <dt>Nghĩa</dt>
+            <dd id="ansMeaning"></dd>
+          </dl>
+          <button type="button" id="btnAcceptMeaning" class="accept-meaning-button" hidden>
+            Vẫn đúng nghĩa — ghi nhớ câu trả lời này
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="doneArea" style="display: none"></div>
+
+    <footer>Chương 1 · Bài 1 — Gungun Joutatsu N3</footer>
+  </div>
+
+  <script src="./data/danh-sach-data.js"></script>
+  <script>
+    /*
+    Mỗi phần tử là một bộ từ riêng. Muốn thêm buổi học mới, chỉ cần sao chép
+    nguyên khối { name: "...", words: [...] } và thay dữ liệu bên trong.
+    "name" có thể là ngày tháng, tên bài hoặc bất cứ tên nào bạn muốn.
+  */
+const VOCAB_SETS = window.VOCAB_SETS || [];
+    const SENTENCE_SETS = (window.SENTENCE_SETS || []).map((set) => ({
+      name: set.name,
+      words: (set.sentences || []).map((sentence, index) => ({
+        ...sentence,
+        kana: sentence.hiragana,
+        type: "Câu ví dụ",
+        contentKind: "sentence",
+        contentId: `${set.name}-${index}`,
+      })),
+    }));
+    /* Giữ nguyên hai kiểu luyện câu cũ; thêm một thẻ recall cho mỗi ngữ pháp.
+       Với bộ dữ liệu cũ chưa khai báo recall: hỏi nghĩa → nhập structure.
+       Với bộ dữ liệu mới: có thể kiểm tra từng cấu trúc và câu điền riêng. */
+    const GRAMMAR_SETS = (window.GRAMMAR_SETS || []).map((set) => ({
+      name: set.name,
+      words: (set.grammar || []).flatMap((grammar, grammarIndex) => {
+        const recallInfo = grammar.recall || null;
+        const pattern = recallInfo?.pattern || grammar.structure;
+        const recallItem = pattern && grammar.meaning ? [{
+          kanji: pattern,
+          kana: "",
+          romaji: "",
+          meaning: grammar.meaning,
+          type: "Tự nhớ ngữ pháp",
+          direction: "recall",
+          contentKind: "grammar",
+          structure: grammar.structure,
+          grammarMeaning: grammar.meaning,
+          grammarNote: grammar.note || "",
+          grammarExamples: grammar.examples || [],
+          grammarRecall: recallInfo,
+          contentId: `${set.name}-${grammarIndex}-recall`,
+        }] : [];
+        const sentenceItems = (grammar.examples || []).map((example, exampleIndex) => ({
+          ...example,
+          kana: example.hiragana,
+          type: example.direction === "ja-vi" ? "Nhật → Romaji + nghĩa Việt" : "Việt → Romaji",
+          contentKind: "grammar",
+          structure: grammar.structure,
+          grammarMeaning: grammar.meaning,
+          grammarNote: grammar.note || "",
+          contentId: `${set.name}-${grammarIndex}-${exampleIndex}`,
+        }));
+        return [...recallItem, ...sentenceItems];
+      }),
+    }));
+    const contentParam = new URLSearchParams(location.search).get("phan");
+    const contentType = contentParam === "cau" ? "sentence" : contentParam === "nguphap" ? "grammar" : "vocab";
+    const CONTENT_SETS = contentType === "sentence" ? SENTENCE_SETS : contentType === "grammar" ? GRAMMAR_SETS : VOCAB_SETS;
+
+    document.body.classList.add(`content-${contentType}`);
+    document.querySelectorAll("[data-content]").forEach((tab) => {
+      tab.classList.toggle("active", tab.dataset.content === contentType);
+    });
+    document.getElementById("vocabStudyModes").hidden = contentType !== "vocab";
+    document.getElementById("grammarStudyModes").hidden = contentType !== "grammar";
+    const pageTitles = {
+      vocab: ["語彙", "Từ vựng Nhật Bản"],
+      sentence: ["例文", "Luyện dịch câu ví dụ"],
+      grammar: ["文法", "Luyện ngữ pháp tiếng Nhật"],
+    };
+    const heading = document.querySelector("header h1");
+    heading.querySelector(".jp").textContent = pageTitles[contentType][0];
+    heading.lastChild.textContent = ` ${pageTitles[contentType][1]}`;
+    const itemNoun = contentType === "vocab" ? "từ" : "câu";
+    document.getElementById("contentSetLabel").textContent = "Thiết lập lượt học";
+    document.querySelector(".day-picker-title").textContent = contentType === "vocab"
+      ? "Bộ từ luyện tập"
+      : contentType === "sentence" ? "Bộ câu dịch" : "Bộ ngữ pháp";
+    document.querySelector(".batch-settings label").textContent = `Số ${itemNoun} mỗi lượt`;
+    document.querySelector(".batch-settings span").textContent = `Giới hạn số ${itemNoun} trong một lượt học.`;
+    document.querySelector(".retry-setting-text strong").textContent = `Hỏi lại ${itemNoun} trả lời sai`;
+    document.getElementById("btnNext").textContent = `${contentType === "vocab" ? "Từ" : "Câu"} tiếp theo →`;
+    if (contentType !== "vocab") {
+      document.getElementById("modeAll").textContent = "Luyện tất cả";
+      document.getElementById("modeWrong").innerHTML = 'Câu hay sai (<span id="wrongCountBadge">0</span>)';
+      document.getElementById("modeImportant").innerHTML = '★ Câu cần nhớ (<span id="importantCountBadge">0</span>)';
+      document.getElementById("modeSkipped").innerHTML = 'Đã bỏ qua (<span id="skippedCountBadge">0</span>)';
+      document.getElementById("btnClearWrong").textContent = "Xoá ds câu sai";
+      const answerTerms = document.querySelectorAll(".answer-grid dt");
+      answerTerms[0].textContent = "Câu Kanji";
+      answerTerms[1].textContent = "Hiragana";
+    }
+
+    /* Chỉ lọc trùng khi luyện tất cả; không sửa dữ liệu và số từ của từng trang. */
+    function removeDuplicateWords(words) {
+      const seen = new Set();
+      return words.filter((word) => {
+        const kanji = String(word.kanji || "").normalize("NFKC").trim();
+        const kana = String(word.kana || "").normalize("NFKC").trim();
+        const key = `${kanji}\u0000${kana}`;
+
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }
+
+    const DAY_STORE_KEY = `japaneseQuizCurrentSet_${contentType}_v1`;
+    const BATCH_SIZE_STORE_KEY = `japaneseQuizBatchSize_${contentType}_v1`;
+    /* ---------- normalization ---------- */
+    function normRomaji(s) {
+      return String(s || "")
+        .normalize("NFKC")
+        .toLowerCase()
+        .replace(/ā/g, "aa")
+        .replace(/ī/g, "ii")
+        .replace(/ū/g, "uu")
+        .replace(/ē/g, "ee")
+        .replace(/ō/g, "oo")
+        .replace(/[～〜~\-・\s]/g, "")
+        .trim();
+    }
+
+    function normJapanese(s) {
+      return String(s || "")
+        .normalize("NFKC")
+        .replace(/[\s。、，,.！？!?「」『』]/g, "")
+        .trim();
+    }
+
+    function romajiAnswerVariants(romaji) {
+      const correct = normRomaji(romaji);
+      const variants = new Set([correct]);
+
+      // Cách ghi trường âm phổ biến: ou/oo, uu/u và nguyên âm kép/đơn.
+      variants.add(correct.replace(/ou/g, "o").replace(/uu/g, "u"));
+      variants.add(correct.replace(/ou/g, "oo"));
+      variants.add(correct.replace(/oo/g, "ou"));
+      variants.add(
+        correct
+          .replace(/aa/g, "a")
+          .replace(/ii/g, "i")
+          .replace(/uu/g, "u")
+          .replace(/ee/g, "e")
+          .replace(/oo/g, "o"),
+      );
+
+      return variants;
+    }
+
+    function stripAccents(str) {
+      str = str.toLowerCase();
+      str = str.replace(/[àáạảãâầấậẩẫăằắặẳẵ]/g, "a");
+      str = str.replace(/[èéẹẻẽêềếệểễ]/g, "e");
+      str = str.replace(/[ìíịỉĩ]/g, "i");
+      str = str.replace(/[òóọỏõôồốộổỗơờớợởỡ]/g, "o");
+      str = str.replace(/[ùúụủũưừứựửữ]/g, "u");
+      str = str.replace(/[ỳýỵỷỹ]/g, "y");
+      str = str.replace(/đ/g, "d");
+      str = str.replace(/[^a-z0-9\s,\/]/g, "");
+      str = str.replace(/\s+/g, " ").trim();
+      return str;
+    }
+
+    function meaningParts(meaning) {
+      return meaning
+        .split(/[,\/]/)
+        .map((s) => stripAccents(s))
+        .filter(Boolean);
+    }
+
+    /* ---------- persistent wrong words ---------- */
+    // Mỗi phần có bộ nhớ riêng; trạng thái của câu không lẫn với từ vựng.
+    const WRONG_STORE_KEY = contentType === "vocab" ? "vocabBai2WrongWords_v1" : `japaneseQuizWrong_${contentType}_v1`;
+    const SKIPPED_STORE_KEY = contentType === "vocab" ? "vocabBai2SkippedWords_v1" : `japaneseQuizSkipped_${contentType}_v1`;
+    const IMPORTANT_STORE_KEY = contentType === "vocab" ? "vocabImportantWords_v1" : `japaneseQuizImportant_${contentType}_v1`;
+    const MEANING_ALIASES_STORE_KEY = contentType === "vocab" ? "vocabMeaningAliases_v1" : `japaneseQuizMeaningAliases_${contentType}_v1`;
+
+    function kanjiKey(word) {
+      return String(word.kanji || "").normalize("NFKC").trim();
+    }
+
+    function wordKey(word) {
+      if (word.contentId) return `${contentType}\u0000${word.contentId}`;
+      const kanji = kanjiKey(word);
+      const kana = String(word.kana || "").normalize("NFKC").trim();
+      return `${kanji}\u0000${kana}`;
+    }
+
+    function wrongWordKey(word) {
+      return wordKey(word);
+    }
+
+    function loadMeaningAliases() {
+      try {
+        const saved = JSON.parse(
+          localStorage.getItem(MEANING_ALIASES_STORE_KEY) || "{}",
+        );
+        return saved && typeof saved === "object" && !Array.isArray(saved)
+          ? saved
+          : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveMeaningAliases() {
+      try {
+        localStorage.setItem(
+          MEANING_ALIASES_STORE_KEY,
+          JSON.stringify(meaningAliases),
+        );
+      } catch (e) { }
+    }
+
+    function learnedMeaningParts(word) {
+      const aliases = meaningAliases[wordKey(word)];
+      return Array.isArray(aliases)
+        ? aliases.map(stripAccents).filter(Boolean)
+        : [];
+    }
+
+    let meaningAliases = loadMeaningAliases();
+
+    function loadSkippedSet() {
+      try {
+        const raw = localStorage.getItem(SKIPPED_STORE_KEY);
+        const savedKeys = raw ? JSON.parse(raw) : [];
+        const migratedKeys = new Set();
+
+        savedKeys.forEach((savedKey) => {
+          const key = String(savedKey);
+          if (key.includes("\u0000")) {
+            migratedKeys.add(key);
+            return;
+          }
+
+          // Bản cũ chỉ lưu kanji. Giữ lựa chọn cũ cho mọi cách đọc tương ứng.
+          getAllWords()
+            .filter((word) => kanjiKey(word) === key)
+            .forEach((word) => migratedKeys.add(wordKey(word)));
+        });
+
+        return migratedKeys;
+      } catch (e) {
+        return new Set();
+      }
+    }
+
+    function saveSkippedSet() {
+      try {
+        localStorage.setItem(SKIPPED_STORE_KEY, JSON.stringify([...skippedSet]));
+      } catch (e) { }
+    }
+
+    function loadWrongSet() {
+      try {
+        const raw = localStorage.getItem(WRONG_STORE_KEY);
+        const savedKeys = raw ? JSON.parse(raw) : [];
+        const migratedKeys = new Set();
+
+        savedKeys.forEach((savedKey) => {
+          const key = String(savedKey);
+          if (key.includes("\u0000")) {
+            migratedKeys.add(key);
+            return;
+          }
+
+          // Bản cũ chỉ lưu kanji. Chuyển mọi cách đọc tương ứng sang khóa đầy đủ.
+          getAllWords()
+            .filter((word) => kanjiKey(word) === key)
+            .forEach((word) => migratedKeys.add(wrongWordKey(word)));
+        });
+
+        return migratedKeys;
+      } catch (e) {
+        return new Set();
+      }
+    }
+    function saveWrongSet() {
+      try {
+        localStorage.setItem(WRONG_STORE_KEY, JSON.stringify([...wrongSet]));
+      } catch (e) { }
+    }
+
+    function loadImportantSet() {
+      try {
+        const raw = localStorage.getItem(IMPORTANT_STORE_KEY);
+        return new Set(raw ? JSON.parse(raw) : []);
+      } catch (e) {
+        return new Set();
+      }
+    }
+
+    function saveImportantSet() {
+      try {
+        localStorage.setItem(IMPORTANT_STORE_KEY, JSON.stringify([...importantSet]));
+      } catch (e) { }
+    }
+
+    let wrongSet = loadWrongSet();
+    saveWrongSet();
+    let skippedSet = loadSkippedSet();
+    saveSkippedSet();
+    let importantSet = loadImportantSet();
+    saveImportantSet();
+    let mode = "all";
+    let studyMode = "recognize";
+    let grammarMode = "ja-vi";
+    let recallProgress = { step: 0, mistakes: false, attempts: 0 };
+    // Luôn cho phép chuyển sang bước tiếp theo khi trả lời sai.
+    // Việc hỏi lại cả mẫu được điều khiển bằng tùy chọn "Hỏi lại câu trả lời sai".
+    const recallMustPass = false;
+    const savedBatchSize = localStorage.getItem(BATCH_SIZE_STORE_KEY);
+    let batchSize = savedBatchSize === "all"
+      ? 0
+      : Math.max(1, Number(savedBatchSize) || 20);
+    let lastLimitedBatchSize = batchSize || 20;
+    const savedDay = localStorage.getItem(DAY_STORE_KEY);
+    let selectedDays = new Set();
+    try {
+      const parsedDays = JSON.parse(savedDay);
+      if (Array.isArray(parsedDays)) {
+        parsedDays.forEach((day) => selectedDays.add(Number(day)));
+      } else if (savedDay === "all") {
+        CONTENT_SETS.forEach((_, index) => selectedDays.add(index));
+      } else {
+        selectedDays.add(Number(savedDay) || 0);
+      }
+    } catch (e) {
+      if (savedDay === "all") {
+        CONTENT_SETS.forEach((_, index) => selectedDays.add(index));
+      } else {
+        selectedDays.add(Number(savedDay) || 0);
+      }
+    }
+    selectedDays = new Set(
+      [...selectedDays].filter(
+        (day) => Number.isInteger(day) && day >= 0 && day < CONTENT_SETS.length,
+      ),
+    );
+    if (selectedDays.size === 0 && CONTENT_SETS.length) selectedDays.add(0);
+    let draftSelectedDays = new Set(selectedDays);
+    let daySearchQuery = "";
+
+    /* ---------- quiz state ---------- */
+    let order = [];
+    let idx = 0;
+    let initialWordCount = 0;
+    let correctCount = 0;
+    let wrongCount = 0;
+    let missed = [];
+    // Chỉ đếm mỗi từ/mẫu một lần, kể cả khi từ sai được chèn lại để hỏi lại.
+    let answeredWordKeys = new Set();
+    let checked = false;
+    let lastAnswer = null;
+    let activeVocabHint = null;
+    let sessionMistakeKeys = new Set();
+    let sessionComplete = false;
+    const RETRY_WRONG_STORE_KEY = "vocabRetryWrongEnabled_v1";
+    let retryWrongEnabled = localStorage.getItem(RETRY_WRONG_STORE_KEY) !== "false";
+    const quizSessions = new Map();
+    const batchQueues = new Map();
+
+    function shuffle(arr) {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    const kanjiDisplay = document.getElementById("kanjiDisplay");
+    const typeDisplay = document.getElementById("typeDisplay");
+    const grammarContext = document.getElementById("grammarContext");
+    const grammarRecall = document.getElementById("grammarRecall");
+    const grammarRecallProgress = document.getElementById("grammarRecallProgress");
+    const grammarRecallQuestion = document.getElementById("grammarRecallQuestion");
+    const inputGrammarRecall = document.getElementById("inputGrammarRecall");
+    const grammarRecallFeedback = document.getElementById("grammarRecallFeedback");
+    const btnRecallReveal = document.getElementById("btnRecallReveal");
+    const btnRecallAcceptMeaning = document.getElementById("btnRecallAcceptMeaning");
+    const grammarRecallLabel = document.getElementById("grammarRecallLabel");
+    const btnListen = document.getElementById("btnListen");
+    const voiceStatus = document.getElementById("voiceStatus");
+    const inputReading = document.getElementById("inputReading");
+    const inputMeaning = document.getElementById("inputMeaning");
+    const readingField = document.getElementById("readingField");
+    const meaningField = document.getElementById("meaningField");
+    const vocabHints = document.getElementById("vocabHints");
+    const btnHintKana = document.getElementById("btnHintKana");
+    const btnHintMeaning = document.getElementById("btnHintMeaning");
+    const vocabHintValue = document.getElementById("vocabHintValue");
+    const btnCheck = document.getElementById("btnCheck");
+    const btnNext = document.getElementById("btnNext");
+    const resultBox = document.getElementById("resultBox");
+    const resultSeal = document.getElementById("resultSeal");
+    const resultMsg = document.getElementById("resultMsg");
+    const ansWord = document.getElementById("ansWord");
+    const ansKana = document.getElementById("ansKana");
+    const ansRomaji = document.getElementById("ansRomaji");
+    const ansMeaning = document.getElementById("ansMeaning");
+    const btnAcceptMeaning = document.getElementById("btnAcceptMeaning");
+    const statCorrect = document.getElementById("statCorrect");
+    const statWrong = document.getElementById("statWrong");
+    const statAnswered = document.getElementById("statAnswered");
+    const statTotal = document.getElementById("statTotal");
+    const progressFill = document.getElementById("progressFill");
+    const quizArea = document.getElementById("quizArea");
+    const doneArea = document.getElementById("doneArea");
+    const modeAllBtn = document.getElementById("modeAll");
+    const modeWrongBtn = document.getElementById("modeWrong");
+    const wrongCountBadge = document.getElementById("wrongCountBadge");
+    const modeImportantBtn = document.getElementById("modeImportant");
+    const importantCountBadge = document.getElementById("importantCountBadge");
+    const btnClearWrong = document.getElementById("btnClearWrong");
+    const modeSkippedBtn = document.getElementById("modeSkipped");
+    const skippedCountBadge = document.getElementById("skippedCountBadge");
+    const btnStar = document.getElementById("btnStar");
+    const btnImportantStar = document.getElementById("btnImportantStar");
+    const dayChecklist = document.getElementById("dayChecklist");
+    const dayPickerToggle = document.getElementById("dayPickerToggle");
+    const dayPickerPanel = document.getElementById("dayPickerPanel");
+    const btnSelectAllDays = document.getElementById("btnSelectAllDays");
+    const btnDeselectAllDays = document.getElementById("btnDeselectAllDays");
+    const daySearch = document.getElementById("daySearch");
+    const draftSelectionCount = document.getElementById("draftSelectionCount");
+    const btnCancelDays = document.getElementById("btnCancelDays");
+    const btnApplyDays = document.getElementById("btnApplyDays");
+    const dailyCount = document.getElementById("dailyCount");
+    const batchSizeInput = document.getElementById("batchSize");
+    const btnBatchAll = document.getElementById("btnBatchAll");
+    const batchHint = document.getElementById("batchHint");
+    const btnRetryToggle = document.getElementById("btnRetryToggle");
+    const retryHint = document.getElementById("retryHint");
+    const btnAutoSpeechToggle = document.getElementById("btnAutoSpeechToggle");
+    const autoSpeechHint = document.getElementById("autoSpeechHint");
+
+    function isPhoneDevice() {
+      const hasTouch = navigator.maxTouchPoints > 0 || "ontouchstart" in window;
+      const coarsePointer = window.matchMedia?.("(pointer: coarse)").matches;
+      const phoneSizedScreen = Math.min(screen.width, screen.height) <= 700;
+      return hasTouch && (coarsePointer || phoneSizedScreen) && phoneSizedScreen;
+    }
+
+    let selectedJapaneseVoice = null;
+    let japaneseVoiceLocked = false;
+    let speechRequestId = 0;
+    let answerSubmissionPending = false;
+    const AUTO_SPEECH_STORE_KEY = "autoSpeechBeforeCheck_v1";
+    let autoSpeechEnabled = localStorage.getItem(AUTO_SPEECH_STORE_KEY) === "true";
+
+    function japaneseVoiceScore(voice) {
+      const description = `${voice.name} ${voice.voiceURI} ${voice.lang}`.toLowerCase();
+      let score = 0;
+      if (/^ja[-_]/i.test(voice.lang)) score += 1000;
+      else if (/japan|日本/.test(description)) score += 700;
+      else return -1;
+
+      // Các giọng Neural/Natural giữ cao độ và ngữ điệu câu tốt hơn giọng hệ thống cũ.
+      if (/natural|neural|premium|enhanced/.test(description)) score += 500;
+      if (/nanami|keita|mayu|shiori|daichi|naoki|ayumi|ichiro|kazuha|tomoko/.test(description)) score += 260;
+      if (/microsoft|apple|siri/.test(description)) score += 100;
+      if (!voice.localService) score += 60;
+      if (voice.default) score += 15;
+      if (/compact|espeak/.test(description)) score -= 250;
+      return score;
+    }
+
+    function selectBestJapaneseVoice(force = false) {
+      if (!("speechSynthesis" in window)) return null;
+      if (japaneseVoiceLocked && selectedJapaneseVoice && !force) return selectedJapaneseVoice;
+      const ranked = window.speechSynthesis.getVoices()
+        .map((voice) => ({ voice, score: japaneseVoiceScore(voice) }))
+        .filter((entry) => entry.score >= 0)
+        .sort((a, b) => b.score - a.score);
+      selectedJapaneseVoice = ranked[0]?.voice || null;
+      if (selectedJapaneseVoice) {
+        japaneseVoiceLocked = true;
+        const isNatural = /natural|neural|premium|enhanced/i.test(
+          `${selectedJapaneseVoice.name} ${selectedJapaneseVoice.voiceURI}`,
+        );
+        voiceStatus.textContent = isNatural ? "Giọng Nhật tự nhiên" : "Giọng Nhật trên máy";
+        voiceStatus.title = selectedJapaneseVoice.name;
+      } else {
+        voiceStatus.textContent = "Chưa tìm thấy giọng Nhật";
+        voiceStatus.title = "Hãy cài thêm giọng Japanese trong cài đặt ngôn ngữ của máy";
+      }
+      updateListenButton();
+      return selectedJapaneseVoice;
+    }
+
+    function getJapaneseVoice() {
+      return selectedJapaneseVoice || selectBestJapaneseVoice();
+    }
+
+    function getDisplayedItem() {
+      // Sau khi chấm, idx đã tăng để chuẩn bị câu kế tiếp nhưng màn hình vẫn
+      // đang hiển thị câu vừa chấm ở idx - 1.
+      return checked ? order[idx - 1] : order[idx];
+    }
+
+    function updateListenButton() {
+      const item = getDisplayedItem();
+      const hidesAnswer = item && contentType === "grammar" && item.direction !== "ja-vi" && !checked;
+      const supported = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+      btnListen.disabled = !item || !supported || hidesAnswer;
+      btnListen.title = !supported
+        ? "Trình duyệt này không hỗ trợ đọc tiếng Nhật"
+        : hidesAnswer
+          ? "Kiểm tra đáp án trước rồi mới nghe câu mẫu"
+          : "Bấm để nghe; bấm lần nữa để nghe lại";
+    }
+
+    function speakJapanese(itemToSpeak = getDisplayedItem(), options = {}) {
+      const { beforeCheck = false } = options;
+      if (!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) {
+        return Promise.resolve(false);
+      }
+      if (!beforeCheck && btnListen.disabled) return Promise.resolve(false);
+      const item = itemToSpeak;
+      if (!item) return Promise.resolve(false);
+      const requestedItem = item;
+      const requestedText = String(item.direction === "recall"
+        ? (item.grammarExamples?.[0]?.kanji || "")
+        : (item.kanji || item.kana || "")).trim();
+      if (!requestedText) return Promise.resolve(false);
+      const currentRequestId = ++speechRequestId;
+      window.speechSynthesis.cancel();
+      btnListen.disabled = true;
+      btnListen.classList.remove("speaking");
+
+      return new Promise((resolve) => {
+        let promiseResolved = false;
+        const resolveOnce = (played) => {
+          if (promiseResolved) return;
+          promiseResolved = true;
+          resolve(played);
+        };
+        // Cho Chrome/Edge đủ thời gian xóa hoàn toàn lượt đọc cũ.
+        window.setTimeout(() => {
+          if (currentRequestId !== speechRequestId || (!beforeCheck && getDisplayedItem() !== requestedItem)) {
+            resolveOnce(false);
+            return;
+          }
+          const utterance = new SpeechSynthesisUtterance(requestedText);
+          utterance.lang = "ja-JP";
+          utterance.rate = contentType === "vocab" ? 0.86 : 0.92;
+          utterance.pitch = 1;
+          const japaneseVoice = getJapaneseVoice();
+          if (japaneseVoice) utterance.voice = japaneseVoice;
+          utterance.onstart = () => {
+            btnListen.classList.add("speaking");
+            // Khi tự động đọc, chỉ cần đợi âm thanh thực sự bắt đầu rồi chấm;
+            // giọng đọc vẫn tiếp tục đến hết câu nên không tạo cảm giác bị lag.
+            if (beforeCheck) resolveOnce(true);
+          };
+          let finished = false;
+          const finish = (played) => {
+            if (finished) return;
+            finished = true;
+            window.clearTimeout(speechSafetyTimer);
+            btnListen.classList.remove("speaking");
+            updateListenButton();
+            resolveOnce(played);
+          };
+          const speechSafetyTimer = window.setTimeout(() => {
+            window.speechSynthesis.cancel();
+            finish(false);
+          }, 30000);
+          utterance.onend = () => finish(true);
+          utterance.onerror = () => finish(false);
+          window.speechSynthesis.speak(utterance);
+        }, 100);
+      });
+    }
+
+    btnListen.addEventListener("click", () => speakJapanese());
+    if ("speechSynthesis" in window) {
+      selectBestJapaneseVoice();
+      window.speechSynthesis.addEventListener("voiceschanged", () => selectBestJapaneseVoice(false));
+    } else {
+      voiceStatus.textContent = "Trình duyệt không hỗ trợ giọng đọc";
+    }
+
+    function updateAutoSpeechToggle() {
+      const supported = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+      btnAutoSpeechToggle.disabled = !supported;
+      btnAutoSpeechToggle.classList.toggle("active", autoSpeechEnabled && supported);
+      btnAutoSpeechToggle.textContent = autoSpeechEnabled && supported ? "ON" : "OFF";
+      btnAutoSpeechToggle.setAttribute("aria-checked", String(autoSpeechEnabled && supported));
+      autoSpeechHint.textContent = !supported
+        ? "Trình duyệt không hỗ trợ phát âm."
+        : autoSpeechEnabled
+          ? "ON: bắt đầu phát âm rồi mới hiện đúng hoặc sai."
+          : "OFF: chấm đáp án ngay sau khi gửi.";
+    }
+
+    btnAutoSpeechToggle.addEventListener("click", () => {
+      autoSpeechEnabled = !autoSpeechEnabled;
+      localStorage.setItem(AUTO_SPEECH_STORE_KEY, String(autoSpeechEnabled));
+      updateAutoSpeechToggle();
+    });
+    updateAutoSpeechToggle();
+
+    function updateRetryToggle() {
+      btnRetryToggle.classList.toggle("active", retryWrongEnabled);
+      btnRetryToggle.textContent = retryWrongEnabled ? "ON" : "OFF";
+      btnRetryToggle.setAttribute("aria-checked", String(retryWrongEnabled));
+      retryHint.textContent = retryWrongEnabled
+        ? `ON: ${itemNoun} sai được hỏi lại ngay đến khi đúng.`
+        : `OFF: ${itemNoun} sai được lưu để ôn lại sau.`;
+    }
+
+    btnRetryToggle.addEventListener("click", () => {
+      retryWrongEnabled = !retryWrongEnabled;
+      localStorage.setItem(RETRY_WRONG_STORE_KEY, String(retryWrongEnabled));
+      updateRetryToggle();
+    });
+    updateRetryToggle();
+
+    function updateBatchControls() {
+      const isAll = batchSize === 0;
+      batchSizeInput.disabled = isAll;
+      batchSizeInput.value = isAll ? "" : batchSize;
+      batchSizeInput.placeholder = isAll ? "Tất cả" : "";
+      btnBatchAll.classList.toggle("active", isAll);
+      btnBatchAll.textContent = isAll ? "Chọn số từ" : "Tất cả";
+      btnBatchAll.setAttribute("aria-pressed", String(isAll));
+    }
+
+    updateBatchControls();
+
+    function quizSessionKey() {
+      return `${contentType}::${studyMode}::${grammarMode}::${mode}`;
+    }
+
+    function saveCurrentSession() {
+      if (mode === "skipped" || order.length === 0) return;
+      quizSessions.set(quizSessionKey(), {
+        order: order.slice(), idx, initialWordCount, correctCount, wrongCount,
+        missed: missed.slice(), checked, lastAnswer,
+        answeredWordKeys: new Set(answeredWordKeys),
+        sessionMistakeKeys: new Set(sessionMistakeKeys), sessionComplete,
+        recallProgress: { ...recallProgress },
+      });
+    }
+
+    function restoreSession(session) {
+      order = session.order.slice();
+      idx = session.idx;
+      initialWordCount = session.initialWordCount;
+      correctCount = session.correctCount;
+      wrongCount = session.wrongCount;
+      missed = session.missed.slice();
+      answeredWordKeys = new Set(
+        session.answeredWordKeys || order.slice(0, idx).map(wordKey),
+      );
+      checked = session.checked;
+      lastAnswer = session.lastAnswer;
+      sessionMistakeKeys = new Set(session.sessionMistakeKeys);
+      sessionComplete = session.sessionComplete;
+      recallProgress = { step: 0, mistakes: false, attempts: 0, ...(session.recallProgress || {}) };
+      if (sessionComplete) showDone();
+      else loadCard({ resumeRecall: true });
+    }
+
+    function clearQuizProgress() {
+      quizSessions.clear();
+      batchQueues.clear();
+      order = [];
+      sessionComplete = false;
+    }
+
+    function filterForGrammarMode(items) {
+      if (contentType !== "grammar") return items;
+      return items.filter((item) => grammarMode === "recall"
+        ? item.direction === "recall"
+        : grammarMode === "ja-vi"
+          ? item.direction === "ja-vi"
+          : item.direction === "vi-romaji" || item.direction === "vi-ja");
+    }
+
+    function getModeSource() {
+      const source = mode === "wrong"
+        ? getAllWords().filter((item) => wrongSet.has(wrongWordKey(item)) && !skippedSet.has(wordKey(item)))
+        : mode === "important"
+          ? getAllWords().filter((item) => importantSet.has(wordKey(item)) && !skippedSet.has(wordKey(item)))
+          : getDailyWords().filter((item) => !skippedSet.has(wordKey(item)));
+      return filterForGrammarMode(source);
+    }
+
+    function takeNextBatch(source) {
+      const key = quizSessionKey();
+      const signature = source.map(wordKey).sort().join("\u0001");
+      let queueState = batchQueues.get(key);
+      if (!queueState || queueState.signature !== signature || queueState.words.length === 0) {
+        queueState = { signature, words: shuffle(source) };
+        batchQueues.set(key, queueState);
+      }
+      const amount = batchSize === 0
+        ? queueState.words.length
+        : Math.min(batchSize, queueState.words.length);
+      return queueState.words.splice(0, amount);
+    }
+
+    function getDailyWords() {
+      const selectedWords = [...selectedDays].flatMap(
+        (day) => CONTENT_SETS[day]?.words || [],
+      );
+      return selectedDays.size > 1
+        ? removeDuplicateWords(selectedWords)
+        : selectedWords;
+    }
+
+    function getAllWords() {
+      return removeDuplicateWords(
+        CONTENT_SETS.flatMap((vocabSet) => vocabSet.words),
+      );
+    }
+
+    function renderDayOptions() {
+      const openGroups = new Set(
+        [...dayChecklist.querySelectorAll("details[open]")].map(
+          (group) => group.dataset.group,
+        ),
+      );
+      dayChecklist.innerHTML = "";
+      const allSelected = draftSelectedDays.size === CONTENT_SETS.length;
+      const groups = new Map();
+      CONTENT_SETS.forEach((vocabSet, setIndex) => {
+        const groupName = vocabSet.name
+          .replace(/\s+trang\s+\d+.*$/i, "")
+          .trim();
+        const searchText = `${groupName} ${vocabSet.name}`.toLowerCase();
+        if (daySearchQuery && !searchText.includes(daySearchQuery)) return;
+        if (!groups.has(groupName)) groups.set(groupName, []);
+        groups.get(groupName).push({ vocabSet, setIndex });
+      });
+
+      groups.forEach((items, groupName) => {
+        const group = document.createElement("details");
+        group.className = "day-group";
+        group.dataset.group = groupName;
+        group.open = Boolean(daySearchQuery) || openGroups.has(groupName);
+        const head = document.createElement("summary");
+        const summaryText = document.createElement("span");
+        summaryText.className = "day-group-summary";
+        const title = document.createElement("strong");
+        title.textContent = groupName;
+        const meta = document.createElement("small");
+        const selectedInGroup = items.filter((item) =>
+          draftSelectedDays.has(item.setIndex),
+        ).length;
+        meta.textContent = `${selectedInGroup}/${items.length} phần đã chọn`;
+        summaryText.append(title, meta);
+        const selectGroup = document.createElement("button");
+        selectGroup.type = "button";
+        selectGroup.className = "day-group-select";
+        selectGroup.dataset.days = items.map((item) => item.setIndex).join(",");
+        const groupSelected = items.every((item) =>
+          draftSelectedDays.has(item.setIndex),
+        );
+        const onlyGroupSelected =
+          groupSelected && draftSelectedDays.size === items.length;
+        selectGroup.dataset.selected = String(groupSelected);
+        selectGroup.disabled = onlyGroupSelected;
+        selectGroup.textContent = onlyGroupSelected
+          ? "Đang chọn"
+          : groupSelected
+            ? "Bỏ chọn"
+            : "Chọn nhóm";
+        head.append(summaryText, selectGroup);
+        group.appendChild(head);
+
+        const itemList = document.createElement("div");
+        itemList.className = "day-group-items";
+        items.forEach(({ vocabSet, setIndex }) => {
+          const pageMatch = vocabSet.name.match(/trang\s+(\d+)/i);
+          const shortName = pageMatch ? `Trang ${pageMatch[1]}` : vocabSet.name;
+          itemList.appendChild(
+            createDayOption(
+              String(setIndex),
+              shortName,
+              filterForGrammarMode(vocabSet.words).length,
+              draftSelectedDays.has(setIndex),
+            ),
+          );
+        });
+        group.appendChild(itemList);
+        dayChecklist.appendChild(group);
+      });
+
+      if (groups.size === 0) {
+        const empty = document.createElement("div");
+        empty.className = "day-empty-search";
+        empty.textContent = "Không tìm thấy phần phù hợp";
+        dayChecklist.appendChild(empty);
+      }
+
+      const appliedAll = selectedDays.size === CONTENT_SETS.length;
+      const partText = appliedAll ? "Tất cả" : `${selectedDays.size} phần`;
+      const unit = contentType === "vocab" ? "từ" : contentType === "grammar" && grammarMode === "recall" ? "mẫu" : "câu";
+      dailyCount.textContent = `${partText} · ${filterForGrammarMode(getDailyWords()).length} ${unit}`;
+      draftSelectionCount.textContent = `${draftSelectedDays.size} phần được chọn`;
+      btnSelectAllDays.disabled = allSelected;
+      btnSelectAllDays.textContent = allSelected ? "Đã chọn tất cả" : "Chọn tất cả";
+      btnDeselectAllDays.disabled = draftSelectedDays.size === 0;
+      btnApplyDays.disabled = draftSelectedDays.size === 0;
+    }
+
+    function createDayOption(value, text, count, checked) {
+      const label = document.createElement("label");
+      label.className = "day-check-option";
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.value = value;
+      input.checked = checked;
+      const caption = document.createElement("span");
+      caption.className = "day-check-name";
+      caption.textContent = text;
+      const wordCount = document.createElement("span");
+      wordCount.className = "day-check-count";
+      wordCount.textContent = `${count} ${contentType === "vocab" ? "từ" : contentType === "grammar" && grammarMode === "recall" ? "mẫu" : "câu"}`;
+      label.append(input, caption, wordCount);
+      return label;
+    }
+
+    function applySelectedDays() {
+      selectedDays = new Set(draftSelectedDays);
+      localStorage.setItem(DAY_STORE_KEY, JSON.stringify([...selectedDays]));
+      clearQuizProgress();
+      renderDayOptions();
+      closeDayPicker();
+      init();
+    }
+
+    function closeDayPicker() {
+      dayPickerPanel.hidden = true;
+      dayPickerToggle.setAttribute("aria-expanded", "false");
+    }
+
+    dayPickerToggle.addEventListener("click", () => {
+      const willOpen = dayPickerPanel.hidden;
+      dayPickerPanel.hidden = !willOpen;
+      dayPickerToggle.setAttribute("aria-expanded", String(willOpen));
+      if (willOpen) {
+        draftSelectedDays = new Set(selectedDays);
+        daySearchQuery = "";
+        daySearch.value = "";
+        renderDayOptions();
+        daySearch.focus();
+      }
+    });
+
+    btnSelectAllDays.addEventListener("click", () => {
+      draftSelectedDays = new Set(CONTENT_SETS.map((_, index) => index));
+      renderDayOptions();
+    });
+
+    btnDeselectAllDays.addEventListener("click", () => {
+      draftSelectedDays.clear();
+      renderDayOptions();
+    });
+
+    daySearch.addEventListener("input", () => {
+      daySearchQuery = daySearch.value.normalize("NFKC").trim().toLowerCase();
+      renderDayOptions();
+    });
+
+    btnCancelDays.addEventListener("click", closeDayPicker);
+    btnApplyDays.addEventListener("click", applySelectedDays);
+
+    dayChecklist.addEventListener("click", (event) => {
+      const button = event.target.closest(".day-group-select");
+      if (!button) return;
+      event.preventDefault();
+      event.stopPropagation();
+      const days = button.dataset.days.split(",").map(Number);
+      if (button.dataset.selected === "true") {
+        days.forEach((day) => draftSelectedDays.delete(day));
+      } else {
+        days.forEach((day) => draftSelectedDays.add(day));
+      }
+      renderDayOptions();
+    });
+
+    dayChecklist.addEventListener("change", (event) => {
+      const input = event.target.closest('input[type="checkbox"]');
+      if (!input) return;
+
+      const day = Number(input.value);
+      if (input.checked) draftSelectedDays.add(day);
+      else draftSelectedDays.delete(day);
+      renderDayOptions();
+    });
+
+    document.querySelectorAll("[data-study-mode]").forEach((button) => {
+      button.addEventListener("click", () => {
+        if (studyMode === button.dataset.studyMode) return;
+        saveCurrentSession();
+        studyMode = button.dataset.studyMode;
+        document.querySelectorAll("[data-study-mode]").forEach((item) => {
+          item.classList.toggle(
+            "active",
+            item.dataset.studyMode === studyMode,
+          );
+        });
+        init();
+      });
+    });
+
+    document.querySelectorAll("[data-grammar-mode]").forEach((button) => {
+      button.addEventListener("click", () => {
+        if (grammarMode === button.dataset.grammarMode) return;
+        saveCurrentSession();
+        grammarMode = button.dataset.grammarMode;
+        document.querySelectorAll("[data-grammar-mode]").forEach((item) => {
+          item.classList.toggle("active", item.dataset.grammarMode === grammarMode);
+        });
+        document.querySelector(".batch-settings label").textContent = grammarMode === "recall"
+          ? "Số mẫu mỗi lượt" : "Số câu mỗi lượt";
+        renderDayOptions();
+        init();
+      });
+    });
+
+    batchSizeInput.addEventListener("change", () => {
+      const available = Math.max(1, filterForGrammarMode(getDailyWords())
+        .filter((item) => !skippedSet.has(wordKey(item))).length);
+      batchSize = Math.min(available, Math.max(1, Math.floor(Number(batchSizeInput.value) || 1)));
+      lastLimitedBatchSize = batchSize;
+      localStorage.setItem(BATCH_SIZE_STORE_KEY, String(batchSize));
+      updateBatchControls();
+      clearQuizProgress();
+      init();
+    });
+
+    btnBatchAll.addEventListener("click", () => {
+      batchSize = batchSize === 0 ? lastLimitedBatchSize : 0;
+      localStorage.setItem(BATCH_SIZE_STORE_KEY, batchSize === 0 ? "all" : String(batchSize));
+      updateBatchControls();
+      clearQuizProgress();
+      init();
+    });
+
+    function updateWrongBadge() {
+      wrongCountBadge.textContent = wrongSet.size;
+      modeWrongBtn.disabled = wrongSet.size === 0 && mode !== "wrong";
+    }
+
+    function updateSkippedBadge() {
+      skippedCountBadge.textContent = skippedSet.size;
+      modeSkippedBtn.disabled = skippedSet.size === 0 && mode !== "skipped";
+    }
+
+    function updateImportantBadge() {
+      importantCountBadge.textContent = importantSet.size;
+      modeImportantBtn.disabled = importantSet.size === 0 && mode !== "important";
+    }
+
+    function setModeButtons() {
+      modeAllBtn.classList.toggle("active", mode === "all");
+      modeWrongBtn.classList.toggle("active", mode === "wrong");
+      modeImportantBtn.classList.toggle("active", mode === "important");
+      modeSkippedBtn.classList.toggle("active", mode === "skipped");
+    }
+
+    modeAllBtn.addEventListener("click", () => {
+      if (mode === "all") return;
+      saveCurrentSession();
+      mode = "all";
+      setModeButtons();
+      init();
+    });
+
+    modeWrongBtn.addEventListener("click", () => {
+      if (wrongSet.size === 0) {
+        alert(
+          'Chưa có từ nào trong danh sách "hay sai" — cứ luyện, từ nào sai sẽ tự động được lưu vào đây.',
+        );
+        return;
+      }
+      if (mode === "wrong") return;
+      saveCurrentSession();
+      mode = "wrong";
+      setModeButtons();
+      init();
+    });
+
+    modeImportantBtn.addEventListener("click", () => {
+      if (importantSet.size === 0) {
+        alert("Chưa có từ hay quên nào. Bấm ngôi sao trên thẻ từ để thêm vào danh sách.");
+        return;
+      }
+      if (mode === "important") return;
+      saveCurrentSession();
+      mode = "important";
+      setModeButtons();
+      init();
+    });
+
+    btnClearWrong.addEventListener("click", () => {
+      if (wrongSet.size === 0) return;
+      if (confirm("Xoá toàn bộ danh sách từ hay sai đã lưu?")) {
+        wrongSet.clear();
+        saveWrongSet();
+        updateWrongBadge();
+        if (mode === "wrong") {
+          mode = "all";
+          setModeButtons();
+          init();
+        }
+      }
+    });
+
+    modeSkippedBtn.addEventListener("click", () => {
+      if (skippedSet.size === 0) {
+        alert("Chưa có từ nào bị bỏ qua.");
+        return;
+      }
+      if (mode === "skipped") return;
+      saveCurrentSession();
+      mode = "skipped";
+      setModeButtons();
+      showSkippedList();
+    });
+
+    btnStar.addEventListener("click", () => {
+      const item = checked ? order[idx - 1] : order[idx];
+      if (!item) return;
+      const key = wordKey(item);
+
+      if (skippedSet.has(key)) skippedSet.delete(key);
+      else skippedSet.add(key);
+      saveSkippedSet();
+      updateSkippedBadge();
+
+      if (checked) {
+        const isSkipped = skippedSet.has(key);
+        btnStar.classList.toggle("active", isSkipped);
+        btnStar.textContent = isSkipped ? "⊘" : "⊘";
+        btnStar.setAttribute("aria-pressed", String(isSkipped));
+        btnStar.setAttribute("aria-label", isSkipped ? "Khôi phục từ này" : "Bỏ qua từ này");
+        btnStar.title = isSkipped
+          ? "Bấm để đưa từ này trở lại các lượt học"
+          : "Từ này dễ — bỏ qua trong các lượt học";
+        return;
+      }
+
+      order.splice(idx, 1);
+      initialWordCount = Math.max(answeredWordKeys.size, initialWordCount - 1);
+      loadCard();
+    });
+
+    btnImportantStar.addEventListener("click", () => {
+      const item = checked ? order[idx - 1] : order[idx];
+      if (!item) return;
+      const key = wordKey(item);
+      if (importantSet.has(key)) importantSet.delete(key);
+      else importantSet.add(key);
+      saveImportantSet();
+      updateImportantBadge();
+
+      const isImportant = importantSet.has(key);
+      btnImportantStar.classList.toggle("active", isImportant);
+      btnImportantStar.textContent = isImportant ? "★" : "☆";
+      btnImportantStar.setAttribute("aria-pressed", String(isImportant));
+      btnImportantStar.setAttribute("aria-label", isImportant
+        ? "Bỏ đánh dấu từ hay quên"
+        : "Đánh dấu từ hay quên");
+      btnImportantStar.title = isImportant
+        ? "Bấm để bỏ khỏi danh sách từ hay quên"
+        : "Đánh dấu từ này là từ hay quên";
+    });
+
+    function showSkippedList() {
+      quizArea.style.display = "none";
+      doneArea.style.display = "block";
+      doneArea.innerHTML = "";
+      progressFill.style.width = "0%";
+
+      const card = document.createElement("div");
+      card.className = "card skipped-screen";
+      const heading = document.createElement("h2");
+      heading.textContent = `Các từ đang bỏ qua (${skippedSet.size})`;
+      const note = document.createElement("p");
+      note.textContent = "Những từ này sẽ không xuất hiện trong các lượt học. Bấm “Hiện lại” để đưa từng từ trở lại.";
+      const list = document.createElement("div");
+      list.className = "skipped-list";
+
+      getAllWords()
+        .filter((item) => skippedSet.has(wordKey(item)))
+        .forEach((item) => {
+          const row = document.createElement("div");
+          row.className = "skipped-row";
+          const info = document.createElement("div");
+          info.className = "skipped-word";
+
+          const kanji = document.createElement("span");
+          kanji.className = "k";
+          kanji.textContent = item.kanji;
+          const reading = document.createElement("span");
+          reading.className = "reading";
+          reading.textContent = `${item.kana} · ${item.romaji}`;
+          const meaning = document.createElement("span");
+          meaning.className = "meaning";
+          meaning.textContent = item.meaning;
+
+          const restore = document.createElement("button");
+          restore.type = "button";
+          restore.className = "restore-button";
+          restore.textContent = "☆ Hiện lại";
+          restore.addEventListener("click", () => {
+            skippedSet.delete(wordKey(item));
+            saveSkippedSet();
+            updateSkippedBadge();
+            if (skippedSet.size === 0) {
+              mode = "all";
+              setModeButtons();
+              init();
+            } else {
+              showSkippedList();
+            }
+          });
+
+          info.append(kanji, reading, meaning);
+          row.append(info, restore);
+          list.appendChild(row);
+        });
+
+      const actions = document.createElement("div");
+      actions.className = "actions";
+      const back = document.createElement("button");
+      back.type = "button";
+      back.textContent = "Quay lại luyện tập";
+      back.addEventListener("click", () => {
+        mode = "all";
+        setModeButtons();
+        init();
+      });
+      actions.appendChild(back);
+      card.append(heading, note, list, actions);
+      doneArea.appendChild(card);
+    }
+
+    function init(forceNew = false) {
+      if (mode === "skipped") {
+        showSkippedList();
+        return;
+      }
+      /*
+        Nếu lượt trước đã hoàn thành, showDone() đã ẩn quizArea.
+        Mọi lần khởi tạo (đổi chế độ, đổi bộ từ, luyện lại) đều phải
+        đưa giao diện về màn hình câu hỏi.
+      */
+      quizArea.style.display = "block";
+      doneArea.style.display = "none";
+      doneArea.innerHTML = "";
+
+      const sessionKey = quizSessionKey();
+      if (!forceNew && quizSessions.has(sessionKey)) {
+        restoreSession(quizSessions.get(sessionKey));
+        return;
+      }
+
+      const source = getModeSource();
+      order = takeNextBatch(source);
+      initialWordCount = order.length;
+      idx = 0;
+      correctCount = 0;
+      wrongCount = 0;
+      missed = [];
+      answeredWordKeys = new Set();
+      sessionMistakeKeys = new Set();
+      sessionComplete = false;
+      quizSessions.delete(sessionKey);
+      const currentUnit = contentType === "grammar" && grammarMode === "recall" ? "mẫu" : itemNoun;
+      batchHint.textContent = batchSize > 0 && source.length > batchSize
+        ? `Mỗi lượt ${batchSize} ${currentUnit}; lượt sau lấy phần chưa xuất hiện.`
+        : `Lượt này có tất cả ${source.length} ${currentUnit}.`;
+      updateWrongBadge();
+      updateSkippedBadge();
+      updateImportantBadge();
+      updateStats();
+      loadCard();
+    }
+
+    function updateStats() {
+      statCorrect.textContent = correctCount;
+      statWrong.textContent = wrongCount;
+      const answeredCount = Math.min(answeredWordKeys.size, initialWordCount);
+      statAnswered.textContent = answeredCount;
+      statTotal.textContent = initialWordCount;
+      progressFill.style.width = (initialWordCount ? (answeredCount / initialWordCount) * 100 : 0) + "%";
+    }
+
+    function showVocabHint(kind) {
+      if (checked || answerSubmissionPending || vocabHints.hidden) return;
+      activeVocabHint = kind;
+      const item = order[idx];
+      btnHintKana.setAttribute("aria-pressed", String(kind === "kana"));
+      btnHintMeaning.setAttribute("aria-pressed", String(kind === "meaning"));
+      vocabHintValue.hidden = false;
+      vocabHintValue.textContent = kind === "kana" ? item.kana : item.meaning;
+      readingField.style.display = kind === "kana" ? "none" : "block";
+      meaningField.style.display = kind === "meaning" ? "none" : "block";
+      const remainingInput = kind === "kana" ? inputMeaning : inputReading;
+      if (!isPhoneDevice()) remainingInput.focus();
+    }
+
+    /* Luyện theo 3 phần: hiện mẫu tiếng Nhật -> người học tự giải thích nghĩa ->
+       khai báo loại từ/thể cần chia -> tự áp dụng vào câu. Đáp án tiếng Nhật
+       được nhận cả dạng chữ Nhật và Romaji có khai báo trong file dữ liệu. */
+    function normalizeGrammarInput(value) {
+      return String(value || "").normalize("NFKC").toLowerCase()
+        .replace(/ā/g, "aa").replace(/ī/g, "ii").replace(/ū/g, "uu")
+        .replace(/ē/g, "ee").replace(/ō/g, "oo")
+        .replace(/[～〜~…⋯.。・、，,：:；;「」『』【】〔〕（）()\[\]\s\-]/g, "")
+        .replace(/[＋+]/g, "").trim();
+    }
+
+    function getRecallStages(item) {
+      const data = item.grammarRecall || {};
+      const stages = [{
+        kind: "meaning", label: "Giải thích nghĩa",
+        prompt: "Mẫu ngữ pháp này có nghĩa gì? Hãy viết bằng tiếng Việt theo cách bạn hiểu.",
+        answer: item.meaning,
+        alternatives: [...(data.meaningAlternatives || []), ...learnedMeaningParts(item)],
+      }];
+      const forms = data.connections || [];
+      if (forms.length) {
+        forms.forEach(entry => {
+          if (!entry.answer) return;
+          stages.push({
+            kind: "structure", label: entry.label || "Cách chia / cách kết hợp",
+            prompt: entry.question || `Mẫu này đi với ${entry.label || "loại từ nào"} và phải chia ở thể gì? Nhập công thức.`,
+            answer: entry.answer,
+            alternatives: entry.alternatives || [],
+            romaji: entry.romaji || [],
+          });
+        });
+      } else if (item.structure) {
+        stages.push({ kind: "structure", label: "Cách kết hợp",
+          prompt: "Mẫu này kết hợp với danh từ/động từ/tính từ thế nào? Nhập công thức.",
+          answer: item.structure, alternatives: [], romaji: data.structureRomaji || [] });
+      }
+      (data.fills || []).forEach(entry => {
+        if (!entry.answer) return;
+        stages.push({
+          kind: "conjugation", label: entry.label || "Tự chia và điền câu",
+          prompt: entry.question || "Cho từ gốc và ngữ cảnh, hãy viết phần đã chia đúng vào chỗ trống.",
+          answer: entry.answer, alternatives: entry.alternatives || [],
+          romaji: entry.romaji || [],
+        });
+      });
+      return stages;
+    }
+
+    function acceptableRecallAnswers(stage) {
+      const roma = Array.isArray(stage.romaji) ? stage.romaji : [stage.romaji];
+      return [stage.answer, ...(stage.alternatives || []), ...roma]
+        .filter(Boolean).map(normalizeGrammarInput);
+    }
+
+    function recallMeaningMatches(stage, input) {
+      const typed = stripAccents(input);
+      if (!typed) return false;
+      const options = [stage.answer, ...(stage.alternatives || [])];
+      return options.some(raw => {
+        const segments = String(raw).split(/[,;\/]/).map(x => stripAccents(x)).filter(Boolean);
+        return segments.some(opt => {
+          if (opt === typed) return true;
+          // Không duyệt chỉ vì trùng một âm/từ quá ngắn như 'có'.
+          if (typed.length < 8 || opt.length < 8) return false;
+          return (opt.includes(typed) || typed.includes(opt)) && Math.min(opt.length,typed.length) >= 8;
+        });
+      });
+    }
+
+    function showRecallFeedback(message, status = "") {
+      grammarRecallFeedback.textContent = message;
+      grammarRecallFeedback.className = `grammar-recall-feedback ${status}`.trim();
+    }
+
+    function renderRecallStage(item, notice = "") {
+      const stages = getRecallStages(item);
+      const step = stages[Math.min(recallProgress.step, stages.length - 1)];
+      grammarRecallProgress.textContent = `Bước ${recallProgress.step + 1}/${stages.length} · ${step.label}`;
+      grammarRecallQuestion.textContent = step.prompt;
+      grammarRecallLabel.textContent = step.kind === "meaning" ? "Nghĩa tiếng Việt (tự diễn đạt)"
+        : step.kind === "structure" ? "Cách chia / công thức (Nhật hoặc Romaji)"
+        : "Câu đã chia / phần điền (Nhật hoặc Romaji)";
+      inputGrammarRecall.placeholder = step.kind === "meaning" ? "Ví dụ: chỉ cần... thì..."
+        : "Gõ tiếng Nhật hoặc Romaji, không cần chuyển bàn phím";
+      inputGrammarRecall.lang = step.kind === "meaning" ? "vi" : "ja";
+      inputGrammarRecall.value = "";
+      inputGrammarRecall.classList.remove("correct", "wrong");
+      btnRecallReveal.disabled = false;
+      btnRecallAcceptMeaning.hidden = true;
+      recallProgress.pendingMeaningMismatch = false;
+      btnNext.disabled = recallMustPass;
+      btnNext.textContent = "Tiếp bước →";
+      showRecallFeedback(notice, notice ? "good" : "");
+      if (!isPhoneDevice()) inputGrammarRecall.focus();
+    }
+
+    function finishRecallCard(item) {
+      const wasWrong = recallProgress.mistakes;
+      const itemWrongKey = wrongWordKey(item);
+      if (wasWrong) {
+        wrongCount++;
+        if (!missed.some(entry => wordKey(entry) === wordKey(item))) missed.push(item);
+        sessionMistakeKeys.add(itemWrongKey);
+        if (!wrongSet.has(itemWrongKey)) { wrongSet.add(itemWrongKey); saveWrongSet(); updateWrongBadge(); }
+        if (retryWrongEnabled) order.splice(idx + 1, 0, item);
+      } else {
+        correctCount++;
+        // Nếu mẫu đã từng sai trong lượt này thì vẫn giữ trong phần cần ôn,
+        // kể cả khi lần hỏi lại sau đó đã trả lời đúng.
+        if (!sessionMistakeKeys.has(itemWrongKey)) {
+          missed = missed.filter(entry => wordKey(entry) !== wordKey(item));
+        }
+        if (mode === "wrong" && !sessionMistakeKeys.has(itemWrongKey) && wrongSet.delete(itemWrongKey)) {
+          saveWrongSet(); updateWrongBadge();
+        }
+      }
+      checked = true;
+      answeredWordKeys.add(wordKey(item));
+      idx++;
+      grammarRecall.hidden = true;
+      grammarContext.hidden = false;
+      grammarContext.replaceChildren();
+      const explanation = document.createElement("strong");
+      explanation.textContent = [item.grammarNote, item.grammarRecall?.contrast].filter(Boolean).join(" — ") || "Tổng kết mẫu vừa luyện";
+      grammarContext.append(explanation);
+      (item.grammarExamples || []).forEach(example => {
+        const p = document.createElement("span");
+        p.textContent = `${example.kanji || ""} — ${example.meaning || ""}`;
+        grammarContext.append(p);
+      });
+      const labels = resultBox.querySelectorAll(".answer-grid dt");
+      ["Mẫu", "Cách nối", "Cách dùng", "Nghĩa"].forEach((label,i) => {labels[i].textContent = label;});
+      ansWord.textContent = item.grammarRecall?.pattern || item.structure;
+      ansKana.textContent = (item.grammarRecall?.connections || []).map(x=>x.answer).join(" · ") || item.structure;
+      ansRomaji.textContent = item.grammarNote || "Xem ví dụ phía trên";
+      ansMeaning.textContent = item.meaning;
+      resultBox.classList.add("show",wasWrong ? "bad":"ok");
+      resultSeal.classList.add(wasWrong ? "bad":"ok");
+      resultSeal.textContent = wasWrong ? "✕":"✓";
+      resultMsg.textContent = wasWrong
+        ? retryWrongEnabled ? "Đã xong (có bước sai) — mẫu này sẽ được hỏi lại ngay." : "Đã xong, mẫu sai/bỏ qua được lưu để ôn lại sau."
+        : "Chính xác tất cả các bước!";
+      btnAcceptMeaning.hidden = true;
+      btnCheck.disabled = true;
+      btnNext.disabled = false;
+      btnNext.textContent = "Mẫu tiếp theo →";
+      updateListenButton();
+      updateStats();
+      if (!isPhoneDevice()) btnNext.focus();
+    }
+
+    function advanceRecallStage(message = "") {
+      const item = order[idx];
+      recallProgress.step++;
+      recallProgress.attempts = 0;
+      if (recallProgress.step < getRecallStages(item).length) renderRecallStage(item,message);
+      else finishRecallCard(item);
+    }
+
+    function checkRecallAnswer() {
+      if (checked) return;
+      const item = order[idx];
+      if (!item || item.direction !== "recall") return;
+      const stage = getRecallStages(item)[recallProgress.step];
+      const raw = inputGrammarRecall.value.trim();
+      const isCorrect = stage.kind === "meaning" ? recallMeaningMatches(stage,raw)
+        : acceptableRecallAnswers(stage).includes(normalizeGrammarInput(raw));
+      if (!isCorrect) {
+        // Chế độ hiện tại không chặn ở câu sai: Enter/Kiểm tra một lần sẽ
+        // ghi nhận lỗi rồi chuyển ngay. Tùy chọn hỏi lại quyết định mẫu có
+        // được đưa vào hàng đợi luyện lại sau khi hoàn tất các bước hay không.
+        if (!recallMustPass) {
+          recallProgress.mistakes = true;
+          recallProgress.attempts++;
+          advanceRecallStage(raw
+            ? "Bước trước chưa đúng — đã chuyển sang bước tiếp theo."
+            : "Đã bỏ qua bước trước — chuyển sang bước tiếp theo.");
+          return;
+        }
+        // Nghĩa tự do có thể đúng dù thuật toán so khớp không nhận ra.
+        // Chỉ tính sai nếu học viên không xác nhận nó là nghĩa tương đương.
+        if (stage.kind === "meaning" && raw) recallProgress.pendingMeaningMismatch = true;
+        else recallProgress.mistakes = true;
+        recallProgress.attempts++;
+        inputGrammarRecall.classList.remove("correct");
+        inputGrammarRecall.classList.add("wrong");
+        if (stage.kind === "meaning" && raw) {
+          btnRecallAcceptMeaning.hidden = false;
+          showRecallFeedback(`Máy chưa khớp với nghĩa mẫu: ${stage.answer}\nNếu bạn diễn đạt cùng ý, bấm “Nghĩa mình nhập vẫn đúng”.`,"bad");
+        } else {
+          showRecallFeedback(`Chưa khớp. ${recallMustPass ? "Hãy thử lại hoặc xem đáp án." : "Bạn có thể bấm Tiếp bước để chuyển."}`, "bad");
+        }
+        return;
+      }
+      inputGrammarRecall.classList.add("correct");
+      recallProgress.pendingMeaningMismatch = false;
+      advanceRecallStage("Đúng! Tiếp tục phần sau.");
+    }
+
+    btnRecallAcceptMeaning.addEventListener("click", () => {
+      if (checked || order[idx]?.direction !== "recall") return;
+      const stage = getRecallStages(order[idx])[recallProgress.step];
+      if (stage.kind !== "meaning" || !inputGrammarRecall.value.trim()) return;
+      const key = wordKey(order[idx]);
+      const value = inputGrammarRecall.value.trim();
+      const aliases = meaningAliases[key] || [];
+      if (!aliases.some(x => stripAccents(x) === stripAccents(value))) {
+        meaningAliases[key] = [...aliases, value];
+        saveMeaningAliases();
+      }
+      // Người học tự xác nhận nghĩa tương đương: không buộc lặp lại.
+      // Nếu hệ thống chấm sai tự động, đánh dấu bước cần ôn (không tuyên bố máy đã xác thực).
+      btnRecallAcceptMeaning.hidden = true;
+      recallProgress.pendingMeaningMismatch = false;
+      advanceRecallStage("Đã lưu cách diễn đạt này theo xác nhận của bạn.");
+    });
+
+    btnRecallReveal.addEventListener("click", () => {
+      if (checked || order[idx]?.direction !== "recall") return;
+      const stage = getRecallStages(order[idx])[recallProgress.step];
+      recallProgress.mistakes = true;
+      const roma = Array.isArray(stage.romaji) ? stage.romaji[0] : stage.romaji;
+      showRecallFeedback(`Đáp án: ${stage.answer}${roma ? `\nRomaji: ${roma}` : ""}\n${recallMustPass ? "Hãy tự nhập lại để chuyển bước." : "Bạn có thể tự nhập hoặc bấm Tiếp bước."}`, "bad");
+      if (!isPhoneDevice()) inputGrammarRecall.focus();
+    });
+
+    function nextRecallStageOrCard() {
+      if (checked) { nextCard(); return; }
+      if (recallMustPass) return;
+      const item = order[idx];
+      if (!item || item.direction !== "recall") return;
+      // Không cần kiểm tra đúng ở chế độ linh hoạt, nhưng bỏ qua tính là sai.
+      recallProgress.mistakes = true;
+      advanceRecallStage("Đã chuyển bước. Bạn có thể quay lại ôn mẫu này trong mục hay sai.");
+    }
+
+    function loadCard({ resumeRecall = false } = {}) {
+      speechRequestId++;
+      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+      answerSubmissionPending = false;
+      checked = false;
+      lastAnswer = null;
+      activeVocabHint = null;
+      if (idx >= order.length) {
+        showDone();
+        return;
+      }
+      const item = order[idx];
+      if (!resumeRecall) recallProgress = { step: 0, mistakes: false, attempts: 0 };
+      const isRecall = contentType === "grammar" && item.direction === "recall";
+      const isImportant = importantSet.has(wordKey(item));
+      btnImportantStar.classList.toggle("active", isImportant);
+      btnImportantStar.textContent = isImportant ? "★" : "☆";
+      btnImportantStar.setAttribute("aria-pressed", String(isImportant));
+      btnImportantStar.setAttribute("aria-label", isImportant
+        ? "Bỏ đánh dấu từ hay quên"
+        : "Đánh dấu từ hay quên");
+      btnImportantStar.title = isImportant
+        ? "Bấm để bỏ khỏi danh sách từ hay quên"
+        : "Đánh dấu từ này là từ hay quên";
+      const isSkipped = skippedSet.has(wordKey(item));
+      btnStar.classList.toggle("active", isSkipped);
+      btnStar.textContent = "⊘";
+      btnStar.setAttribute("aria-pressed", String(isSkipped));
+      btnStar.setAttribute("aria-label", isSkipped ? "Khôi phục từ này" : "Bỏ qua từ này");
+      btnStar.title = isSkipped
+        ? "Bấm để đưa từ này trở lại các lượt học"
+        : "Từ này dễ — bỏ qua trong các lượt học";
+      const isVietnameseToRomaji = contentType === "grammar" && item.direction !== "ja-vi";
+      kanjiDisplay.textContent = isRecall ? (item.grammarRecall?.pattern || item.structure) : isVietnameseToRomaji
+        ? item.meaning
+        : studyMode === "meaningToRomaji"
+          ? item.meaning
+          : studyMode === "kanaToMeaning"
+            ? item.kana
+            : item.kanji;
+      typeDisplay.textContent = item.type;
+      vocabHints.hidden = contentType !== "vocab" || studyMode !== "recognize";
+      vocabHintValue.hidden = true;
+      vocabHintValue.textContent = "";
+      btnHintKana.setAttribute("aria-pressed", "false");
+      btnHintMeaning.setAttribute("aria-pressed", "false");
+      btnHintKana.disabled = false;
+      btnHintMeaning.disabled = false;
+      grammarContext.hidden = contentType !== "grammar" || isRecall;
+      grammarRecall.hidden = !isRecall;
+      if (contentType === "grammar" && !isRecall) {
+        grammarContext.replaceChildren();
+        const structure = document.createElement("strong");
+        structure.textContent = item.structure;
+        const explanation = document.createElement("span");
+        explanation.textContent = [item.grammarMeaning, item.grammarNote].filter(Boolean).join(" — ");
+        grammarContext.append(structure, explanation);
+      }
+      readingField.style.display =
+        isRecall || (studyMode === "kanaToMeaning" && contentType === "vocab") ? "none" : "block";
+      meaningField.style.display =
+        isRecall || isVietnameseToRomaji || (studyMode === "meaningToRomaji" && contentType === "vocab") ? "none" : "block";
+      readingField.querySelector("label").textContent = isVietnameseToRomaji
+        ? "Viết câu bằng Romaji"
+        : "Cách đọc (Romaji)";
+      inputReading.placeholder = isVietnameseToRomaji ? "Nhập câu Romaji..." : "vd: hajime";
+      inputReading.value = "";
+      inputMeaning.value = "";
+      inputReading.classList.remove("correct", "wrong");
+      inputMeaning.classList.remove("correct", "wrong");
+      resultBox.classList.remove("show", "ok", "bad");
+      resultSeal.classList.remove("ok", "bad");
+      btnAcceptMeaning.hidden = true;
+      btnStar.disabled = false;
+      btnCheck.disabled = false;
+      btnNext.disabled = true;
+      updateListenButton();
+      updateStats();
+      if (isRecall) {
+        renderRecallStage(item);
+        return;
+      }
+      const firstAnswerInput = studyMode === "kanaToMeaning" && contentType === "vocab"
+        ? inputMeaning
+        : inputReading;
+      if (isPhoneDevice()) {
+        // Trên điện thoại chỉ mở bàn phím khi người học chủ động chạm vào ô nhập.
+        firstAnswerInput.blur();
+      } else {
+        firstAnswerInput.focus();
+      }
+    }
+
+    function checkAnswer() {
+      if (checked) return;
+      const item = order[idx];
+      let queuedRetryIndex = -1;
+      const isVietnameseToRomaji = contentType === "grammar" && item.direction !== "ja-vi";
+
+      /* --- check romaji --- */
+      const userReading = normRomaji(inputReading.value);
+      const romajiVariants = romajiAnswerVariants(item.romaji);
+      const readingOK = studyMode === "kanaToMeaning" || activeVocabHint === "kana" ||
+        (userReading.length > 0 &&
+          romajiVariants.has(userReading));
+
+      /* --- check meaning --- */
+      const meaningOptions = [
+        ...meaningParts(item.meaning),
+        ...learnedMeaningParts(item),
+      ];
+      const userMeaning = stripAccents(inputMeaning.value);
+      const meaningOK = isVietnameseToRomaji || activeVocabHint === "meaning" ||
+        studyMode === "meaningToRomaji" ||
+        (userMeaning.length > 0 &&
+          (meaningOptions.some(
+            (opt) =>
+              opt === userMeaning ||
+              opt.includes(userMeaning) ||
+              userMeaning.includes(opt),
+          ) ||
+            stripAccents(item.meaning) === userMeaning));
+
+      if ((studyMode !== "kanaToMeaning" || contentType !== "vocab") && activeVocabHint !== "kana")
+        inputReading.classList.add(readingOK ? "correct" : "wrong");
+      if (!isVietnameseToRomaji && studyMode !== "meaningToRomaji" && activeVocabHint !== "meaning")
+        inputMeaning.classList.add(meaningOK ? "correct" : "wrong");
+
+      const bothOK = readingOK && meaningOK;
+      resultBox.classList.add("show", bothOK ? "ok" : "bad");
+      resultSeal.classList.add(bothOK ? "ok" : "bad");
+      resultSeal.textContent = bothOK ? "✓" : "✕";
+
+      if (bothOK) {
+        resultMsg.textContent = activeVocabHint ? "Chính xác! (đã dùng gợi ý)" : "Chính xác!";
+      } else if (isVietnameseToRomaji) {
+        resultMsg.textContent = "Câu Romaji chưa đúng";
+      } else if (studyMode === "meaningToRomaji") {
+        resultMsg.textContent = "Cách đọc Romaji chưa đúng";
+      } else if (studyMode === "kanaToMeaning") {
+        resultMsg.textContent = "Nghĩa tiếng Việt chưa đúng";
+      } else if (activeVocabHint === "kana") {
+        resultMsg.textContent = "Nghĩa tiếng Việt chưa đúng";
+      } else if (activeVocabHint === "meaning") {
+        resultMsg.textContent = "Cách đọc Romaji chưa đúng";
+      } else if (readingOK) {
+        resultMsg.textContent = "Đúng cách đọc, sai nghĩa";
+      } else if (meaningOK) {
+        resultMsg.textContent = "Đúng nghĩa, sai cách đọc";
+      } else {
+        resultMsg.textContent = "Chưa đúng";
+      }
+
+      ansWord.textContent = item.kanji;
+      ansKana.textContent = item.kana;
+      ansRomaji.textContent = item.romaji;
+      ansMeaning.textContent = item.meaning;
+      btnAcceptMeaning.hidden =
+        isVietnameseToRomaji || studyMode === "meaningToRomaji" || activeVocabHint === "meaning" || meaningOK || !userMeaning;
+
+      if (bothOK) {
+        correctCount++;
+        const itemWrongKey = wrongWordKey(item);
+        // Trả lời đúng ở lần hỏi lại không xóa lịch sử đã từng sai trong lượt.
+        if (!sessionMistakeKeys.has(itemWrongKey)) {
+          missed = missed.filter(
+            (missedItem) => wordKey(missedItem) !== wordKey(item),
+          );
+        }
+        // Chỉ gỡ khỏi danh sách khi đang chủ động luyện "Từ hay sai"
+        // và trả lời đúng ngay, chưa từng sai từ này trong lượt hiện tại.
+        if (
+          mode === "wrong" &&
+          !activeVocabHint &&
+          !sessionMistakeKeys.has(itemWrongKey) &&
+          wrongSet.has(itemWrongKey)
+        ) {
+          wrongSet.delete(itemWrongKey);
+          saveWrongSet();
+          updateWrongBadge();
+        }
+      } else {
+        wrongCount++;
+        if (!missed.some((missedItem) => wordKey(missedItem) === wordKey(item))) {
+          missed.push(item);
+        }
+        if (retryWrongEnabled) {
+          // Đưa lại từ sai ngay sau câu hiện tại. Nếu lần sau vẫn sai,
+          // từ này tiếp tục được hỏi lại ngay cho đến khi trả lời đúng.
+          queuedRetryIndex = idx + 1;
+          order.splice(queuedRetryIndex, 0, item);
+          resultMsg.textContent += " — Từ này sẽ được hỏi lại ngay.";
+        } else {
+          resultMsg.textContent += " — Đã lưu vào Từ hay sai.";
+        }
+        const itemWrongKey = wrongWordKey(item);
+        sessionMistakeKeys.add(itemWrongKey);
+        if (!wrongSet.has(itemWrongKey)) {
+          wrongSet.add(itemWrongKey);
+          saveWrongSet();
+          updateWrongBadge();
+        }
+      }
+
+      checked = true;
+      btnHintKana.disabled = true;
+      btnHintMeaning.disabled = true;
+      lastAnswer = {
+        item,
+        readingOK,
+        meaningOK,
+        rawMeaning: inputMeaning.value.trim(),
+        queuedRetryIndex,
+      };
+      answeredWordKeys.add(wordKey(item));
+      btnCheck.disabled = true;
+      btnNext.disabled = false;
+      idx++;
+      updateListenButton();
+      updateStats();
+      btnNext.focus();
+    }
+
+    async function submitAnswer() {
+      if (checked || answerSubmissionPending) return;
+      const submittedItem = order[idx];
+      if (!submittedItem) return;
+      // Không đọc đáp án trước khi kiểm tra trong chế độ nhớ chủ động.
+      if (contentType === "grammar" && submittedItem.direction === "recall") {
+        checkRecallAnswer();
+        return;
+      }
+
+      if (!autoSpeechEnabled) {
+        checkAnswer();
+        return;
+      }
+
+      answerSubmissionPending = true;
+      inputReading.disabled = true;
+      inputMeaning.disabled = true;
+      btnCheck.disabled = true;
+      btnStar.disabled = true;
+      btnImportantStar.disabled = true;
+      btnHintKana.disabled = true;
+      btnHintMeaning.disabled = true;
+      btnCheck.textContent = "Đang phát âm…";
+
+      await speakJapanese(submittedItem, { beforeCheck: true });
+
+      // Chỉ chấm nếu người học vẫn đang ở đúng câu đã gửi.
+      if (!checked && order[idx] === submittedItem) {
+        inputReading.disabled = false;
+        inputMeaning.disabled = false;
+        btnCheck.disabled = false;
+        btnStar.disabled = false;
+        btnImportantStar.disabled = false;
+        btnHintKana.disabled = false;
+        btnHintMeaning.disabled = false;
+        btnCheck.textContent = "Kiểm tra";
+        answerSubmissionPending = false;
+        checkAnswer();
+      } else {
+        answerSubmissionPending = false;
+      }
+    }
+
+    function acceptCurrentMeaning() {
+      if (!checked || !lastAnswer || lastAnswer.meaningOK || !lastAnswer.rawMeaning) return;
+
+      const { item, readingOK, rawMeaning } = lastAnswer;
+      const key = wordKey(item);
+      const aliases = Array.isArray(meaningAliases[key])
+        ? meaningAliases[key]
+        : [];
+      const normalizedMeaning = stripAccents(rawMeaning);
+
+      // Lưu cách diễn đạt tiếng Việt được người học xác nhận là hợp lệ.
+      if (!aliases.some((alias) => stripAccents(alias) === normalizedMeaning)) {
+        aliases.push(rawMeaning);
+        meaningAliases[key] = aliases;
+        saveMeaningAliases();
+      }
+
+      lastAnswer.meaningOK = true;
+      lastAnswer.acceptedByUser = true;
+      inputMeaning.classList.remove("wrong");
+      inputMeaning.classList.add("correct");
+      btnAcceptMeaning.hidden = true;
+
+      // Bấm "Vẫn đúng nghĩa" sẽ cho qua cả thẻ này,
+      // kể cả khi Romaji cũng chưa được nhập chính xác.
+      wrongCount = Math.max(0, wrongCount - 1);
+      correctCount++;
+      missed = missed.filter(
+        (missedItem) => wordKey(missedItem) !== key,
+      );
+
+      // Xóa lượt hỏi lại vừa được tự động chèn khi chấm sai.
+      const retryIndex = lastAnswer.queuedRetryIndex;
+      if (
+        Number.isInteger(retryIndex) &&
+        retryIndex >= idx &&
+        retryIndex < order.length &&
+        order[retryIndex] === item
+      ) {
+        order.splice(retryIndex, 1);
+      }
+      lastAnswer.queuedRetryIndex = -1;
+
+      // Không giữ từ vừa được xác nhận đúng trong danh sách ôn sai.
+      const itemWrongKey = wrongWordKey(item);
+      sessionMistakeKeys.delete(itemWrongKey);
+      if (wrongSet.delete(itemWrongKey)) {
+        saveWrongSet();
+        updateWrongBadge();
+      }
+
+      // Nếu Romaji sai, bỏ trạng thái đỏ do đã quyết định cho qua thẻ.
+      // Không đánh dấu Romaji đúng vì đáp án đó chưa được xác thực.
+      if (!readingOK) inputReading.classList.remove("wrong");
+
+      resultBox.classList.remove("bad");
+      resultBox.classList.add("ok");
+      resultSeal.classList.remove("bad");
+      resultSeal.classList.add("ok");
+      resultSeal.textContent = "✓";
+      resultMsg.textContent = readingOK
+        ? "Đã chấp nhận nghĩa này — từ đã được tính đúng, không hỏi lại."
+        : "Đã chấp nhận nghĩa và cho qua từ này (Romaji chưa đúng).";
+
+      updateStats();
+      btnNext.focus();
+    }
+
+    function nextCard() {
+      const item = order[idx];
+      if (contentType === "grammar" && grammarMode === "recall" && item?.direction === "recall" && !checked) {
+        nextRecallStageOrCard();
+        return;
+      }
+      loadCard();
+    }
+
+    function showDone() {
+      sessionComplete = true;
+      saveCurrentSession();
+      quizArea.style.display = "none";
+      doneArea.style.display = "block";
+      const total = initialWordCount;
+      let missedHtml = "";
+      if (missed.length) {
+        missedHtml =
+          `<div class="missed-panel"><h2>Những từ cần ôn lại (${missed.length})</h2>` +
+          missed
+            .map(
+              (m) =>
+                `<div class="missed-item"><div><span class="k">${m.kanji}</span> ${m.romaji}</div><div>${m.meaning}</div></div>`,
+            )
+            .join("") +
+          `</div>`;
+      }
+      const wrongBtnHtml = wrongSet.size
+        ? `<button id="btnPracticeWrong" class="secondary">Luyện từ hay sai (${wrongSet.size})</button>`
+        : "";
+      doneArea.innerHTML = `
+    <div class="card done-screen">
+      <div class="big">${correctCount} / ${total}</div>
+      <p>Bạn đã hoàn thành lượt luyện tập này.</p>
+      <div class="actions">
+        <button id="btnRestart">Lượt từ tiếp theo</button>
+        ${wrongBtnHtml}
+      </div>
+      ${missedHtml}
+    </div>
+  `;
+      document.getElementById("btnRestart").addEventListener("click", () => {
+        quizArea.style.display = "block";
+        doneArea.style.display = "none";
+        quizSessions.delete(quizSessionKey());
+        init(true);
+      });
+      const btnPW = document.getElementById("btnPracticeWrong");
+      if (btnPW) {
+        btnPW.addEventListener("click", () => {
+          quizArea.style.display = "block";
+          doneArea.style.display = "none";
+          saveCurrentSession();
+          mode = "wrong";
+          setModeButtons();
+          init();
+        });
+      }
+    }
+
+    btnCheck.addEventListener("click", submitAnswer);
+    btnHintKana.addEventListener("click", () => showVocabHint("kana"));
+    btnHintMeaning.addEventListener("click", () => showVocabHint("meaning"));
+    btnAcceptMeaning.addEventListener("click", acceptCurrentMeaning);
+    btnNext.addEventListener("click", nextCard);
+
+    /* Enter: ô Romaji -> ô nghĩa (nếu có). Ô cuối -> phát âm/chấm. Sau khi chấm -> câu tiếp. */
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter") return;
+      if (quizArea.style.display === "none") return;
+      if (contentType === "grammar" && grammarMode === "recall") {
+        e.preventDefault();
+        if (!checked) submitAnswer();
+        else nextCard();
+        return;
+      }
+
+      if (
+        !checked &&
+        document.activeElement === inputReading &&
+        meaningField.style.display !== "none"
+      ) {
+        e.preventDefault();
+        inputMeaning.focus();
+        return;
+      }
+
+      e.preventDefault();
+      if (!checked) submitAnswer();
+      else nextCard();
+    });
+
+    setModeButtons();
+    renderDayOptions();
+    updateWrongBadge();
+    updateSkippedBadge();
+    init();
+  </script>
+</body>
+
+</html>

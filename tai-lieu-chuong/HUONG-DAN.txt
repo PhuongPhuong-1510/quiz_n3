@@ -1,0 +1,14 @@
+Mỗi chương nên có một thư mục riêng, ví dụ:
+
+tai-lieu-chuong/
+  chuong-1/
+    bai-1.pdf
+    bai-2.jpg
+  chuong-2/
+    bai-1.pdf
+
+Sau khi chép tài liệu, tạo file dữ liệu dựa trên:
+data/tai-lieu/MAU-TAI-LIEU.js
+
+Cuối cùng thêm tên file dữ liệu vào:
+data/tai-lieu/danh-sach-tai-lieu.js
