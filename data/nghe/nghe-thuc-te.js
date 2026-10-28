@@ -1,6 +1,6 @@
 window.LISTENING_SETS = window.LISTENING_SETS || [];
 
-const THU_MUC_NGHE_GOC = "../../../tài liệu/nghe";
+const THU_MUC_NGHE_GOC = "./tai-lieu-nghe";
 
 function themChuongNghe(chapterNumber, fileNames) {
   window.LISTENING_SETS.push({

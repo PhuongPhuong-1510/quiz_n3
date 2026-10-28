@@ -1,6 +1,6 @@
 window.DOCUMENT_SETS = window.DOCUMENT_SETS || [];
 
-const TAI_LIEU_GOC = "../../../tài liệu";
+const TAI_LIEU_GOC = "./tai-lieu-chuong";
 
 window.DOCUMENT_SETS.push(
   {

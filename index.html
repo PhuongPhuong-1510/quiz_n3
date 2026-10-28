@@ -498,6 +498,29 @@
     function renderListening(item) {
       clearElement(content);
       const head = makeHeader(item);
+      const isLocalMediaMode = location.protocol === "file:" || ["localhost", "127.0.0.1", "::1"].includes(location.hostname);
+      const driveFolderUrl = "https://drive.google.com/drive/folders/1DRelz00voyCGeZusLH7ABh1Bf6EOZCoK?usp=sharing";
+
+      if (!isLocalMediaMode) {
+        const openDrive = document.createElement("a");
+        openDrive.className = "button primary";
+        openDrive.href = driveFolderUrl;
+        openDrive.target = "_blank";
+        openDrive.rel = "noopener";
+        openDrive.textContent = "Mở thư mục nghe trên Google Drive ↗";
+        head.appendChild(openDrive);
+        content.appendChild(head);
+
+        const driveBox = document.createElement("div");
+        driveBox.className = "player-box";
+        const message = document.createElement("div");
+        message.className = "player-status";
+        message.textContent = `Bài đang chọn: ${item.title}. Bản trên điện thoại dùng Google Drive để không phải tải MP4 từ Vercel.`;
+        driveBox.appendChild(message);
+        content.appendChild(driveBox);
+        return;
+      }
+
       const open = document.createElement("a");
       open.className = "button";
       open.href = item.file;

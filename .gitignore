@@ -1,0 +1,4 @@
+# Video nghe chi dung o may tinh va Google Drive; khong day len GitHub/Vercel.
+/tai-lieu-nghe/**/*.mp4
+/tai-lieu-nghe/**/*.webm
+/tai-lieu-nghe/**/*.mov
