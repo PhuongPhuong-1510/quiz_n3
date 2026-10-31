@@ -2949,6 +2949,11 @@
     .grammar-recall-accept[hidden] { display:none !important; }
     .grammar-recall-accept { width:100%; min-height:38px; padding:8px; margin-top:10px; border:1px solid var(--moss); border-radius:5px; background:var(--moss-soft); color:var(--moss); font-size:13px; }
     body.content-grammar .kanji-display { overflow-wrap:anywhere; }
+    .grammar-meaning-toggle { display:block; width:fit-content; max-width:100%; margin-top:7px; padding:6px 10px; min-height:32px; border:1px solid var(--line); border-radius:4px; background:#fff; color:var(--aizome); font-size:12px; font-weight:700; }
+    .grammar-meaning-toggle:hover { border-color:var(--aizome); background:var(--aizome-soft); }
+    .grammar-meaning-toggle[aria-expanded="true"] { color:var(--seal-red); }
+    .grammar-meaning-detail { display:block; margin-top:7px; }
+    .grammar-meaning-detail[hidden] { display:none !important; }
     .grammar-recall-question { white-space:pre-line; }
     @media (max-width: 620px) { .grammar-recall-question { font-size: 16px; } }
   </style>
@@ -4658,8 +4663,26 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
         const structure = document.createElement("strong");
         structure.textContent = item.structure;
         const explanation = document.createElement("span");
+        explanation.className = "grammar-meaning-detail";
         explanation.textContent = [item.grammarMeaning, item.grammarNote].filter(Boolean).join(" — ");
-        grammarContext.append(structure, explanation);
+        grammarContext.append(structure);
+        if (item.direction === "ja-vi" && explanation.textContent) {
+          explanation.hidden = true;
+          const meaningToggle = document.createElement("button");
+          meaningToggle.type = "button";
+          meaningToggle.className = "grammar-meaning-toggle";
+          meaningToggle.textContent = "Hiện nghĩa mẫu câu";
+          meaningToggle.setAttribute("aria-expanded", "false");
+          meaningToggle.addEventListener("click", () => {
+            explanation.hidden = !explanation.hidden;
+            const isVisible = !explanation.hidden;
+            meaningToggle.textContent = isVisible ? "Ẩn nghĩa mẫu câu" : "Hiện nghĩa mẫu câu";
+            meaningToggle.setAttribute("aria-expanded", String(isVisible));
+          });
+          grammarContext.append(meaningToggle, explanation);
+        } else {
+          grammarContext.append(explanation);
+        }
       }
       readingField.style.display =
         isRecall || (studyMode === "kanaToMeaning" && contentType === "vocab") ? "none" : "block";
