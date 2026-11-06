@@ -2934,28 +2934,16 @@
     .grammar-recall[hidden] { display: none !important; }
     .grammar-recall { max-width: 740px; margin: 8px auto 20px; }
     .grammar-recall-progress { color: var(--ink-soft); font-size: 12px; font-weight: 600; margin-bottom: 12px; }
-    .grammar-recall-question { font-size: clamp(16px, 2.2vw, 20px); line-height: 1.6; margin-bottom: 17px; white-space: pre-line; overflow-wrap: anywhere; }
-    .grammar-recall-label { display: block; font-size: 11px; font-weight: 700; letter-spacing: .09em; color: var(--ink-soft); margin-bottom: 7px; }
     .grammar-recall input { width: 100%; min-height: 44px; padding: 12px; border: 1px solid var(--line); border-radius: 4px; background: #fff; color: var(--ink); font-size: 16px; }
     .grammar-recall input:focus { border-color: var(--aizome); outline: 2px solid rgba(51,75,114,.1); }
     .grammar-recall input.correct { border-color: var(--moss); }
     .grammar-recall input.wrong { border-color: var(--seal-red); }
-    .grammar-recall-feedback { min-height: 26px; margin-top: 10px; font-size: 13px; line-height: 1.55; white-space: pre-line; overflow-wrap: anywhere; }
-    .grammar-recall-feedback.bad { color: var(--seal-red); }
-    .grammar-recall-feedback.good { color: var(--moss); }
-    .grammar-recall-reveal { display: block; width: fit-content; max-width: 100%; flex: none; margin-top: 7px; padding: 7px 0; min-height: 0; border: 0; background: transparent; color: var(--ink-soft); text-decoration: underline; font-size: 12px; box-shadow: none; }
-    .grammar-recall-reveal:hover { color: var(--seal-red); }
-    .grammar-recall-review { white-space: pre-line; overflow-wrap: anywhere; }
-    .grammar-recall-accept[hidden] { display:none !important; }
-    .grammar-recall-accept { width:100%; min-height:38px; padding:8px; margin-top:10px; border:1px solid var(--moss); border-radius:5px; background:var(--moss-soft); color:var(--moss); font-size:13px; }
     body.content-grammar .kanji-display { overflow-wrap:anywhere; }
     .grammar-meaning-toggle { display:block; width:fit-content; max-width:100%; margin-top:7px; padding:6px 10px; min-height:32px; border:1px solid var(--line); border-radius:4px; background:#fff; color:var(--aizome); font-size:12px; font-weight:700; }
     .grammar-meaning-toggle:hover { border-color:var(--aizome); background:var(--aizome-soft); }
     .grammar-meaning-toggle[aria-expanded="true"] { color:var(--seal-red); }
     .grammar-meaning-detail { display:block; margin-top:7px; }
     .grammar-meaning-detail[hidden] { display:none !important; }
-    .grammar-recall-question { white-space:pre-line; }
-    @media (max-width: 620px) { .grammar-recall-question { font-size: 16px; } }
   </style>
 </head>
 
@@ -3108,13 +3096,8 @@
         <!-- Chế độ nhớ chủ động: không tiết lộ cấu trúc trước khi trả lời. -->
         <section class="grammar-recall" id="grammarRecall" hidden aria-label="Luyện nhớ ngữ pháp">
           <div class="grammar-recall-progress" id="grammarRecallProgress"></div>
-          <div class="grammar-recall-question" id="grammarRecallQuestion"></div>
-          <label class="grammar-recall-label" id="grammarRecallLabel" for="inputGrammarRecall">Nhập đáp án</label>
           <input type="text" id="inputGrammarRecall" autocomplete="off" autocapitalize="off"
-            spellcheck="false" placeholder="Có thể nhập chữ Nhật hoặc Romaji..." />
-          <div class="grammar-recall-feedback" id="grammarRecallFeedback" role="status" aria-live="polite"></div>
-          <button type="button" class="grammar-recall-reveal" id="btnRecallReveal">Xem đáp án bước này</button>
-          <button type="button" class="grammar-recall-accept" id="btnRecallAcceptMeaning" hidden>✓ Nghĩa mình nhập vẫn đúng</button>
+            spellcheck="false" placeholder="Nhập đáp án..." />
         </section>
 
         <div class="field" id="readingField">
@@ -3185,8 +3168,13 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
     const GRAMMAR_SETS = (window.GRAMMAR_SETS || []).map((set) => ({
       name: set.name,
       words: (set.grammar || []).flatMap((grammar, grammarIndex) => {
-        const recallInfo = grammar.recall || null;
-        const pattern = recallInfo?.pattern || grammar.structure;
+        const pattern = grammar.pattern || grammar.structure;
+        const grammarUsage = grammar.usage || grammar.note || "";
+        const recallInfo = grammar.recall || {
+          pattern,
+          meaningAlternatives: grammar.meaningAlternatives || [],
+          connections: grammar.connections || [],
+        };
         const recallItem = pattern && grammar.meaning ? [{
           kanji: pattern,
           kana: "",
@@ -3195,9 +3183,9 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
           type: "Tự nhớ ngữ pháp",
           direction: "recall",
           contentKind: "grammar",
-          structure: grammar.structure,
+          structure: pattern,
           grammarMeaning: grammar.meaning,
-          grammarNote: grammar.note || "",
+          grammarNote: grammarUsage,
           grammarExamples: grammar.examples || [],
           grammarRecall: recallInfo,
           contentId: `${set.name}-${grammarIndex}-recall`,
@@ -3207,9 +3195,9 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
           kana: example.hiragana,
           type: example.direction === "ja-vi" ? "Nhật → Romaji + nghĩa Việt" : "Việt → Romaji",
           contentKind: "grammar",
-          structure: grammar.structure,
+          structure: pattern,
           grammarMeaning: grammar.meaning,
-          grammarNote: grammar.note || "",
+          grammarNote: grammarUsage,
           contentId: `${set.name}-${grammarIndex}-${exampleIndex}`,
         }));
         return [...recallItem, ...sentenceItems];
@@ -3469,10 +3457,7 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
     let mode = "all";
     let studyMode = "recognize";
     let grammarMode = "ja-vi";
-    let recallProgress = { step: 0, mistakes: false, attempts: 0 };
-    // Luôn cho phép chuyển sang bước tiếp theo khi trả lời sai.
-    // Việc hỏi lại cả mẫu được điều khiển bằng tùy chọn "Hỏi lại câu trả lời sai".
-    const recallMustPass = false;
+    let recallProgress = { step: 0, mistakes: false, attempts: 0, stageChecked: false };
     const savedBatchSize = localStorage.getItem(BATCH_SIZE_STORE_KEY);
     let batchSize = savedBatchSize === "all"
       ? 0
@@ -3538,12 +3523,7 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
     const grammarContext = document.getElementById("grammarContext");
     const grammarRecall = document.getElementById("grammarRecall");
     const grammarRecallProgress = document.getElementById("grammarRecallProgress");
-    const grammarRecallQuestion = document.getElementById("grammarRecallQuestion");
     const inputGrammarRecall = document.getElementById("inputGrammarRecall");
-    const grammarRecallFeedback = document.getElementById("grammarRecallFeedback");
-    const btnRecallReveal = document.getElementById("btnRecallReveal");
-    const btnRecallAcceptMeaning = document.getElementById("btnRecallAcceptMeaning");
-    const grammarRecallLabel = document.getElementById("grammarRecallLabel");
     const btnListen = document.getElementById("btnListen");
     const voiceStatus = document.getElementById("voiceStatus");
     const inputReading = document.getElementById("inputReading");
@@ -3823,7 +3803,10 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
       lastAnswer = session.lastAnswer;
       sessionMistakeKeys = new Set(session.sessionMistakeKeys);
       sessionComplete = session.sessionComplete;
-      recallProgress = { step: 0, mistakes: false, attempts: 0, ...(session.recallProgress || {}) };
+      recallProgress = { step: 0, mistakes: false, attempts: 0, stageChecked: false, ...(session.recallProgress || {}) };
+      // Tương thích với phiên đã lưu từ luồng xem tuần tự cũ (bắt đầu ở -1).
+      recallProgress.step = Math.max(0, Number(recallProgress.step) || 0);
+      recallProgress.stageChecked = Boolean(recallProgress.stageChecked);
       if (sessionComplete) showDone();
       else loadCard({ resumeRecall: true });
     }
@@ -4383,38 +4366,48 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
         .replace(/[＋+]/g, "").trim();
     }
 
+    function grammarStudyParts(item) {
+      const explicitConnections = (item.grammarRecall?.connections || [])
+        .map(connection => connection.answer)
+        .filter(Boolean);
+      return {
+        connection: explicitConnections.join("\n") || item.structure || "",
+        usage: String(item.grammarNote || "").trim(),
+      };
+    }
+
     function getRecallStages(item) {
       const data = item.grammarRecall || {};
+      const studyParts = grammarStudyParts(item);
       const stages = [{
-        kind: "meaning", label: "Giải thích nghĩa",
-        prompt: "Mẫu ngữ pháp này có nghĩa gì? Hãy viết bằng tiếng Việt theo cách bạn hiểu.",
+        kind: "meaning", label: "Nhập nghĩa",
         answer: item.meaning,
         alternatives: [...(data.meaningAlternatives || []), ...learnedMeaningParts(item)],
       }];
       const forms = data.connections || [];
       if (forms.length) {
-        forms.forEach(entry => {
-          if (!entry.answer) return;
-          stages.push({
-            kind: "structure", label: entry.label || "Cách chia / cách kết hợp",
-            prompt: entry.question || `Mẫu này đi với ${entry.label || "loại từ nào"} và phải chia ở thể gì? Nhập công thức.`,
-            answer: entry.answer,
-            alternatives: entry.alternatives || [],
-            romaji: entry.romaji || [],
-          });
-        });
-      } else if (item.structure) {
-        stages.push({ kind: "structure", label: "Cách kết hợp",
-          prompt: "Mẫu này kết hợp với danh từ/động từ/tính từ thế nào? Nhập công thức.",
-          answer: item.structure, alternatives: [], romaji: data.structureRomaji || [] });
-      }
-      (data.fills || []).forEach(entry => {
-        if (!entry.answer) return;
+        forms.forEach(entry => stages.push({
+          kind: "structure", label: entry.label || "Cấu trúc / cách chia",
+          answer: entry.answer, alternatives: entry.alternatives || [], romaji: entry.romaji || [],
+        }));
+      } else {
         stages.push({
-          kind: "conjugation", label: entry.label || "Tự chia và điền câu",
-          prompt: entry.question || "Cho từ gốc và ngữ cảnh, hãy viết phần đã chia đúng vào chỗ trống.",
-          answer: entry.answer, alternatives: entry.alternatives || [],
-          romaji: entry.romaji || [],
+          kind: "structure", label: "Cấu trúc / cách chia",
+          answer: studyParts.connection || item.structure,
+          alternatives: studyParts.connection !== item.structure ? [item.structure] : [], romaji: data.structureRomaji || [],
+        });
+      }
+      if (studyParts.usage) {
+        stages.push({
+          kind: "note", label: "Cách dùng / ghi chú",
+          answer: studyParts.usage, alternatives: [],
+        });
+      }
+      (item.grammarExamples || []).forEach((example, index) => {
+        stages.push({
+          kind: "example",
+          label: `Áp dụng ${index + 1}/${item.grammarExamples.length}`,
+          example,
         });
       });
       return stages;
@@ -4441,31 +4434,34 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
       });
     }
 
-    function showRecallFeedback(message, status = "") {
-      grammarRecallFeedback.textContent = message;
-      grammarRecallFeedback.className = `grammar-recall-feedback ${status}`.trim();
-    }
-
-    function renderRecallStage(item, notice = "") {
+    function renderRecallStage(item) {
       const stages = getRecallStages(item);
       const step = stages[Math.min(recallProgress.step, stages.length - 1)];
+      const isExample = step.kind === "example";
       grammarRecallProgress.textContent = `Bước ${recallProgress.step + 1}/${stages.length} · ${step.label}`;
-      grammarRecallQuestion.textContent = step.prompt;
-      grammarRecallLabel.textContent = step.kind === "meaning" ? "Nghĩa tiếng Việt (tự diễn đạt)"
-        : step.kind === "structure" ? "Cách chia / công thức (Nhật hoặc Romaji)"
-        : "Câu đã chia / phần điền (Nhật hoặc Romaji)";
-      inputGrammarRecall.placeholder = step.kind === "meaning" ? "Ví dụ: chỉ cần... thì..."
-        : "Gõ tiếng Nhật hoặc Romaji, không cần chuyển bàn phím";
-      inputGrammarRecall.lang = step.kind === "meaning" ? "vi" : "ja";
+      kanjiDisplay.textContent = isExample ? (step.example.kanji || "") : (item.grammarRecall?.pattern || item.structure);
+      inputGrammarRecall.hidden = isExample;
+      inputGrammarRecall.placeholder = step.kind === "meaning" ? "Nhập nghĩa tiếng Việt..."
+        : step.kind === "note" ? "Nhập cách dùng ngắn gọn..."
+        : "Nhập cấu trúc / cách chia...";
       inputGrammarRecall.value = "";
       inputGrammarRecall.classList.remove("correct", "wrong");
-      btnRecallReveal.disabled = false;
-      btnRecallAcceptMeaning.hidden = true;
-      recallProgress.pendingMeaningMismatch = false;
-      btnNext.disabled = recallMustPass;
-      btnNext.textContent = "Tiếp bước →";
-      showRecallFeedback(notice, notice ? "good" : "");
-      if (!isPhoneDevice()) inputGrammarRecall.focus();
+      readingField.style.display = isExample ? "block" : "none";
+      meaningField.style.display = isExample ? "block" : "none";
+      readingField.querySelector("label").textContent = "Cách đọc (Romaji)";
+      inputReading.placeholder = "Nhập Romaji của câu Kanji...";
+      inputReading.value = "";
+      inputMeaning.value = "";
+      inputReading.classList.remove("correct", "wrong");
+      inputMeaning.classList.remove("correct", "wrong");
+      resultBox.classList.remove("show", "ok", "bad");
+      resultSeal.classList.remove("ok", "bad");
+      recallProgress.stageChecked = false;
+      btnCheck.disabled = false;
+      btnCheck.textContent = "Kiểm tra";
+      btnNext.disabled = true;
+      btnNext.textContent = recallProgress.step === stages.length - 1 ? "Hoàn thành mẫu →" : "Bước tiếp theo →";
+      if (!isPhoneDevice()) (isExample ? inputReading : inputGrammarRecall).focus();
     }
 
     function finishRecallCard(item) {
@@ -4492,28 +4488,14 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
       answeredWordKeys.add(wordKey(item));
       idx++;
       grammarRecall.hidden = true;
-      grammarContext.hidden = false;
-      grammarContext.replaceChildren();
-      const explanation = document.createElement("strong");
-      explanation.textContent = [item.grammarNote, item.grammarRecall?.contrast].filter(Boolean).join(" — ") || "Tổng kết mẫu vừa luyện";
-      grammarContext.append(explanation);
-      (item.grammarExamples || []).forEach(example => {
-        const p = document.createElement("span");
-        p.textContent = `${example.kanji || ""} — ${example.meaning || ""}`;
-        grammarContext.append(p);
-      });
+      grammarContext.hidden = true;
       const labels = resultBox.querySelectorAll(".answer-grid dt");
-      ["Mẫu", "Cách nối", "Cách dùng", "Nghĩa"].forEach((label,i) => {labels[i].textContent = label;});
-      ansWord.textContent = item.grammarRecall?.pattern || item.structure;
-      ansKana.textContent = (item.grammarRecall?.connections || []).map(x=>x.answer).join(" · ") || item.structure;
-      ansRomaji.textContent = item.grammarNote || "Xem ví dụ phía trên";
-      ansMeaning.textContent = item.meaning;
+      const values = resultBox.querySelectorAll(".answer-grid dd");
+      [...labels, ...values].forEach(node => { node.hidden = true; });
       resultBox.classList.add("show",wasWrong ? "bad":"ok");
       resultSeal.classList.add(wasWrong ? "bad":"ok");
       resultSeal.textContent = wasWrong ? "✕":"✓";
-      resultMsg.textContent = wasWrong
-        ? retryWrongEnabled ? "Đã xong (có bước sai) — mẫu này sẽ được hỏi lại ngay." : "Đã xong, mẫu sai/bỏ qua được lưu để ôn lại sau."
-        : "Chính xác tất cả các bước!";
+      resultMsg.textContent = wasWrong ? "Hoàn thành — có bước sai" : "Hoàn thành";
       btnAcceptMeaning.hidden = true;
       btnCheck.disabled = true;
       btnNext.disabled = false;
@@ -4523,89 +4505,73 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
       if (!isPhoneDevice()) btnNext.focus();
     }
 
-    function advanceRecallStage(message = "") {
+    function advanceRecallStage() {
       const item = order[idx];
       recallProgress.step++;
       recallProgress.attempts = 0;
-      if (recallProgress.step < getRecallStages(item).length) renderRecallStage(item,message);
+      if (recallProgress.step < getRecallStages(item).length) renderRecallStage(item);
       else finishRecallCard(item);
     }
 
     function checkRecallAnswer() {
-      if (checked) return;
+      if (checked || recallProgress.stageChecked) return;
       const item = order[idx];
       if (!item || item.direction !== "recall") return;
       const stage = getRecallStages(item)[recallProgress.step];
-      const raw = inputGrammarRecall.value.trim();
-      const isCorrect = stage.kind === "meaning" ? recallMeaningMatches(stage,raw)
-        : acceptableRecallAnswers(stage).includes(normalizeGrammarInput(raw));
-      if (!isCorrect) {
-        // Chế độ hiện tại không chặn ở câu sai: Enter/Kiểm tra một lần sẽ
-        // ghi nhận lỗi rồi chuyển ngay. Tùy chọn hỏi lại quyết định mẫu có
-        // được đưa vào hàng đợi luyện lại sau khi hoàn tất các bước hay không.
-        if (!recallMustPass) {
-          recallProgress.mistakes = true;
-          recallProgress.attempts++;
-          advanceRecallStage(raw
-            ? "Bước trước chưa đúng — đã chuyển sang bước tiếp theo."
-            : "Đã bỏ qua bước trước — chuyển sang bước tiếp theo.");
-          return;
-        }
-        // Nghĩa tự do có thể đúng dù thuật toán so khớp không nhận ra.
-        // Chỉ tính sai nếu học viên không xác nhận nó là nghĩa tương đương.
-        if (stage.kind === "meaning" && raw) recallProgress.pendingMeaningMismatch = true;
-        else recallProgress.mistakes = true;
-        recallProgress.attempts++;
-        inputGrammarRecall.classList.remove("correct");
-        inputGrammarRecall.classList.add("wrong");
-        if (stage.kind === "meaning" && raw) {
-          btnRecallAcceptMeaning.hidden = false;
-          showRecallFeedback(`Máy chưa khớp với nghĩa mẫu: ${stage.answer}\nNếu bạn diễn đạt cùng ý, bấm “Nghĩa mình nhập vẫn đúng”.`,"bad");
-        } else {
-          showRecallFeedback(`Chưa khớp. ${recallMustPass ? "Hãy thử lại hoặc xem đáp án." : "Bạn có thể bấm Tiếp bước để chuyển."}`, "bad");
-        }
-        return;
+      let isCorrect = false;
+      if (stage.kind === "example") {
+        const example = stage.example;
+        const readingOK = inputReading.value.trim().length > 0 && romajiAnswerVariants(example.romaji).has(normRomaji(inputReading.value));
+        const typedMeaning = stripAccents(inputMeaning.value);
+        const meaningOK = typedMeaning.length > 0 && meaningParts(example.meaning).some(opt =>
+          opt === typedMeaning || (opt.length >= 8 && typedMeaning.length >= 8 && (opt.includes(typedMeaning) || typedMeaning.includes(opt)))
+        );
+        isCorrect = readingOK && meaningOK;
+        inputReading.classList.add(readingOK ? "correct" : "wrong");
+        inputMeaning.classList.add(meaningOK ? "correct" : "wrong");
+        const labels = resultBox.querySelectorAll(".answer-grid dt");
+        const values = resultBox.querySelectorAll(".answer-grid dd");
+        [...labels, ...values].forEach(node => { node.hidden = false; });
+        ["Kanji", "Hiragana", "Romaji", "Nghĩa"].forEach((label, i) => { labels[i].textContent = label; });
+        ansWord.textContent = example.kanji || "";
+        ansKana.textContent = example.hiragana || "";
+        ansRomaji.textContent = example.romaji || "";
+        ansMeaning.textContent = example.meaning || "";
+      } else {
+        const raw = inputGrammarRecall.value.trim();
+        isCorrect = stage.kind === "meaning" || stage.kind === "note"
+          ? recallMeaningMatches(stage, raw)
+          : acceptableRecallAnswers(stage).includes(normalizeGrammarInput(raw));
+        inputGrammarRecall.classList.add(isCorrect ? "correct" : "wrong");
+        const labels = resultBox.querySelectorAll(".answer-grid dt");
+        const values = resultBox.querySelectorAll(".answer-grid dd");
+        [...labels, ...values].forEach((node, index) => { node.hidden = index % 4 !== 3; });
+        labels[3].textContent = stage.kind === "meaning" ? "Nghĩa"
+          : stage.kind === "structure" ? "Cấu trúc / cách chia"
+          : "Cách dùng";
+        ansWord.textContent = "";
+        ansKana.textContent = "";
+        ansRomaji.textContent = "";
+        ansMeaning.textContent = stage.answer || "";
       }
-      inputGrammarRecall.classList.add("correct");
-      recallProgress.pendingMeaningMismatch = false;
-      advanceRecallStage("Đúng! Tiếp tục phần sau.");
+      if (!isCorrect) recallProgress.mistakes = true;
+      recallProgress.stageChecked = true;
+      resultBox.classList.add("show", isCorrect ? "ok" : "bad");
+      resultSeal.classList.add(isCorrect ? "ok" : "bad");
+      resultSeal.textContent = isCorrect ? "✓" : "✕";
+      resultMsg.textContent = isCorrect ? "Đúng" : "Sai";
+      btnCheck.disabled = true;
+      btnNext.disabled = false;
+      updateStats();
+      if (!isPhoneDevice()) btnNext.focus();
     }
-
-    btnRecallAcceptMeaning.addEventListener("click", () => {
-      if (checked || order[idx]?.direction !== "recall") return;
-      const stage = getRecallStages(order[idx])[recallProgress.step];
-      if (stage.kind !== "meaning" || !inputGrammarRecall.value.trim()) return;
-      const key = wordKey(order[idx]);
-      const value = inputGrammarRecall.value.trim();
-      const aliases = meaningAliases[key] || [];
-      if (!aliases.some(x => stripAccents(x) === stripAccents(value))) {
-        meaningAliases[key] = [...aliases, value];
-        saveMeaningAliases();
-      }
-      // Người học tự xác nhận nghĩa tương đương: không buộc lặp lại.
-      // Nếu hệ thống chấm sai tự động, đánh dấu bước cần ôn (không tuyên bố máy đã xác thực).
-      btnRecallAcceptMeaning.hidden = true;
-      recallProgress.pendingMeaningMismatch = false;
-      advanceRecallStage("Đã lưu cách diễn đạt này theo xác nhận của bạn.");
-    });
-
-    btnRecallReveal.addEventListener("click", () => {
-      if (checked || order[idx]?.direction !== "recall") return;
-      const stage = getRecallStages(order[idx])[recallProgress.step];
-      recallProgress.mistakes = true;
-      const roma = Array.isArray(stage.romaji) ? stage.romaji[0] : stage.romaji;
-      showRecallFeedback(`Đáp án: ${stage.answer}${roma ? `\nRomaji: ${roma}` : ""}\n${recallMustPass ? "Hãy tự nhập lại để chuyển bước." : "Bạn có thể tự nhập hoặc bấm Tiếp bước."}`, "bad");
-      if (!isPhoneDevice()) inputGrammarRecall.focus();
-    });
 
     function nextRecallStageOrCard() {
       if (checked) { nextCard(); return; }
-      if (recallMustPass) return;
       const item = order[idx];
       if (!item || item.direction !== "recall") return;
-      // Không cần kiểm tra đúng ở chế độ linh hoạt, nhưng bỏ qua tính là sai.
-      recallProgress.mistakes = true;
-      advanceRecallStage("Đã chuyển bước. Bạn có thể quay lại ôn mẫu này trong mục hay sai.");
+      if (!recallProgress.stageChecked) return;
+      advanceRecallStage();
     }
 
     function loadCard({ resumeRecall = false } = {}) {
@@ -4620,7 +4586,7 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
         return;
       }
       const item = order[idx];
-      if (!resumeRecall) recallProgress = { step: 0, mistakes: false, attempts: 0 };
+      if (!resumeRecall) recallProgress = { step: 0, mistakes: false, attempts: 0, stageChecked: false };
       const isRecall = contentType === "grammar" && item.direction === "recall";
       const isImportant = importantSet.has(wordKey(item));
       btnImportantStar.classList.toggle("active", isImportant);
@@ -4664,7 +4630,7 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
         structure.textContent = item.structure;
         const explanation = document.createElement("span");
         explanation.className = "grammar-meaning-detail";
-        explanation.textContent = [item.grammarMeaning, item.grammarNote].filter(Boolean).join(" — ");
+        explanation.textContent = item.grammarMeaning || "";
         grammarContext.append(structure);
         if (item.direction === "ja-vi" && explanation.textContent) {
           explanation.hidden = true;
@@ -4698,6 +4664,7 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
       inputMeaning.classList.remove("correct", "wrong");
       resultBox.classList.remove("show", "ok", "bad");
       resultSeal.classList.remove("ok", "bad");
+      resultBox.querySelectorAll(".answer-grid dt, .answer-grid dd").forEach(node => { node.hidden = false; });
       btnAcceptMeaning.hidden = true;
       btnStar.disabled = false;
       btnCheck.disabled = false;
@@ -5033,7 +5000,8 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
       if (quizArea.style.display === "none") return;
       if (contentType === "grammar" && grammarMode === "recall") {
         e.preventDefault();
-        if (!checked) submitAnswer();
+        if (!checked && recallProgress.stageChecked) nextRecallStageOrCard();
+        else if (!checked) submitAnswer();
         else nextCard();
         return;
       }

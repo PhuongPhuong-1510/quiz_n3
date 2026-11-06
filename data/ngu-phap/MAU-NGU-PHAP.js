@@ -1,18 +1,35 @@
 /*
-  FILE MẪU NGỮ PHÁP
-  Thêm tên file mới vào ngu-phap/danh-sach-ngu-phap.js.
+  FILE MẪU NGỮ PHÁP CHUẨN
+
+  Thêm tên file bài học vào danh-sach-ngu-phap.js.
+  Không gộp cách nối và cách dùng vào `note`.
+
   direction:
-    "ja-vi" = hiện câu Nhật, nhập Romaji và nghĩa Việt.
-    "vi-romaji" = hiện câu Việt, nhập câu bằng Romaji.
+    "ja-vi"      = hiện câu Kanji, nhập Romaji và nghĩa Việt.
+    "vi-romaji"  = hiện nghĩa Việt, nhập câu bằng Romaji.
 */
 window.GRAMMAR_SETS = window.GRAMMAR_SETS || [];
+
 window.GRAMMAR_SETS.push({
   name: "Ngữ pháp mẫu",
+  source: {
+    document: "tai-lieu-chuong/ten-tai-lieu.pdf",
+    section: "Chương X - Bài Y"
+  },
   grammar: [
     {
-      structure: "Vる + ことができます",
+      pattern: "～ことができる",
       meaning: "Có thể làm gì",
-      note: "Dùng để nói về khả năng hoặc điều kiện cho phép.",
+      meaningAlternatives: ["có khả năng làm", "làm được"],
+      connections: [
+        {
+          label: "Động từ",
+          answer: "Vる + ことができる",
+          alternatives: ["V thể từ điển + ことができる"],
+          romaji: ["V ru + koto ga dekiru"]
+        }
+      ],
+      usage: "Diễn tả khả năng thực hiện một hành động hoặc điều kiện cho phép thực hiện hành động đó.",
       examples: [
         {
           direction: "ja-vi",
