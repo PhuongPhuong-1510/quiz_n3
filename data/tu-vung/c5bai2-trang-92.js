@@ -1,7 +1,7 @@
 /* Toàn bộ từ phần chữ Hán trang 88-92, gộp trong một file cuối */
 window.VOCAB_SETS = window.VOCAB_SETS || [];
 window.VOCAB_SETS.push({
-  name: "chương 5 bài 2 chữ Hán trang 88-92",
+  name: "chương 5 bài 2 trang 92",
   words: [
     { kanji: "支給", kana: "しきゅう", romaji: "shikyuu", meaning: "cấp phát, chu cấp", type: "(N, V3)" },
     { kanji: "給食", kana: "きゅうしょく", romaji: "kyuushoku", meaning: "suất ăn trường học, cơ quan", type: "(N)" },

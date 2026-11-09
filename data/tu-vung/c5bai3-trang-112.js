@@ -1,7 +1,7 @@
 /* Chữ Hán bài 3 - gộp 5 trang 108–112 và đặt ở cuối. */
 window.VOCAB_SETS = window.VOCAB_SETS || [];
 window.VOCAB_SETS.push({
-  name: "chương 5 bài 3 chữ Hán trang 108-112",
+  name: "chương 5 bài 3 trang 112",
   words: [
     {"kanji": "正式", "kana": "せいしき", "romaji": "seishiki", "meaning": "chính thức", "type": "(N, Adj-na)"},
     {"kanji": "〜式", "kana": "しき", "romaji": "shiki", "meaning": "lễ, nghi thức", "type": "(Suffix)"},

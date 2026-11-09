@@ -1,7 +1,7 @@
 /* Ngữ pháp Chương 5 - Bài 2. Câu ja-vi: ví dụ giáo trình; câu vi-romaji: bài dịch từ đáp án tham khảo. */
 window.GRAMMAR_SETS = window.GRAMMAR_SETS || [];
 window.GRAMMAR_SETS.push({
-  "name": "chương 5 bài 2 ngữ pháp",
+  "name": "chương 5 bài 2 ",
   "source": {
     "document": "20260130105932_CHƯƠNG 5 - GHV - N3 (ko doc nghe)(1).pdf",
     "section": "Chương 5 - Bài 2"
