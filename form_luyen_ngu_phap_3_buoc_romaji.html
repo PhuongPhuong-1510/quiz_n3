@@ -2944,6 +2944,61 @@
     .grammar-meaning-toggle[aria-expanded="true"] { color:var(--seal-red); }
     .grammar-meaning-detail { display:block; margin-top:7px; }
     .grammar-meaning-detail[hidden] { display:none !important; }
+  
+    /* Tra tu va tu can nho - bo sung doc lap voi giao dien hoc cu */
+    .lookup-trigger { background:#fff !important; color:var(--ink) !important; border:1px solid var(--line) !important;
+      padding:8px 12px !important; border-radius:7px !important; min-height:34px; width:auto !important;
+      font-size:12px !important; line-height:1.3; flex:none !important; box-shadow:none !important; white-space:nowrap; }
+    .lookup-trigger:hover { border-color:var(--seal-red) !important; color:var(--seal-red) !important; }
+    body.content-vocab #btnLookupWord { display:none !important; }
+    body.content-sentence #btnLookupWord, body.content-grammar #btnLookupWord { display:inline-flex !important; }
+    body:not(.content-vocab) #modeSaved { display:none !important; }
+    .lookup-overlay[hidden] { display:none !important; }
+    .lookup-overlay { position:fixed; inset:0; z-index:10000; padding:20px 14px; background:rgba(19,24,27,.65);
+      display:flex; justify-content:center; align-items:center; overflow-y:auto; }
+    .lookup-dialog { flex:none; width:min(680px,100%); max-height:min(94dvh,880px); overflow:auto; background:var(--white,#faf9f5);
+      border:1px solid var(--line); border-radius:13px; box-shadow:0 25px 80px rgba(0,0,0,.22); padding:24px; color:var(--ink); }
+    .lookup-head { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:15px; }
+    .lookup-head h2 {font-family:"Shippori Mincho",serif; font-size:23px; margin:2px 0 4px;}
+    .lookup-head p,.lookup-small {margin:0; color:var(--ink-soft); font-size:12px; line-height:1.55;}
+    .lookup-dialog button {width:auto; flex:none; box-shadow:none; font-size:13px; border-radius:7px; padding:9px 12px; }
+    .lookup-close {background:transparent !important; color:var(--ink) !important; border:1px solid var(--line) !important; font-size:20px !important; padding:3px 11px !important;}
+    .lookup-search {display:flex; gap:8px; margin:12px 0;}
+    .lookup-search input,.lookup-edit input,.lookup-edit textarea {width:100%; min-width:0; border:1px solid var(--line);
+      border-radius:7px; color:var(--ink); background:#fff; padding:11px 12px; font:inherit; font-size:14px; }
+    .lookup-search input {flex:1; font-size:16px; }
+    .lookup-search button,.lookup-main-btn {background:var(--ink) !important; color:#fff !important; border-color:var(--ink) !important;}
+    .lookup-secondary {background:#fff !important; color:var(--ink) !important; border:1px solid var(--line) !important;}
+    .lookup-tabs {display:flex; gap:6px; margin:12px 0; border-bottom:1px solid var(--line);}
+    .lookup-tabs button {background:transparent !important; color:var(--ink-soft) !important; border:0 !important; border-radius:0; font-size:12px; }
+    .lookup-tabs button.active {color:var(--ink) !important; box-shadow:inset 0 -2px 0 var(--seal-red);}
+    .lookup-status {margin:8px 0; color:var(--ink-soft); font-size:12px; min-height:18px;}
+    .lookup-results {max-height:192px; overflow-y:auto; display:grid; gap:6px; margin:5px 0 12px;}
+    .lookup-result {width:100% !important; display:flex; align-items:center; justify-content:space-between; gap:12px;
+      text-align:left; border:1px solid var(--line) !important; background:#fff !important; color:var(--ink) !important; padding:10px !important; }
+    .lookup-result.selected {border-color:var(--seal-red) !important; background:var(--seal-red-soft) !important;}
+    .lookup-result strong {font-family:"Shippori Mincho",serif; font-size:19px;}
+    .lookup-result small {display:block; color:var(--ink-soft); font-size:12px; line-height:1.5; font-weight:400;}
+    .lookup-result em {white-space:nowrap; font-style:normal; font-size:10px; color:var(--ink-soft);}
+    .lookup-edit {border-top:1px solid var(--line); padding-top:14px; display:grid; gap:10px;}
+    .lookup-edit-title {font-size:13px; font-weight:750;}
+    .lookup-edit-grid {display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px;}
+    .lookup-edit label {font-size:12px; font-weight:600; color:var(--ink-soft); display:grid; gap:5px;}
+    .lookup-edit textarea {resize:vertical; min-height:65px;}
+    .lookup-editor-actions {display:flex; flex-wrap:wrap; gap:8px; align-items:center;}
+    .lookup-status[data-kind="error"] {color:var(--seal-red);}
+    .lookup-status[data-kind="ok"] {color:var(--moss);}
+    .lookup-saved-list {display:grid; gap:8px; margin:12px 0;}
+    .lookup-saved-row {display:flex; align-items:center; justify-content:space-between; gap:10px; border:1px solid var(--line); padding:10px 12px; background:#fff; border-radius:7px;}
+    .lookup-saved-row strong {font-size:18px; font-family:"Shippori Mincho",serif;}
+    .lookup-saved-row small {display:block; color:var(--ink-soft); font-size:12px; overflow-wrap:anywhere;}
+    .lookup-saved-actions {display:flex; gap:5px; flex-wrap:wrap; justify-content:flex-end;}
+    .lookup-saved-actions button {padding:5px 8px; font-size:12px;}
+    .lookup-source-link {font-size:12px; color:var(--aizome); text-decoration:underline;}
+    body.lookup-modal-open {overflow:hidden;}
+    @media(max-width:520px){ .lookup-dialog {padding:17px; max-height:95dvh;} .lookup-edit-grid {grid-template-columns:1fr;}
+      .lookup-saved-row {align-items:flex-start; flex-direction:column;} .lookup-saved-actions {align-self:flex-end;} }
+  
   </style>
 </head>
 
@@ -3061,6 +3116,9 @@
       <button type="button" class="mode-btn" id="modeImportant">
         ★ Từ hay quên (<span id="importantCountBadge">0</span>)
       </button>
+      <button type="button" class="mode-btn" id="modeSaved">
+        📒 Từ cần nhớ (<span id="rememberCountBadge">0</span>)
+      </button>
       <button type="button" class="mode-btn" id="modeSkipped">
         Đã bỏ qua (<span id="skippedCountBadge">0</span>)
       </button>
@@ -3076,6 +3134,7 @@
     <div id="quizArea">
       <div class="card">
         <div class="card-tools" aria-label="Công cụ của câu hiện tại">
+          <button type="button" id="btnLookupWord" class="lookup-trigger" title="Bôi đen từ lạ trong câu rồi tra">⌕ Tra từ mới</button>
           <button type="button" class="listen-button" id="btnListen" aria-label="Nghe phát âm tiếng Nhật"
             title="Nghe tiếng Nhật">🔊</button>
           <button type="button" class="star-button" id="btnImportantStar" aria-label="Đánh dấu từ hay quên"
@@ -3144,6 +3203,57 @@
     <footer>Chương 1 · Bài 1 — Gungun Joutatsu N3</footer>
   </div>
 
+
+  <!-- Tra từ: giữ nguyên câu hiện tại và vị trí của bài tập -->
+  <div class="lookup-overlay" id="lookupOverlay" role="presentation" hidden>
+    <section class="lookup-dialog" id="lookupDialog" role="dialog" aria-modal="true" aria-labelledby="lookupHeading" tabindex="-1">
+      <div class="lookup-head">
+        <div><h2 id="lookupHeading">Tra từ mới · 辞書</h2>
+          <p>Bôi đen từ trong mẫu câu hoặc nhập Kanji / Kana. Bạn có thể chỉnh nghĩa tiếng Việt trước khi lưu.</p></div>
+        <button type="button" class="lookup-close" id="btnLookupClose" aria-label="Đóng tra từ">×</button>
+      </div>
+      <div class="lookup-tabs">
+        <button type="button" id="lookupTabSearch" class="active">Tra từ</button>
+        <button type="button" id="lookupTabSaved">Từ cần nhớ (<span id="lookupSavedCount">0</span>)</button>
+      </div>
+      <div id="lookupSearchPane">
+        <form id="lookupForm" class="lookup-search" autocomplete="off">
+          <input type="search" id="lookupQuery" placeholder="Ví dụ: 約束, 勉強, べんきょう" aria-label="Từ tiếng Nhật cần tra">
+          <button type="submit">Tìm</button>
+        </form>
+        <div class="lookup-small">Tìm đúng từ đã nhập trong giáo trình, sau đó tra từ điển. Nghĩa tiếng Việt được tự điền khi dịch vụ hỗ trợ; hãy kiểm tra theo ngữ cảnh trước khi lưu.</div>
+        <p class="lookup-status" id="lookupStatus" aria-live="polite"></p>
+        <div id="lookupResults" class="lookup-results" aria-label="Kết quả tra từ"></div>
+        <div class="lookup-edit">
+          <div class="lookup-edit-title">Thông tin từ muốn lưu</div>
+          <div class="lookup-edit-grid">
+            <label>Từ (Kanji / Kana)<input id="lookupWord" maxlength="90" placeholder="約束" lang="ja"></label>
+            <label>Hiragana / Katakana<input id="lookupKana" maxlength="90" placeholder="やくそく" lang="ja"></label>
+            <label>Romaji<input id="lookupRomaji" maxlength="160" placeholder="yakusoku"></label>
+            <label>Từ loại<input id="lookupType" maxlength="90" placeholder="Danh từ / Động từ..." value="Từ mới"></label>
+          </div>
+          <label>Nghĩa tiếng Việt<textarea id="lookupMeaning" rows="2" placeholder="Nghĩa tiếng Việt sẽ tự điền khi tra được; có thể chỉnh sửa"></textarea></label>
+          <p class="lookup-small" id="lookupEnglishNote" hidden></p>
+          <div class="lookup-editor-actions">
+            <button type="button" class="lookup-secondary" id="lookupSpeak">🔊 Nghe cách đọc</button>
+            <button type="button" class="lookup-main-btn" id="lookupSave">＋ Thêm vào từ cần nhớ</button>
+            <a id="lookupExternal" class="lookup-source-link" href="https://jdict.net/" target="_blank" rel="noopener noreferrer">Tra thêm trên Jdict ↗</a>
+          </div>
+        </div>
+      </div>
+      <div id="lookupSavedPane" hidden>
+        <p class="lookup-small">Các từ được lưu trên trình duyệt này. Chọn “Luyện” để học theo bài luyện từ vựng hiện tại.</p>
+        <div id="lookupSavedList" class="lookup-saved-list"></div>
+        <div class="lookup-editor-actions">
+          <button type="button" class="lookup-main-btn" id="lookupPractice">Luyện các từ cần nhớ →</button>
+          <button type="button" class="lookup-secondary" id="lookupExport">Xuất JSON dự phòng</button>
+          <button type="button" class="lookup-secondary" id="lookupImportButton">Nhập JSON</button>
+          <input type="file" id="lookupImportFile" accept=".json,application/json" hidden>
+        </div>
+      </div>
+    </section>
+  </div>
+
   <script src="./data/danh-sach-data.js"></script>
   <script>
     /*
@@ -3151,7 +3261,20 @@
     nguyên khối { name: "...", words: [...] } và thay dữ liệu bên trong.
     "name" có thể là ngày tháng, tên bài hoặc bất cứ tên nào bạn muốn.
   */
-const VOCAB_SETS = window.VOCAB_SETS || [];
+const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
+    function loadRememberWords() {
+      try {
+        const data = JSON.parse(localStorage.getItem(REMEMBER_WORDS_KEY) || "[]");
+        return Array.isArray(data) ? data.filter(x => x && x.kanji && x.kana && x.romaji && x.meaning) : [];
+      } catch (_) { return []; }
+    }
+    const REMEMBER_WORDS = loadRememberWords();
+    const REMEMBER_SET = { name: "★ Từ cần nhớ · tự lưu", words: REMEMBER_WORDS };
+    function persistRememberWords() {
+      try { localStorage.setItem(REMEMBER_WORDS_KEY, JSON.stringify(REMEMBER_WORDS)); return true; }
+      catch (_) { return false; }
+    }
+    const VOCAB_SETS = window.VOCAB_SETS || [];
     const SENTENCE_SETS = (window.SENTENCE_SETS || []).map((set) => ({
       name: set.name,
       words: (set.sentences || []).map((sentence, index) => ({
@@ -3205,7 +3328,7 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
     }));
     const contentParam = new URLSearchParams(location.search).get("phan");
     const contentType = contentParam === "cau" ? "sentence" : contentParam === "nguphap" ? "grammar" : "vocab";
-    const CONTENT_SETS = contentType === "sentence" ? SENTENCE_SETS : contentType === "grammar" ? GRAMMAR_SETS : VOCAB_SETS;
+    const CONTENT_SETS = contentType === "sentence" ? SENTENCE_SETS : contentType === "grammar" ? GRAMMAR_SETS : [...VOCAB_SETS, REMEMBER_SET];
 
     document.body.classList.add(`content-${contentType}`);
     document.querySelectorAll("[data-content]").forEach((tab) => {
@@ -3454,10 +3577,10 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
     saveSkippedSet();
     let importantSet = loadImportantSet();
     saveImportantSet();
-    let mode = "all";
+    let mode = contentType === "vocab" && new URLSearchParams(location.search).get("ds") === "tucan" ? "saved" : "all";
     let studyMode = "recognize";
     let grammarMode = "ja-vi";
-    let recallProgress = { step: 0, mistakes: false, attempts: 0, stageChecked: false };
+    let recallProgress = { step: 0, mistakes: false, mistakeCount: 0, attempts: 0, stageChecked: false, pendingMeaning: null };
     const savedBatchSize = localStorage.getItem(BATCH_SIZE_STORE_KEY);
     let batchSize = savedBatchSize === "all"
       ? 0
@@ -3557,6 +3680,7 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
     const modeImportantBtn = document.getElementById("modeImportant");
     const importantCountBadge = document.getElementById("importantCountBadge");
     const btnClearWrong = document.getElementById("btnClearWrong");
+    const modeSavedBtn = document.getElementById("modeSaved");
     const modeSkippedBtn = document.getElementById("modeSkipped");
     const skippedCountBadge = document.getElementById("skippedCountBadge");
     const btnStar = document.getElementById("btnStar");
@@ -3803,10 +3927,13 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
       lastAnswer = session.lastAnswer;
       sessionMistakeKeys = new Set(session.sessionMistakeKeys);
       sessionComplete = session.sessionComplete;
-      recallProgress = { step: 0, mistakes: false, attempts: 0, stageChecked: false, ...(session.recallProgress || {}) };
+      recallProgress = { step: 0, mistakes: false, mistakeCount: 0, attempts: 0, stageChecked: false, pendingMeaning: null, ...(session.recallProgress || {}) };
       // Tương thích với phiên đã lưu từ luồng xem tuần tự cũ (bắt đầu ở -1).
       recallProgress.step = Math.max(0, Number(recallProgress.step) || 0);
       recallProgress.stageChecked = Boolean(recallProgress.stageChecked);
+      recallProgress.mistakeCount = Math.max(0, Number(recallProgress.mistakeCount) || (recallProgress.mistakes ? 1 : 0));
+      recallProgress.mistakes = recallProgress.mistakeCount > 0;
+      recallProgress.pendingMeaning = null;
       if (sessionComplete) showDone();
       else loadCard({ resumeRecall: true });
     }
@@ -3828,7 +3955,9 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
     }
 
     function getModeSource() {
-      const source = mode === "wrong"
+      const source = mode === "saved" && contentType === "vocab"
+        ? REMEMBER_WORDS.filter((item) => !skippedSet.has(wordKey(item)))
+        : mode === "wrong"
         ? getAllWords().filter((item) => wrongSet.has(wrongWordKey(item)) && !skippedSet.has(wordKey(item)))
         : mode === "important"
           ? getAllWords().filter((item) => importantSet.has(wordKey(item)) && !skippedSet.has(wordKey(item)))
@@ -4110,6 +4239,7 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
       modeWrongBtn.classList.toggle("active", mode === "wrong");
       modeImportantBtn.classList.toggle("active", mode === "important");
       modeSkippedBtn.classList.toggle("active", mode === "skipped");
+      if (modeSavedBtn) modeSavedBtn.classList.toggle("active", mode === "saved");
     }
 
     modeAllBtn.addEventListener("click", () => {
@@ -4456,6 +4586,8 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
       inputMeaning.classList.remove("correct", "wrong");
       resultBox.classList.remove("show", "ok", "bad");
       resultSeal.classList.remove("ok", "bad");
+      btnAcceptMeaning.hidden = true;
+      recallProgress.pendingMeaning = null;
       recallProgress.stageChecked = false;
       btnCheck.disabled = false;
       btnCheck.textContent = "Kiểm tra";
@@ -4554,7 +4686,15 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
         ansRomaji.textContent = "";
         ansMeaning.textContent = stage.answer || "";
       }
-      if (!isCorrect) recallProgress.mistakes = true;
+      if (!isCorrect) {
+        recallProgress.mistakeCount = Math.max(0, Number(recallProgress.mistakeCount) || 0) + 1;
+        recallProgress.mistakes = true;
+      }
+      const rawMeaning = stage.kind === "meaning" ? inputGrammarRecall.value.trim() : "";
+      recallProgress.pendingMeaning = !isCorrect && rawMeaning
+        ? { rawMeaning, itemKey: wordKey(item), step: recallProgress.step }
+        : null;
+      btnAcceptMeaning.hidden = !recallProgress.pendingMeaning;
       recallProgress.stageChecked = true;
       resultBox.classList.add("show", isCorrect ? "ok" : "bad");
       resultSeal.classList.add(isCorrect ? "ok" : "bad");
@@ -4574,6 +4714,20 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
       advanceRecallStage();
     }
 
+    function getRecallSpeechItem(item) {
+      const stage = getRecallStages(item)[recallProgress.step];
+      if (stage?.kind === "example") {
+        return {
+          kanji: stage.example.kanji || stage.example.hiragana || "",
+          kana: stage.example.hiragana || "",
+        };
+      }
+      return {
+        kanji: item.grammarRecall?.pattern || item.structure || item.kanji || "",
+        kana: "",
+      };
+    }
+
     function loadCard({ resumeRecall = false } = {}) {
       speechRequestId++;
       if ("speechSynthesis" in window) window.speechSynthesis.cancel();
@@ -4586,7 +4740,7 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
         return;
       }
       const item = order[idx];
-      if (!resumeRecall) recallProgress = { step: 0, mistakes: false, attempts: 0, stageChecked: false };
+      if (!resumeRecall) recallProgress = { step: 0, mistakes: false, mistakeCount: 0, attempts: 0, stageChecked: false, pendingMeaning: null };
       const isRecall = contentType === "grammar" && item.direction === "recall";
       const isImportant = importantSet.has(wordKey(item));
       btnImportantStar.classList.toggle("active", isImportant);
@@ -4820,9 +4974,37 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
       if (checked || answerSubmissionPending) return;
       const submittedItem = order[idx];
       if (!submittedItem) return;
-      // Không đọc đáp án trước khi kiểm tra trong chế độ nhớ chủ động.
       if (contentType === "grammar" && submittedItem.direction === "recall") {
-        checkRecallAnswer();
+        if (!autoSpeechEnabled) {
+          checkRecallAnswer();
+          return;
+        }
+
+        answerSubmissionPending = true;
+        inputGrammarRecall.disabled = true;
+        inputReading.disabled = true;
+        inputMeaning.disabled = true;
+        btnCheck.disabled = true;
+        btnStar.disabled = true;
+        btnImportantStar.disabled = true;
+        btnCheck.textContent = "Đang phát âm…";
+
+        await speakJapanese(getRecallSpeechItem(submittedItem), { beforeCheck: true });
+
+        // Chỉ chấm nếu người học vẫn đang ở đúng bước vừa gửi.
+        if (!checked && order[idx] === submittedItem && !recallProgress.stageChecked) {
+          inputGrammarRecall.disabled = false;
+          inputReading.disabled = false;
+          inputMeaning.disabled = false;
+          btnCheck.disabled = false;
+          btnStar.disabled = false;
+          btnImportantStar.disabled = false;
+          btnCheck.textContent = "Kiểm tra";
+          answerSubmissionPending = false;
+          checkRecallAnswer();
+        } else {
+          answerSubmissionPending = false;
+        }
         return;
       }
 
@@ -4861,6 +5043,41 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
     }
 
     function acceptCurrentMeaning() {
+      const recallItem = order[idx];
+      const pendingMeaning = recallProgress.pendingMeaning;
+      if (
+        contentType === "grammar" &&
+        recallItem?.direction === "recall" &&
+        recallProgress.stageChecked &&
+        pendingMeaning &&
+        pendingMeaning.itemKey === wordKey(recallItem) &&
+        pendingMeaning.step === recallProgress.step
+      ) {
+        const key = wordKey(recallItem);
+        const aliases = Array.isArray(meaningAliases[key]) ? meaningAliases[key] : [];
+        const normalizedMeaning = stripAccents(pendingMeaning.rawMeaning);
+        if (!aliases.some((alias) => stripAccents(alias) === normalizedMeaning)) {
+          aliases.push(pendingMeaning.rawMeaning);
+          meaningAliases[key] = aliases;
+          saveMeaningAliases();
+        }
+
+        recallProgress.mistakeCount = Math.max(0, (Number(recallProgress.mistakeCount) || 0) - 1);
+        recallProgress.mistakes = recallProgress.mistakeCount > 0;
+        recallProgress.pendingMeaning = null;
+        inputGrammarRecall.classList.remove("wrong");
+        inputGrammarRecall.classList.add("correct");
+        btnAcceptMeaning.hidden = true;
+        resultBox.classList.remove("bad");
+        resultBox.classList.add("ok");
+        resultSeal.classList.remove("bad");
+        resultSeal.classList.add("ok");
+        resultSeal.textContent = "✓";
+        resultMsg.textContent = "Đã ghi nhớ nghĩa này";
+        if (!isPhoneDevice()) btnNext.focus();
+        return;
+      }
+
       if (!checked || !lastAnswer || lastAnswer.meaningOK || !lastAnswer.rawMeaning) return;
 
       const { item, readingOK, rawMeaning } = lastAnswer;
@@ -5026,6 +5243,433 @@ const VOCAB_SETS = window.VOCAB_SETS || [];
     updateWrongBadge();
     updateSkippedBadge();
     init();
+
+
+    /* =========== TỪ ĐIỂN + SỔ TỪ CẦN NHỚ =========== */
+    const lookupOverlay = document.getElementById("lookupOverlay");
+    const lookupDialog = document.getElementById("lookupDialog");
+    const lookupQuery = document.getElementById("lookupQuery");
+    const lookupResults = document.getElementById("lookupResults");
+    const lookupStatus = document.getElementById("lookupStatus");
+    const lookupWord = document.getElementById("lookupWord");
+    const lookupKana = document.getElementById("lookupKana");
+    const lookupRomaji = document.getElementById("lookupRomaji");
+    const lookupMeaning = document.getElementById("lookupMeaning");
+    const lookupType = document.getElementById("lookupType");
+    const lookupEnglishNote = document.getElementById("lookupEnglishNote");
+    const lookupTabSearch = document.getElementById("lookupTabSearch");
+    const lookupTabSaved = document.getElementById("lookupTabSaved");
+    const lookupSearchPane = document.getElementById("lookupSearchPane");
+    const lookupSavedPane = document.getElementById("lookupSavedPane");
+    const lookupSavedList = document.getElementById("lookupSavedList");
+    const rememberCountBadge = document.getElementById("rememberCountBadge");
+    const lookupSavedCount = document.getElementById("lookupSavedCount");
+    let lookupSelection = -1;
+    let lookupCandidates = [];
+    let lastLookupFocus = null;
+    let lookupRequestSequence = 0;
+
+    function updateRememberBadge() {
+      if (rememberCountBadge) rememberCountBadge.textContent = REMEMBER_WORDS.length;
+      lookupSavedCount.textContent = REMEMBER_WORDS.length;
+      if (modeSavedBtn) modeSavedBtn.disabled = REMEMBER_WORDS.length === 0 && mode !== "saved";
+    }
+
+    function setLookupStatus(message, kind = "") {
+      lookupStatus.textContent = message;
+      lookupStatus.dataset.kind = kind;
+    }
+
+    function kanaToRomaji(value) {
+      if (!value) return "";
+      const kana = String(value).normalize("NFKC").replace(/[\u30a1-\u30f6]/g, ch => String.fromCharCode(ch.charCodeAt(0)-96));
+      const map = {
+        あ:'a',い:'i',う:'u',え:'e',お:'o',か:'ka',き:'ki',く:'ku',け:'ke',こ:'ko',
+        さ:'sa',し:'shi',す:'su',せ:'se',そ:'so',た:'ta',ち:'chi',つ:'tsu',て:'te',と:'to',
+        な:'na',に:'ni',ぬ:'nu',ね:'ne',の:'no',は:'ha',ひ:'hi',ふ:'fu',へ:'he',ほ:'ho',
+        ま:'ma',み:'mi',む:'mu',め:'me',も:'mo',や:'ya',ゆ:'yu',よ:'yo',
+        ら:'ra',り:'ri',る:'ru',れ:'re',ろ:'ro',わ:'wa',を:'o',ん:'n',
+        が:'ga',ぎ:'gi',ぐ:'gu',げ:'ge',ご:'go',ざ:'za',じ:'ji',ず:'zu',ぜ:'ze',ぞ:'zo',
+        だ:'da',ぢ:'ji',づ:'zu',で:'de',ど:'do',ば:'ba',び:'bi',ぶ:'bu',べ:'be',ぼ:'bo',
+        ぱ:'pa',ぴ:'pi',ぷ:'pu',ぺ:'pe',ぽ:'po',
+        きゃ:'kya',きゅ:'kyu',きょ:'kyo',しゃ:'sha',しゅ:'shu',しょ:'sho',
+        ちゃ:'cha',ちゅ:'chu',ちょ:'cho',にゃ:'nya',にゅ:'nyu',にょ:'nyo',
+        ひゃ:'hya',ひゅ:'hyu',ひょ:'hyo',みゃ:'mya',みゅ:'myu',みょ:'myo',
+        りゃ:'rya',りゅ:'ryu',りょ:'ryo',ぎゃ:'gya',ぎゅ:'gyu',ぎょ:'gyo',
+        じゃ:'ja',じゅ:'ju',じょ:'jo',びゃ:'bya',びゅ:'byu',びょ:'byo',
+        ぴゃ:'pya',ぴゅ:'pyu',ぴょ:'pyo',てぃ:'ti',でぃ:'di',ふぁ:'fa',ふぃ:'fi',ふぇ:'fe',ふぉ:'fo',
+        しぇ:'she',ちぇ:'che',じぇ:'je',うぃ:'wi',うぇ:'we',うぉ:'wo',
+        ゔ:'vu',ぁ:'a',ぃ:'i',ぅ:'u',ぇ:'e',ぉ:'o',ゃ:'ya',ゅ:'yu',ょ:'yo'
+      };
+      let result='';
+      for(let i=0;i<kana.length;i++){
+        const ch=kana[i];
+        if(ch==='っ'){ const next=map[kana.slice(i+1,i+3)] || map[kana[i+1]] || ''; result += next.startsWith('ch') ? 't' : next[0] || ''; continue; }
+        if(ch==='ー'){ const match=result.match(/[aeiou]$/); if(match) result += match[0]; continue; }
+        if(ch==='ん' && /[あいうえおやゆよ]/.test(kana[i+1] || '')){result += "n'";continue;}
+        const digraph=map[kana.slice(i,i+2)];
+        if(digraph){result+=digraph;i++;} else result+=map[ch] || (/[\u3040-\u30ff]/.test(ch) ? '' : ch);
+      }
+      return result;
+    }
+
+    function normalizeLookupItem(item, source="Giáo trình") {
+      const kanji=String(item.kanji || item.word || '').trim();
+      const kana=String(item.kana || item.hiragana || item.reading || '').trim();
+      const meaning=String(item.meaning || '').trim();
+      return {kanji, kana, romaji:String(item.romaji || kanaToRomaji(kana)).trim(),
+        meaning, type:String(item.type || 'Từ mới'), source,
+        englishMeaning:String(item.englishMeaning || '').trim(),
+        translatedBy:String(item.translatedBy || '').trim(), translationWarning:String(item.translationWarning || '').trim()};
+    }
+
+    function normLookup(text) {
+      return String(text || '').normalize('NFKC').trim();
+    }
+
+    function lookupToHiragana(text) {
+      return normLookup(text).replace(/[\u30A1-\u30F6]/g, ch => String.fromCharCode(ch.charCodeAt(0)-96));
+    }
+
+    function lookupExactScore(item, query) {
+      const q=normLookup(query), word=normLookup(item.kanji), kana=normLookup(item.kana);
+      if(word===q)return 3;
+      if(kana===q)return 2;
+      if(kana && lookupToHiragana(kana)===lookupToHiragana(q))return 1;
+      return 0;
+    }
+
+    function lookupLocal(query) {
+      const q=normLookup(query);
+      const all=[...REMEMBER_WORDS, ...VOCAB_SETS.flatMap(s=>s.words || [])];
+      // Chỉ lấy từ TRÙNG KHỚP; không gợi ý từ gần giống vào kết quả chính.
+      return all.map(w=>normalizeLookupItem(w,'Giáo trình / đã lưu'))
+        .filter(w=>w.kanji && lookupExactScore(w,q)>0)
+        .sort((a,b)=>lookupExactScore(b,q)-lookupExactScore(a,q))
+        .slice(0,12);
+    }
+
+    function uniqueLookupResults(items, query='') {
+      const seen=new Map();
+      for(const item of items){
+        if(!item.kanji || (query && !lookupExactScore(item,query))) continue;
+        const key=(normLookup(item.kanji)+'\u0000'+lookupToHiragana(item.kana));
+        const old=seen.get(key);
+        // Nếu từ cũ chưa có nghĩa Việt, cập nhật bằng kết quả dịch tự động.
+        if(!old) seen.set(key,item);
+        else if(!old.meaning && item.meaning) seen.set(key,{...old,meaning:item.meaning,
+          englishMeaning:old.englishMeaning||item.englishMeaning,
+          translatedBy:item.translatedBy||'', translationWarning:item.translationWarning||''});
+      }
+      return [...seen.values()].sort((a,b)=>query?lookupExactScore(b,query)-lookupExactScore(a,query):0).slice(0,18);
+    }
+
+    function makeLookupCandidate(raw) {
+      return normalizeLookupItem(raw,raw.source || 'Từ điển trực tuyến');
+    }
+
+    function drawLookupResults() {
+      lookupResults.replaceChildren();
+      if(!lookupCandidates.length) return;
+      lookupCandidates.forEach((item,index)=>{
+        const btn=document.createElement('button');
+        btn.type='button'; btn.className='lookup-result'+(index===lookupSelection?' selected':'');
+        const left=document.createElement('span');
+        const word=document.createElement('strong');word.textContent=item.kanji;
+        const detail=document.createElement('small');
+        detail.textContent=[item.kana, item.romaji, item.meaning || item.englishMeaning].filter(Boolean).join(' · ');
+        left.append(word,detail);
+        const origin=document.createElement('em');origin.textContent=item.source;
+        btn.append(left,origin);
+        btn.addEventListener('click',()=>chooseLookupCandidate(index));
+        lookupResults.appendChild(btn);
+      });
+    }
+
+    function chooseLookupCandidate(index) {
+      const item=lookupCandidates[index];
+      if(!item)return;
+      lookupSelection=index;
+      drawLookupResults();
+      lookupWord.value=item.kanji;
+      lookupKana.value=item.kana;
+      lookupRomaji.value=item.romaji;
+      lookupMeaning.value=item.meaning;
+      lookupType.value=item.type || 'Từ mới';
+      lookupEnglishNote.hidden=!item.englishMeaning;
+      lookupEnglishNote.textContent=item.englishMeaning
+        ? `Nghĩa Anh tham khảo: ${item.englishMeaning}. ${item.meaning ? (item.translatedBy ? 'Nghĩa Việt được dịch tự động bởi '+item.translatedBy+'; hãy kiểm tra trước khi lưu.' : 'Có thể sửa nghĩa theo ngữ cảnh.') : 'Chưa dịch tự động được nghĩa Việt; hãy nhập nghĩa trước khi lưu.'}`
+        : '';
+    }
+
+    function urlForJdict(term) {
+      return `https://jdict.net/search?keyword=${encodeURIComponent(term)}`;
+    }
+
+    async function requestJson(url, options={}) {
+      const controller=new AbortController();
+      const timeout=setTimeout(()=>controller.abort(),9500);
+      try {
+        const response=await fetch(url,{...options,signal:controller.signal});
+        if(!response.ok)throw new Error(`HTTP ${response.status}`);
+        return await response.json();
+      } finally{clearTimeout(timeout);}
+    }
+
+    function jotobaEntries(data, term) {
+      const words=Array.isArray(data?.words) ? data.words : [];
+      return words.map(w=>{
+        const senses=Array.isArray(w.senses)?w.senses:[];
+        const en=senses.filter(s=>!s.language || /^English$/i.test(s.language))
+          .flatMap(s=>Array.isArray(s.glosses)?s.glosses:[]).slice(0,3).join('; ');
+        const viSenses=senses.filter(s=>/^Vietnamese$/i.test(s.language || ''));
+        const vi=viSenses.flatMap(s=>Array.isArray(s.glosses)?s.glosses:[]).slice(0,3).join('; ');
+        return makeLookupCandidate({kanji:w.reading?.kanji || w.reading?.kana,
+          kana:w.reading?.kana || '',meaning:vi,englishMeaning:en,type:'Từ mới',source:'Jotoba'});
+      }).filter(w=>w.kanji && lookupExactScore(w,term)>0);
+    }
+
+    async function translateLookupFallback(englishText, japaneseText) {
+      // Trường hợp chỉ mở HTML mà chưa cài /api/tu-dien: thử gọi trực tiếp.
+      // MyMemory có hạn mức và có thể chặn CORS, nên không đảm bảo thành công.
+      const source=englishText?'en':'ja';
+      const text=(englishText || japaneseText || '').slice(0,460);
+      if(!text)return '';
+      try {
+        const data=await requestJson('https://api.mymemory.translated.net/get?'+new URLSearchParams({
+          q:text,langpair:source+'|vi'
+        }),{});
+        if(Number(data.responseStatus)!==200)return '';
+        const result=String(data.responseData?.translatedText||'').trim();
+        if(!result || result.toLowerCase()===text.toLowerCase()
+          || /^(MYMEMORY WARNING|QUERY LENGTH LIMIT|PLEASE SELECT|INVALID LANGUAGE|ERROR:)/i.test(result)) return '';
+        return result;
+      } catch (_) {return '';}
+    }
+
+    async function searchExternalDictionary(term) {
+      // Vercel function: từ chính xác + tự dịch Anh -> Việt (Google Cloud nếu cấu hình, MyMemory nếu không).
+      try {
+        const proxy=await requestJson(`/api/tu-dien?q=${encodeURIComponent(term)}`);
+        return (proxy.results || []).map(makeLookupCandidate).filter(w=>lookupExactScore(w,term));
+      } catch (_) {
+        // Chế độ mở HTML riêng: Jotoba trực tiếp chỉ là dự phòng, thường bị CORS.
+        let items=[];
+        try {
+          const raw=await requestJson('https://jotoba.de/api/search/words', {
+            method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({query:term,language:'English'})
+          });
+          items=jotobaEntries(raw,term);
+        } catch (_) { /* Cho phép nhập thủ công */ }
+        if(items.length) {
+          const first=items[0];
+          if(!first.meaning){
+            first.meaning=await translateLookupFallback(first.englishMeaning,first.kanji);
+            if(first.meaning){first.translatedBy='MyMemory';first.translationWarning='Nghĩa dịch máy, cần kiểm tra.';}
+          }
+        }
+        return items;
+      }
+    }
+
+    async function doLookupSearch() {
+      const q=lookupQuery.value.normalize('NFKC').trim();
+      if(!q){setLookupStatus('Bạn hãy nhập một từ cần tra.','error');lookupQuery.focus();return;}
+      if(q.length>90){setLookupStatus('Chỉ tra một từ hoặc cụm ngắn (tối đa 90 ký tự).','error');return;}
+      document.getElementById('lookupExternal').href=urlForJdict(q);
+      const requestId=++lookupRequestSequence;
+      lookupSelection=-1;
+      lookupCandidates=uniqueLookupResults(lookupLocal(q),q);
+      drawLookupResults();
+      lookupWord.value=q;
+      lookupKana.value=/^[\u3040-\u30ffー]+$/.test(q)?q:'';
+      lookupRomaji.value=kanaToRomaji(lookupKana.value);
+      lookupMeaning.value='';
+      lookupType.value='Từ mới';
+      lookupEnglishNote.hidden=true;
+      if(lookupCandidates.length){chooseLookupCandidate(0);}
+      setLookupStatus(lookupCandidates.length ? 'Đã tìm trong bộ từ. Đang kiểm tra thêm từ điển trực tuyến…' : 'Đang tìm trong từ điển trực tuyến…');
+      const external=await searchExternalDictionary(q);
+      if(requestId!==lookupRequestSequence || lookupOverlay.hidden) return;
+      const alreadySelected=lookupSelection>=0;
+      lookupCandidates=uniqueLookupResults([...lookupCandidates,...external],q);
+      drawLookupResults();
+      if(lookupCandidates.length && (!alreadySelected || !lookupMeaning.value.trim())){
+        const index=alreadySelected ? Math.max(0,lookupCandidates.findIndex(w=>w.kanji===lookupWord.value && w.kana===lookupKana.value))
+          : Math.max(0,lookupCandidates.findIndex(w=>w.meaning));
+        chooseLookupCandidate(index);
+      }
+      if(lookupCandidates.length){
+        const hasVietnameseMeaning=lookupCandidates.some(item=>item.meaning);
+        setLookupStatus(hasVietnameseMeaning
+          ? `Đã tìm thấy ${lookupCandidates.length} từ trùng khớp và điền nghĩa Việt (nếu có). Hãy kiểm tra trước khi lưu.`
+          : `Đã tìm thấy ${lookupCandidates.length} từ trùng khớp, nhưng dịch vụ chưa trả được nghĩa Việt. Bạn có thể nhập thủ công.`,
+          hasVietnameseMeaning?'ok':'error');
+      } else {
+        setLookupStatus('Không tìm thấy từ trùng khớp (không hiển thị từ gần giống). Hãy kiểm tra cách viết hoặc tra trên Jdict.','error');
+      }
+    }
+
+    function showLookupTab(tab) {
+      const saved=tab==='saved';
+      lookupTabSearch.classList.toggle('active',!saved);
+      lookupTabSaved.classList.toggle('active',saved);
+      lookupSearchPane.hidden=saved;
+      lookupSavedPane.hidden=!saved;
+      if(saved)drawRememberedList();
+      else lookupQuery.focus();
+    }
+
+    function openLookupDialog(tab='search') {
+      lastLookupFocus=document.activeElement;
+      let selection='';
+      try {
+        const current=window.getSelection();
+        if(current && kanjiDisplay.contains(current.anchorNode) && kanjiDisplay.contains(current.focusNode))
+          selection=current.toString().trim();
+      } catch (_) {}
+      lookupOverlay.hidden=false;
+      document.body.classList.add('lookup-modal-open');
+      showLookupTab(tab);
+      lookupQuery.value=selection.length<=90 ? selection : '';
+      if(selection)doLookupSearch();
+      else {lookupResults.replaceChildren();setLookupStatus('Bôi đen từ trong câu hoặc gõ từ vào ô tìm kiếm.');}
+      setTimeout(()=>{(tab==='saved'?lookupDialog:lookupQuery).focus();},0);
+    }
+
+    function closeLookupDialog() {
+      lookupRequestSequence++;
+      lookupOverlay.hidden=true;
+      document.body.classList.remove('lookup-modal-open');
+      if(lastLookupFocus?.focus)lastLookupFocus.focus({preventScroll:true});
+    }
+
+    function speakLookupItem(word, kana) {
+      if(!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)){
+        setLookupStatus('Trình duyệt không hỗ trợ đọc tiếng Nhật.','error');return;
+      }
+      const text=(word || kana || '').trim();
+      if(!text)return;
+      // Phat am theo kana neu co de tranh doc sai han tu da am.
+      const utterance=new SpeechSynthesisUtterance((kana || text).trim());
+      utterance.lang='ja-JP';utterance.rate=.82;
+      const voices=window.speechSynthesis.getVoices();
+      utterance.voice=voices.find(v=>/^ja(-|_)/i.test(v.lang)) || null;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function saveLookupWord() {
+      const kanji=lookupWord.value.trim().normalize('NFKC');
+      let kana=lookupKana.value.trim().normalize('NFKC');
+      if(!kana && /^[\u3040-\u30ffー]+$/.test(kanji))kana=kanji;
+      const romaji=lookupRomaji.value.trim() || kanaToRomaji(kana);
+      const meaning=lookupMeaning.value.trim();
+      if(!kanji || !kana || !romaji || !meaning){
+        setLookupStatus('Bạn cần điền đầy đủ từ, cách đọc Kana, Romaji và nghĩa tiếng Việt trước khi lưu.','error');return;
+      }
+      const key=kanji+'\u0000'+kana;
+      const existing=REMEMBER_WORDS.find(item=>item.kanji.normalize('NFKC')+'\u0000'+item.kana.normalize('NFKC')===key);
+      if(existing){
+        setLookupStatus('Từ này đã có trong danh sách cần nhớ. Không tạo bản trùng.','ok');return;
+      }
+      REMEMBER_WORDS.push({kanji,kana,romaji,meaning,type:lookupType.value.trim() || 'Từ mới',source:'Tra từ',createdAt:new Date().toISOString()});
+      if(!persistRememberWords()){
+        REMEMBER_WORDS.pop();setLookupStatus('Không thể lưu vào trình duyệt. Hãy kiểm tra bộ nhớ / chế độ riêng tư.','error');return;
+      }
+      updateRememberBadge();
+      setLookupStatus(`Đã thêm “${kanji}” vào Từ cần nhớ (${REMEMBER_WORDS.length} từ).`,'ok');
+      if(contentType==='vocab' && mode==='saved'){clearQuizProgress();init();}
+    }
+
+    function drawRememberedList() {
+      updateRememberBadge();
+      lookupSavedList.replaceChildren();
+      if(!REMEMBER_WORDS.length){
+        const msg=document.createElement('p');msg.className='lookup-small';
+        msg.textContent='Chưa có từ nào. Chuyển sang “Tra từ”, tra rồi thêm vào danh sách.';
+        lookupSavedList.appendChild(msg);return;
+      }
+      [...REMEMBER_WORDS].reverse().forEach(item=>{
+        const row=document.createElement('div');row.className='lookup-saved-row';
+        const info=document.createElement('div');
+        const title=document.createElement('strong');title.textContent=item.kanji;
+        const detail=document.createElement('small');detail.textContent=[item.kana,item.romaji,item.meaning].filter(Boolean).join(' · ');
+        info.append(title,detail);
+        const actions=document.createElement('div');actions.className='lookup-saved-actions';
+        const listen=document.createElement('button');listen.type='button';listen.className='lookup-secondary';listen.textContent='🔊';
+        listen.title='Nghe';listen.addEventListener('click',()=>speakLookupItem(item.kanji,item.kana));
+        const edit=document.createElement('button');edit.type='button';edit.className='lookup-secondary';edit.textContent='Sửa';
+        edit.addEventListener('click',()=>{lookupQuery.value=item.kanji;lookupWord.value=item.kanji;lookupKana.value=item.kana;
+          lookupRomaji.value=item.romaji;lookupMeaning.value=item.meaning;lookupType.value=item.type || 'Từ mới';
+          showLookupTab('search');setLookupStatus('Để cập nhật từ này, hãy xoá bản cũ trong danh sách rồi lưu bản đã sửa.');});
+        const del=document.createElement('button');del.type='button';del.className='lookup-secondary';del.textContent='Xóa';
+        del.addEventListener('click',()=>{
+          if(!confirm(`Xóa “${item.kanji}” khỏi danh sách từ cần nhớ?`))return;
+          const i=REMEMBER_WORDS.indexOf(item);
+          if(i<0)return;
+          REMEMBER_WORDS.splice(i,1);persistRememberWords();drawRememberedList();
+          if(contentType==='vocab' && mode==='saved'){clearQuizProgress();init();}
+        });
+        actions.append(listen,edit,del);row.append(info,actions);lookupSavedList.appendChild(row);
+      });
+    }
+
+    document.getElementById('btnLookupWord').addEventListener('click',()=>openLookupDialog('search'));
+    document.getElementById('btnLookupClose').addEventListener('click',closeLookupDialog);
+    lookupOverlay.addEventListener('mousedown',event=>{if(event.target===lookupOverlay)closeLookupDialog();});
+    lookupTabSearch.addEventListener('click',()=>showLookupTab('search'));
+    lookupTabSaved.addEventListener('click',()=>showLookupTab('saved'));
+    document.getElementById('lookupForm').addEventListener('submit',event=>{event.preventDefault();doLookupSearch();});
+    document.getElementById('lookupSpeak').addEventListener('click',()=>speakLookupItem(lookupWord.value,lookupKana.value));
+    document.getElementById('lookupSave').addEventListener('click',saveLookupWord);
+    lookupKana.addEventListener('input',()=>{lookupRomaji.value=kanaToRomaji(lookupKana.value);});
+    document.getElementById('lookupPractice').addEventListener('click',()=>{location.href='?phan=tuvung&ds=tucan';});
+    if(modeSavedBtn){modeSavedBtn.addEventListener('click',()=>{
+      if(!REMEMBER_WORDS.length){openLookupDialog('saved');return;}
+      if(mode==='saved')return;
+      saveCurrentSession();mode='saved';setModeButtons();init();
+    });}
+    document.getElementById('lookupExport').addEventListener('click',()=>{
+      const blob=new Blob([JSON.stringify(REMEMBER_WORDS,null,2)],{type:'application/json;charset=utf-8'});
+      const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;
+      a.download='tu-can-nho.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    });
+    document.getElementById('lookupImportButton').addEventListener('click',()=>document.getElementById('lookupImportFile').click());
+    document.getElementById('lookupImportFile').addEventListener('change',async event=>{
+      const file=event.target.files?.[0];if(!file)return;
+      try {
+        if(file.size>1024*1024)throw new Error('Tệp quá lớn (tối đa 1 MB)');
+        const input=JSON.parse(await file.text());if(!Array.isArray(input))throw new Error('Tệp phải chứa một mảng JSON');
+        let added=0;
+        for(const item of input.slice(0,3000)) {
+          if(!item || typeof item!=='object')continue;
+          const w=normalizeLookupItem(item);
+          if(!w.kanji || !w.kana || !w.romaji || !w.meaning)continue;
+          if(REMEMBER_WORDS.some(old=>old.kanji===w.kanji && old.kana===w.kana))continue;
+          REMEMBER_WORDS.push({...w,createdAt:new Date().toISOString()});added++;
+        }
+        if(!persistRememberWords())throw new Error('Không lưu được dữ liệu');
+        drawRememberedList();setLookupStatus(`Đã nhập ${added} từ không trùng.`, 'ok');
+        if(contentType==='vocab' && mode==='saved'){clearQuizProgress();init();}
+      } catch(err){alert(`Không thể nhập danh sách: ${err.message}`);}
+      finally{event.target.value='';}
+    });
+    // Enter trong khung tra tu khong duoc kich hoat su kien nop dap an cua bai hoc.
+    lookupOverlay.addEventListener('keydown',event=>{
+      if(event.key==='Escape'){event.preventDefault();event.stopPropagation();closeLookupDialog();return;}
+      if(event.key==='Enter')event.stopPropagation();
+      if(event.key==='Tab'){
+        const focusables=[...lookupDialog.querySelectorAll('button:not([disabled]):not([hidden]),input:not([hidden]):not([disabled]),textarea:not([hidden]),a[href]')]
+          .filter(el=>el.getClientRects().length>0);
+        if(!focusables.length)return;
+        const first=focusables[0],last=focusables[focusables.length-1];
+        if(event.shiftKey && document.activeElement===first){event.preventDefault();last.focus();}
+        else if(!event.shiftKey && document.activeElement===last){event.preventDefault();first.focus();}
+      }
+    });
+    updateRememberBadge();
   </script>
 </body>
 

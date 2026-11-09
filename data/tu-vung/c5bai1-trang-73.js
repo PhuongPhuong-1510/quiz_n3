@@ -1,0 +1,48 @@
+
+/* Sao chép file này, đổi tên file, rồi sửa nội dung bên dưới. */
+window.VOCAB_SETS = window.VOCAB_SETS || [];
+window.VOCAB_SETS.push({
+  "name": "chương 5 bài 1 trang 73",
+  "words": [
+    { "kanji": "散らかす", "kana": "ちらかす", "romaji": "chirakasu", "meaning": "bày bừa, làm lộn xộn", "type": "(V1)" },
+    { "kanji": "散らかる", "kana": "ちらかる", "romaji": "chirakaru", "meaning": "bị bừa bộn, bị lộn xộn", "type": "(V1)" },
+    { "kanji": "散らす", "kana": "ちらす", "romaji": "chirasu", "meaning": "làm rơi vãi, làm phân tán", "type": "(V1)" },
+    { "kanji": "散る", "kana": "ちる", "romaji": "chiru", "meaning": "rơi rụng, tàn (hoa)", "type": "(V1)" },
+    { "kanji": "散歩", "kana": "さんぽ", "romaji": "sanpo", "meaning": "đi dạo", "type": "(N, V3)" },
+    { "kanji": "昔", "kana": "むかし", "romaji": "mukashi", "meaning": "ngày xưa", "type": "(N)" },
+    { "kanji": "借りる", "kana": "かりる", "romaji": "kariru", "meaning": "mượn, vay", "type": "(V2)" },
+    { "kanji": "借り", "kana": "かり", "romaji": "kari", "meaning": "khoản vay, nợ", "type": "(N)" },
+    { "kanji": "借金", "kana": "しゃっきん", "romaji": "shakkin", "meaning": "tiền nợ, khoản vay", "type": "(N, V3)" },
+    { "kanji": "共通", "kana": "きょうつう", "romaji": "kyoutsuu", "meaning": "chung", "type": "(N, Adj-na)" },
+    { "kanji": "共通点", "kana": "きょうつうてん", "romaji": "kyoutsuuten", "meaning": "điểm chung", "type": "(N)" },
+    { "kanji": "子供", "kana": "こども", "romaji": "kodomo", "meaning": "trẻ em, con cái", "type": "(N)" },
+    { "kanji": "選ぶ", "kana": "えらぶ", "romaji": "erabu", "meaning": "chọn, lựa chọn", "type": "(V1)" },
+    { "kanji": "選挙", "kana": "せんきょ", "romaji": "senkyo", "meaning": "bầu cử", "type": "(N)" },
+    { "kanji": "選手", "kana": "せんしゅ", "romaji": "senshu", "meaning": "tuyển thủ, vận động viên", "type": "(N)" },
+    { "kanji": "選択", "kana": "せんたく", "romaji": "sentaku", "meaning": "lựa chọn", "type": "(N, V3)" },
+    { "kanji": "延期", "kana": "えんき", "romaji": "enki", "meaning": "lùi (kỳ hạn, lịch trình), trì hoãn", "type": "(N, V3)" },
+    { "kanji": "期限", "kana": "きげん", "romaji": "kigen", "meaning": "thời hạn, kỳ hạn", "type": "(N)" },
+    { "kanji": "賞味期限", "kana": "しょうみきげん", "romaji": "shoumikigen", "meaning": "hạn sử dụng (thời hạn ngon nhất của thực phẩm)", "type": "(N)" },
+    { "kanji": "納期", "kana": "のうき", "romaji": "nouki", "meaning": "thời hạn giao hàng, thời hạn nộp", "type": "(N)" },
+    { "kanji": "予期", "kana": "よき", "romaji": "yoki", "meaning": "dự đoán, mong đợi", "type": "(N, V3)" },
+    { "kanji": "定期的に", "kana": "ていきてきに", "romaji": "teikiteki ni", "meaning": "một cách định kỳ, thường xuyên", "type": "(Adv)" },
+    { "kanji": "来学期", "kana": "らいがっき", "romaji": "raigakki", "meaning": "học kỳ tới", "type": "(N)" },
+    { "kanji": "期限切れ", "kana": "きげんぎれ", "romaji": "kigengire", "meaning": "hết hạn", "type": "(N)" },
+    { "kanji": "学期末", "kana": "がっきまつ", "romaji": "gakkimatsu", "meaning": "cuối học kỳ", "type": "(N)" },
+    { "kanji": "基礎", "kana": "きそ", "romaji": "kiso", "meaning": "cơ bản, nền tảng; móng (nhà)", "type": "(N)" },
+    { "kanji": "基本", "kana": "きほん", "romaji": "kihon", "meaning": "căn bản", "type": "(N)" },
+    { "kanji": "基礎的", "kana": "きそてき", "romaji": "kisoteki", "meaning": "mang tính nền tảng", "type": "(Adj-na)" },
+    { "kanji": "基本的", "kana": "きほんてき", "romaji": "kihonteki", "meaning": "mang tính cơ bản", "type": "(Adj-na)" },
+    { "kanji": "探す", "kana": "さがす", "romaji": "sagasu", "meaning": "tìm kiếm", "type": "(V1)" },
+    { "kanji": "深める", "kana": "ふかめる", "romaji": "fukameru", "meaning": "làm sâu thêm, tăng cường", "type": "(V2)" },
+    { "kanji": "深まる", "kana": "ふかまる", "romaji": "fukamaru", "meaning": "trở nên sâu sắc hơn", "type": "(V1)" },
+    { "kanji": "深い", "kana": "ふかい", "romaji": "fukai", "meaning": "sâu, sâu sắc", "type": "(Adj-i)" },
+    { "kanji": "深夜", "kana": "しんや", "romaji": "shin'ya", "meaning": "khuya, đêm muộn", "type": "(N)" },
+    { "kanji": "波", "kana": "なみ", "romaji": "nami", "meaning": "sóng, làn sóng", "type": "(N)" },
+    { "kanji": "彼", "kana": "かれ", "romaji": "kare", "meaning": "anh ấy, ông ấy; bạn trai", "type": "(N)" },
+    { "kanji": "彼氏", "kana": "かれし", "romaji": "kareshi", "meaning": "bạn trai", "type": "(N)" },
+    { "kanji": "彼女", "kana": "かのじょ", "romaji": "kanojo", "meaning": "cô ấy, bà ấy; bạn gái", "type": "(N)" },
+    { "kanji": "疲れ", "kana": "つかれ", "romaji": "tsukare", "meaning": "sự mệt mỏi", "type": "(N)" },
+    { "kanji": "疲れる", "kana": "つかれる", "romaji": "tsukareru", "meaning": "mệt mỏi", "type": "(V2)" }
+  ]
+});
