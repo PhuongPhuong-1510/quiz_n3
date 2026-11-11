@@ -2944,6 +2944,36 @@
     .grammar-meaning-toggle[aria-expanded="true"] { color:var(--seal-red); }
     .grammar-meaning-detail { display:block; margin-top:7px; }
     .grammar-meaning-detail[hidden] { display:none !important; }
+
+    /* Bước bắt buộc sửa từng từ sai sau khi viết lại câu bằng Romaji. */
+    .sentence-correction[hidden] { display:none !important; }
+    .sentence-correction { max-width:740px; margin:14px auto 0; padding:14px; border:1px solid #d9aaa4;
+      border-radius:7px; background:var(--seal-red-soft); }
+    .sentence-correction-title { margin:0 0 5px; color:var(--seal-red); font-size:14px; font-weight:800; }
+    .sentence-correction-help { margin:0 0 10px; color:var(--ink-soft); font-size:12px; line-height:1.5; }
+    .sentence-correction-list { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 9px; }
+    .sentence-correction-chip { padding:4px 8px; border:1px solid #d9aaa4; border-radius:999px; background:#fff;
+      color:var(--seal-red); font-size:12px; font-weight:800; }
+    .sentence-correction-chip.active { background:var(--seal-red); color:#fff; }
+    .sentence-correction-chip.done { border-color:var(--moss); color:var(--moss); text-decoration:line-through; }
+    .sentence-correction-word { margin:5px 0 11px; color:var(--seal-red); font-family:"Shippori Mincho",serif;
+      font-size:24px; font-weight:800; overflow-wrap:anywhere; }
+    .sentence-correction-hints { display:flex; flex-wrap:wrap; align-items:center; gap:7px; margin:-3px 0 10px; }
+    .sentence-correction-hints button, .correction-accept-meaning { width:auto; min-height:32px; padding:6px 10px;
+      border:1px solid var(--line); border-radius:5px; background:#fff; color:var(--aizome); font-size:12px; font-weight:800; }
+    .sentence-correction-hint-value { color:var(--seal-red); font-size:13px; font-weight:800; }
+    .sentence-correction-answer { margin:9px 0 0; padding:8px 10px; border-left:3px solid var(--seal-red);
+      background:#fff; color:var(--ink); font-size:13px; line-height:1.55; }
+    .correction-accept-meaning { margin-top:8px; color:var(--seal-red); border-color:#d9aaa4; }
+    .sentence-correction-hint-value[hidden], .sentence-correction-answer[hidden], .correction-accept-meaning[hidden] { display:none !important; }
+    .sentence-correction-fields { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+    .sentence-correction-fields label { display:grid; gap:5px; color:var(--ink-soft); font-size:12px; font-weight:700; }
+    .sentence-correction-fields input { width:100%; min-width:0; min-height:40px; padding:9px 10px; border:1px solid var(--line);
+      border-radius:4px; background:#fff; color:var(--ink); font:inherit; }
+    .sentence-correction-fields input.wrong { border-color:var(--seal-red); background:#fff7f6; }
+    .sentence-correction-fields input.correct { border-color:var(--moss); }
+    .wrong-romaji-token, .wrong-japanese-token { color:var(--seal-red); font-weight:900; text-decoration:underline 2px; text-underline-offset:3px; }
+    @media (max-width:520px) { .sentence-correction-fields { grid-template-columns:1fr; } }
   
     /* Tra tu va tu can nho - bo sung doc lap voi giao dien hoc cu */
     .lookup-trigger { background:#fff !important; color:var(--ink) !important; border:1px solid var(--line) !important;
@@ -3169,6 +3199,28 @@
           <input type="text" id="inputMeaning" autocomplete="off" placeholder="vd: lúc đầu" spellcheck="false" />
         </div>
 
+        <section class="sentence-correction" id="sentenceCorrection" hidden aria-live="polite">
+          <p class="sentence-correction-title" id="sentenceCorrectionTitle">Sửa lại từ bị sai</p>
+          <p class="sentence-correction-help">Các từ sai được liệt kê bên dưới. Hãy nhập lại Romaji và nghĩa của từng từ; phải sửa hết mới được sang câu tiếp theo.</p>
+          <div class="sentence-correction-list" id="sentenceCorrectionList"></div>
+          <div class="sentence-correction-word" id="sentenceCorrectionWord"></div>
+          <div class="sentence-correction-hints">
+            <button type="button" id="btnCorrectionHintKana">Gợi ý Hiragana</button>
+            <button type="button" id="btnCorrectionHintMeaning">Gợi ý nghĩa</button>
+            <span class="sentence-correction-hint-value" id="sentenceCorrectionHintValue" hidden></span>
+          </div>
+          <div class="sentence-correction-fields">
+            <label>Romaji của từ
+              <input type="text" id="inputCorrectionRomaji" autocomplete="off" autocapitalize="off" spellcheck="false" />
+            </label>
+            <label>Nghĩa tiếng Việt
+              <input type="text" id="inputCorrectionMeaning" autocomplete="off" spellcheck="false" />
+            </label>
+          </div>
+          <div class="sentence-correction-answer" id="sentenceCorrectionAnswer" hidden></div>
+          <button type="button" class="correction-accept-meaning" id="btnCorrectionAcceptMeaning" hidden>Nghĩa này vẫn đúng — ghi nhớ và cho qua</button>
+        </section>
+
         <div class="actions">
           <button id="btnCheck">Kiểm tra</button>
           <button id="btnNext" class="secondary" disabled>
@@ -3351,7 +3403,9 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       : contentType === "sentence" ? "Bộ câu dịch" : "Bộ ngữ pháp";
     document.querySelector(".batch-settings label").textContent = `Số ${itemNoun} mỗi lượt`;
     document.querySelector(".batch-settings span").textContent = `Giới hạn số ${itemNoun} trong một lượt học.`;
-    document.querySelector(".retry-setting-text strong").textContent = `Hỏi lại ${itemNoun} trả lời sai`;
+    document.querySelector(".retry-setting-text strong").textContent = contentType === "vocab"
+      ? "Hỏi lại từ trả lời sai"
+      : "Sửa và ôn lại câu trả lời sai";
     document.getElementById("btnNext").textContent = `${contentType === "vocab" ? "Từ" : "Câu"} tiếp theo →`;
     if (contentType !== "vocab") {
       document.getElementById("modeAll").textContent = "Luyện tất cả";
@@ -3390,7 +3444,9 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         .replace(/ū/g, "uu")
         .replace(/ē/g, "ee")
         .replace(/ō/g, "oo")
-        .replace(/[～〜~\-・\s]/g, "")
+        // Khi viết lại câu chỉ chấm các chữ Romaji: bỏ toàn bộ khoảng trắng,
+        // dấu chấm, phẩy, chấm phẩy và các dấu câu/ký hiệu khác.
+        .replace(/[\p{P}\p{S}\s]+/gu, "")
         .trim();
     }
 
@@ -3442,12 +3498,212 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         .filter(Boolean);
     }
 
+    function similarVietnameseMeaning(input, answers) {
+      const typed = stripAccents(input);
+      if (!typed) return false;
+      const toWords = value => new Set(stripAccents(value).split(/[^a-z0-9]+/).filter(Boolean));
+      const typedWords = toWords(typed);
+      return answers.filter(Boolean).some(answer => {
+        const normalized = stripAccents(answer);
+        if (normalized === typed || normalized.includes(typed) || typed.includes(normalized)) return true;
+        const answerWords = toWords(normalized);
+        if (typedWords.size < 3 || answerWords.size < 3) return false;
+        let common = 0;
+        typedWords.forEach(word => { if (answerWords.has(word)) common++; });
+        const union = new Set([...typedWords, ...answerWords]).size;
+        const coverage = common / Math.min(typedWords.size, answerWords.size);
+        const jaccard = common / union;
+        const lengthRatio = Math.min(typedWords.size, answerWords.size) / Math.max(typedWords.size, answerWords.size);
+        return common >= 3 && coverage >= 0.65 && jaccard >= 0.45 && lengthRatio >= 0.55;
+      });
+    }
+
+    function romajiTokens(romaji) {
+      const tokens = [];
+      let flatIndex = 0;
+      String(romaji || "").split(/([\p{P}\p{S}\s]+)/gu).forEach((text) => {
+        const normalized = normRomaji(text);
+        if (!normalized) return;
+        tokens.push({ text, normalized, start: flatIndex, end: flatIndex + normalized.length });
+        flatIndex += normalized.length;
+      });
+      return tokens;
+    }
+
+    /* Trả về các vị trí trong đáp án chuẩn bị sai bằng phép căn chỉnh ký tự.
+       Nhờ so sánh chuỗi đã bỏ dấu câu/khoảng trắng, người học có thể viết liền
+       hoặc đặt khoảng trắng tùy ý mà vẫn được chấm đúng. */
+    function mismatchedExpectedIndexes(expected, actual) {
+      const rows = expected.length + 1;
+      const cols = actual.length + 1;
+      const dp = Array.from({ length: rows }, () => new Uint16Array(cols));
+      for (let i = 0; i < rows; i++) dp[i][0] = i;
+      for (let j = 0; j < cols; j++) dp[0][j] = j;
+      for (let i = 1; i < rows; i++) {
+        for (let j = 1; j < cols; j++) {
+          dp[i][j] = expected[i - 1] === actual[j - 1]
+            ? dp[i - 1][j - 1]
+            : Math.min(dp[i - 1][j - 1], dp[i - 1][j], dp[i][j - 1]) + 1;
+        }
+      }
+      const wrong = new Set();
+      let i = expected.length;
+      let j = actual.length;
+      while (i > 0 || j > 0) {
+        if (i > 0 && j > 0 && expected[i - 1] === actual[j - 1] && dp[i][j] === dp[i - 1][j - 1]) {
+          i--; j--; continue;
+        }
+        if (i > 0 && j > 0 && dp[i][j] === dp[i - 1][j - 1] + 1) {
+          wrong.add(i - 1); i--; j--; continue;
+        }
+        if (i > 0 && dp[i][j] === dp[i - 1][j] + 1) {
+          wrong.add(i - 1); i--; continue;
+        }
+        if (j > 0) {
+          if (expected.length) wrong.add(Math.min(i, expected.length - 1));
+          j--; continue;
+        }
+      }
+      return wrong;
+    }
+
+    function sentenceVocabularyCandidates(item) {
+      const expected = normRomaji(item.romaji);
+      const japanese = `${item.kanji || ""}\u0000${item.hiragana || item.kana || ""}`;
+      const candidates = [];
+      VOCAB_SETS.flatMap(set => set.words || []).forEach((word) => {
+        const roma = normRomaji(word.romaji);
+        if (!roma || !word.meaning) return;
+        const isVerb = /^\(V/i.test(String(word.type || ""));
+        const sentenceKanji = String(item.kanji || "");
+        const sentenceKana = String(item.hiragana || item.kana || "");
+        const hasKanjiSpelling = /\p{Script=Han}/u.test(String(word.kanji || ""));
+        const kanjiForms = [word.kanji].filter(Boolean);
+        const kanaForms = [word.kana].filter(Boolean);
+        if (isVerb && word.kanji?.length > 1) kanjiForms.push(word.kanji.slice(0, -1));
+        if (isVerb && word.kana?.length > 1) kanaForms.push(word.kana.slice(0, -1));
+        let matchedJapanese = kanjiForms.find(value => sentenceKanji.includes(value));
+        let japanesePriority = matchedJapanese ? (matchedJapanese === word.kanji ? 4 : 3) : 0;
+        // Với từ có Kanji, không dùng Kana để đoán nếu câu đang có chữ Kanji:
+        // điều này tránh chọn nhầm các từ đồng âm như 貯まる và 溜まる.
+        if (!matchedJapanese && (!hasKanjiSpelling || !/\p{Script=Han}/u.test(sentenceKanji))) {
+          matchedJapanese = kanaForms.find(value => sentenceKana.includes(value));
+          japanesePriority = matchedJapanese ? (matchedJapanese === word.kana ? 2 : 1) : 0;
+        }
+        const romajiForms = [roma];
+        if (isVerb && roma.endsWith("ru") && roma.length > 4) romajiForms.push(roma.slice(0, -2));
+        if (isVerb && roma.endsWith("u") && roma.length > 4) romajiForms.push(roma.slice(0, -1));
+        const matchedRomaji = romajiForms.find(value => value.length >= 3 && expected.includes(value));
+        if (!matchedJapanese || !matchedRomaji) return;
+        const start = expected.indexOf(matchedRomaji);
+        candidates.push({
+          ...word,
+          normalized: roma,
+          highlightJapanese: matchedJapanese,
+          japanesePriority,
+          start,
+          end: start + matchedRomaji.length,
+        });
+      });
+      return candidates.sort((a, b) =>
+        b.japanesePriority - a.japanesePriority || b.normalized.length - a.normalized.length);
+    }
+
+    function correctionsForSentence(item, userValue) {
+      const expected = normRomaji(item.romaji);
+      const tokens = romajiTokens(item.romaji);
+      const actual = normRomaji(userValue);
+      const wrongTokens = [];
+      let cursor = 0;
+      let tokenIndex = 0;
+      while (tokenIndex < tokens.length) {
+        const token = tokens[tokenIndex];
+        if (actual.startsWith(token.normalized, cursor)) {
+          cursor += token.normalized.length;
+          tokenIndex++;
+          continue;
+        }
+        let anchorIndex = -1;
+        let anchorAt = -1;
+        for (let next = tokenIndex + 1; next < tokens.length; next++) {
+          const at = actual.indexOf(tokens[next].normalized, cursor);
+          if (at >= cursor) { anchorIndex = next; anchorAt = at; break; }
+        }
+        if (anchorIndex < 0) {
+          wrongTokens.push(...tokens.slice(tokenIndex));
+          break;
+        }
+        wrongTokens.push(...tokens.slice(tokenIndex, anchorIndex));
+        cursor = anchorAt;
+        tokenIndex = anchorIndex;
+      }
+      const vocab = sentenceVocabularyCandidates(item);
+      const chosen = [];
+      wrongTokens.forEach(token => {
+        let match = vocab.find(word => word.start < token.end && word.end > token.start);
+        if (!match && vocab.length) {
+          match = vocab.reduce((best, word) => {
+            const distance = Math.min(Math.abs(word.start - token.end), Math.abs(token.start - word.end));
+            return !best || distance < best.distance ? { ...word, distance } : best;
+          }, null);
+        }
+        const correction = match || {
+          kanji: token.text,
+          kana: "",
+          romaji: token.text,
+          meaning: item.meaning,
+          normalized: token.normalized,
+          start: token.start,
+          end: token.end,
+        };
+        const key = `${correction.kanji}\u0000${correction.romaji}`;
+        if (!chosen.some(entry => entry.key === key)) chosen.push({ ...correction, key });
+      });
+      return { corrections: chosen, wrongTokens };
+    }
+
+    function renderHighlightedRomaji(element, romaji, wrongTokens) {
+      element.replaceChildren();
+      const wrong = new Set(wrongTokens.map(token => token.start));
+      let flatIndex = 0;
+      String(romaji || "").split(/([\p{P}\p{S}\s]+)/gu).forEach(text => {
+        const normalized = normRomaji(text);
+        const node = document.createElement(wrong.has(flatIndex) && normalized ? "span" : "span");
+        if (wrong.has(flatIndex) && normalized) node.className = "wrong-romaji-token";
+        node.textContent = text;
+        element.append(node);
+        flatIndex += normalized.length;
+      });
+    }
+
+    function renderHighlightedJapanese(element, text, corrections) {
+      element.replaceChildren();
+      let remaining = String(text || "");
+      const terms = corrections.map(entry => entry.highlightJapanese || entry.kanji).filter(term => term && remaining.includes(term));
+      if (!terms.length) { element.textContent = remaining; return; }
+      while (remaining) {
+        let found = null;
+        terms.forEach(term => {
+          const at = remaining.indexOf(term);
+          if (at >= 0 && (!found || at < found.at || (at === found.at && term.length > found.term.length))) found = { term, at };
+        });
+        if (!found) { element.append(document.createTextNode(remaining)); break; }
+        if (found.at) element.append(document.createTextNode(remaining.slice(0, found.at)));
+        const mark = document.createElement("span");
+        mark.className = "wrong-japanese-token";
+        mark.textContent = found.term;
+        element.append(mark);
+        remaining = remaining.slice(found.at + found.term.length);
+      }
+    }
+
     /* ---------- persistent wrong words ---------- */
     // Mỗi phần có bộ nhớ riêng; trạng thái của câu không lẫn với từ vựng.
     const WRONG_STORE_KEY = contentType === "vocab" ? "vocabBai2WrongWords_v1" : `japaneseQuizWrong_${contentType}_v1`;
     const SKIPPED_STORE_KEY = contentType === "vocab" ? "vocabBai2SkippedWords_v1" : `japaneseQuizSkipped_${contentType}_v1`;
     const IMPORTANT_STORE_KEY = contentType === "vocab" ? "vocabImportantWords_v1" : `japaneseQuizImportant_${contentType}_v1`;
     const MEANING_ALIASES_STORE_KEY = contentType === "vocab" ? "vocabMeaningAliases_v1" : `japaneseQuizMeaningAliases_${contentType}_v1`;
+    const RECALL_ANSWER_ALIASES_STORE_KEY = "japaneseGrammarRecallAnswerAliases_v1";
 
     function kanjiKey(word) {
       return String(word.kanji || "").normalize("NFKC").trim();
@@ -3494,6 +3750,20 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     }
 
     let meaningAliases = loadMeaningAliases();
+
+    function loadRecallAnswerAliases() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(RECALL_ANSWER_ALIASES_STORE_KEY) || "{}");
+        return saved && typeof saved === "object" && !Array.isArray(saved) ? saved : {};
+      } catch (_) { return {}; }
+    }
+
+    function saveRecallAnswerAliases() {
+      try { localStorage.setItem(RECALL_ANSWER_ALIASES_STORE_KEY, JSON.stringify(recallAnswerAliases)); }
+      catch (_) { }
+    }
+
+    let recallAnswerAliases = loadRecallAnswerAliases();
 
     function loadSkippedSet() {
       try {
@@ -3580,7 +3850,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     let mode = contentType === "vocab" && new URLSearchParams(location.search).get("ds") === "tucan" ? "saved" : "all";
     let studyMode = "recognize";
     let grammarMode = "ja-vi";
-    let recallProgress = { step: 0, mistakes: false, mistakeCount: 0, attempts: 0, stageChecked: false, pendingMeaning: null };
+    let recallProgress = { step: 0, mistakes: false, mistakeCount: 0, attempts: 0, stageChecked: false, pendingMeaning: null, showingCorrectionAnswer: false };
     const savedBatchSize = localStorage.getItem(BATCH_SIZE_STORE_KEY);
     let batchSize = savedBatchSize === "all"
       ? 0
@@ -3627,6 +3897,8 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     let activeVocabHint = null;
     let sessionMistakeKeys = new Set();
     let sessionComplete = false;
+    let sentenceCorrectionState = null;
+    let sentenceRewriteState = null;
     const RETRY_WRONG_STORE_KEY = "vocabRetryWrongEnabled_v1";
     let retryWrongEnabled = localStorage.getItem(RETRY_WRONG_STORE_KEY) !== "false";
     const quizSessions = new Map();
@@ -3667,6 +3939,17 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     const ansRomaji = document.getElementById("ansRomaji");
     const ansMeaning = document.getElementById("ansMeaning");
     const btnAcceptMeaning = document.getElementById("btnAcceptMeaning");
+    const sentenceCorrection = document.getElementById("sentenceCorrection");
+    const sentenceCorrectionTitle = document.getElementById("sentenceCorrectionTitle");
+    const sentenceCorrectionList = document.getElementById("sentenceCorrectionList");
+    const sentenceCorrectionWord = document.getElementById("sentenceCorrectionWord");
+    const btnCorrectionHintKana = document.getElementById("btnCorrectionHintKana");
+    const btnCorrectionHintMeaning = document.getElementById("btnCorrectionHintMeaning");
+    const sentenceCorrectionHintValue = document.getElementById("sentenceCorrectionHintValue");
+    const sentenceCorrectionAnswer = document.getElementById("sentenceCorrectionAnswer");
+    const btnCorrectionAcceptMeaning = document.getElementById("btnCorrectionAcceptMeaning");
+    const inputCorrectionRomaji = document.getElementById("inputCorrectionRomaji");
+    const inputCorrectionMeaning = document.getElementById("inputCorrectionMeaning");
     const statCorrect = document.getElementById("statCorrect");
     const statWrong = document.getElementById("statWrong");
     const statAnswered = document.getElementById("statAnswered");
@@ -3875,14 +4158,25 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       btnRetryToggle.textContent = retryWrongEnabled ? "ON" : "OFF";
       btnRetryToggle.setAttribute("aria-checked", String(retryWrongEnabled));
       retryHint.textContent = retryWrongEnabled
-        ? `ON: ${itemNoun} sai được hỏi lại ngay đến khi đúng.`
-        : `OFF: ${itemNoun} sai được lưu để ôn lại sau.`;
+        ? contentType === "vocab"
+          ? "ON: từ sai được hỏi lại ngay đến khi đúng."
+          : "ON: sửa từ sai, viết lại cả câu và ôn lại sau vài câu."
+        : contentType === "vocab"
+          ? `OFF: ${itemNoun} sai được lưu để ôn lại sau.`
+          : "OFF: chế độ đọc — không cần nhập, bấm Xem đáp án để học.";
+    }
+
+    function isReadOnlyReviewMode() {
+      return !retryWrongEnabled && (contentType === "sentence" || contentType === "grammar");
     }
 
     btnRetryToggle.addEventListener("click", () => {
       retryWrongEnabled = !retryWrongEnabled;
       localStorage.setItem(RETRY_WRONG_STORE_KEY, String(retryWrongEnabled));
       updateRetryToggle();
+      if (typeof order !== "undefined" && order.length && quizArea.style.display !== "none") {
+        loadCard({ resumeRecall: true });
+      }
     });
     updateRetryToggle();
 
@@ -3927,13 +4221,14 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       lastAnswer = session.lastAnswer;
       sessionMistakeKeys = new Set(session.sessionMistakeKeys);
       sessionComplete = session.sessionComplete;
-      recallProgress = { step: 0, mistakes: false, mistakeCount: 0, attempts: 0, stageChecked: false, pendingMeaning: null, ...(session.recallProgress || {}) };
+      recallProgress = { step: 0, mistakes: false, mistakeCount: 0, attempts: 0, stageChecked: false, pendingMeaning: null, showingCorrectionAnswer: false, ...(session.recallProgress || {}) };
       // Tương thích với phiên đã lưu từ luồng xem tuần tự cũ (bắt đầu ở -1).
       recallProgress.step = Math.max(0, Number(recallProgress.step) || 0);
       recallProgress.stageChecked = Boolean(recallProgress.stageChecked);
       recallProgress.mistakeCount = Math.max(0, Number(recallProgress.mistakeCount) || (recallProgress.mistakes ? 1 : 0));
       recallProgress.mistakes = recallProgress.mistakeCount > 0;
       recallProgress.pendingMeaning = null;
+      recallProgress.showingCorrectionAnswer = false;
       if (sessionComplete) showDone();
       else loadCard({ resumeRecall: true });
     }
@@ -4543,9 +4838,14 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       return stages;
     }
 
-    function acceptableRecallAnswers(stage) {
+    function recallStageAliasKey(item, stage) {
+      return `${wordKey(item)}\u0000${stage.kind}\u0000${String(stage.answer || "")}`;
+    }
+
+    function acceptableRecallAnswers(stage, item) {
       const roma = Array.isArray(stage.romaji) ? stage.romaji : [stage.romaji];
-      return [stage.answer, ...(stage.alternatives || []), ...roma]
+      const learned = item ? recallAnswerAliases[recallStageAliasKey(item, stage)] || [] : [];
+      return [stage.answer, ...(stage.alternatives || []), ...roma, ...learned]
         .filter(Boolean).map(normalizeGrammarInput);
     }
 
@@ -4564,20 +4864,309 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       });
     }
 
+    function correctionMeaningMatches(word, input) {
+      const typed = stripAccents(input);
+      if (!typed) return false;
+      const options = [...meaningParts(word.meaning), ...learnedMeaningParts(word)];
+      return options.some(option =>
+        option === typed || option.includes(typed) || typed.includes(option));
+    }
+
+    function renderSentenceCorrection() {
+      const state = sentenceCorrectionState;
+      if (!state || !state.corrections.length) {
+        sentenceCorrection.hidden = true;
+        return;
+      }
+      const word = state.corrections[0];
+      const completed = state.total - state.corrections.length;
+      sentenceCorrection.hidden = false;
+      sentenceCorrectionTitle.textContent = `Phát hiện ${state.total} từ sai · đang sửa ${completed + 1}/${state.total}`;
+      sentenceCorrectionList.replaceChildren();
+      state.allCorrections.forEach((entry, index) => {
+        const chip = document.createElement("span");
+        chip.className = "sentence-correction-chip";
+        if (index < completed) chip.classList.add("done");
+        if (index === completed) chip.classList.add("active");
+        chip.textContent = entry.kanji || entry.kana || entry.romaji;
+        sentenceCorrectionList.append(chip);
+      });
+      // Chỉ hiện mặt chữ; Hiragana và nghĩa phải được người học chủ động xin gợi ý.
+      sentenceCorrectionWord.textContent = word.kanji || word.romaji;
+      sentenceCorrectionHintValue.hidden = true;
+      sentenceCorrectionHintValue.textContent = "";
+      sentenceCorrectionAnswer.hidden = true;
+      sentenceCorrectionAnswer.textContent = "";
+      btnCorrectionAcceptMeaning.hidden = true;
+      inputCorrectionRomaji.value = "";
+      inputCorrectionMeaning.value = "";
+      inputCorrectionRomaji.classList.remove("correct", "wrong");
+      inputCorrectionMeaning.classList.remove("correct", "wrong");
+      btnCheck.disabled = false;
+      btnCheck.textContent = "Kiểm tra từ";
+      btnNext.disabled = true;
+      if (!isPhoneDevice()) inputCorrectionRomaji.focus();
+    }
+
+    function startSentenceCorrection(item, userValue, onComplete) {
+      const details = correctionsForSentence(item, userValue);
+      if (!details.corrections.length) return false;
+      sentenceCorrectionState = {
+        corrections: details.corrections.slice(),
+        allCorrections: details.corrections.slice(),
+        total: details.corrections.length,
+        onComplete,
+      };
+      renderHighlightedRomaji(ansRomaji, item.romaji || "", details.wrongTokens);
+      renderHighlightedJapanese(ansWord, item.kanji || "", details.corrections);
+      renderHighlightedJapanese(kanjiDisplay, item.kanji || "", details.corrections);
+      renderSentenceCorrection();
+      return true;
+    }
+
+    function checkSentenceCorrection() {
+      const state = sentenceCorrectionState;
+      if (!state || !state.corrections.length) return;
+      const word = state.corrections[0];
+      const romajiOK = inputCorrectionRomaji.value.trim().length > 0 &&
+        romajiAnswerVariants(word.romaji).has(normRomaji(inputCorrectionRomaji.value));
+      const meaningOK = correctionMeaningMatches(word, inputCorrectionMeaning.value);
+      inputCorrectionRomaji.classList.toggle("correct", romajiOK);
+      inputCorrectionRomaji.classList.toggle("wrong", !romajiOK);
+      inputCorrectionMeaning.classList.toggle("correct", meaningOK);
+      inputCorrectionMeaning.classList.toggle("wrong", !meaningOK);
+      if (!romajiOK || !meaningOK) {
+        sentenceCorrectionAnswer.hidden = false;
+        sentenceCorrectionAnswer.textContent = `Đáp án đúng: ${word.kana || "—"} · ${word.romaji} · ${word.meaning}`;
+        btnCorrectionAcceptMeaning.hidden = !romajiOK || !inputCorrectionMeaning.value.trim() || meaningOK;
+        resultMsg.textContent = !romajiOK && !meaningOK
+          ? "Romaji và nghĩa của từ vẫn chưa đúng — hãy viết lại."
+          : !romajiOK ? "Romaji của từ chưa đúng — hãy viết lại."
+          : "Nghĩa của từ chưa đúng — hãy viết lại.";
+        if (!isPhoneDevice()) (romajiOK ? inputCorrectionMeaning : inputCorrectionRomaji).focus();
+        return;
+      }
+      finishCurrentSentenceCorrection("Đúng từ này. Tiếp tục sửa từ được tô đỏ kế tiếp.");
+    }
+
+    function finishCurrentSentenceCorrection(nextMessage) {
+      const state = sentenceCorrectionState;
+      if (!state || !state.corrections.length) return;
+      state.corrections.shift();
+      if (state.corrections.length) {
+        resultMsg.textContent = nextMessage;
+        renderSentenceCorrection();
+        return;
+      }
+      const onComplete = state.onComplete;
+      sentenceCorrectionState = null;
+      sentenceCorrection.hidden = true;
+      btnCheck.disabled = true;
+      btnCheck.textContent = "Kiểm tra";
+      btnNext.disabled = false;
+      resultMsg.textContent = "Đã viết đúng Romaji và nghĩa của tất cả từ sai.";
+      if (typeof onComplete === "function") onComplete();
+      if (!isPhoneDevice()) btnNext.focus();
+    }
+
+    function showCorrectionHint(kind) {
+      const word = sentenceCorrectionState?.corrections?.[0];
+      if (!word) return;
+      sentenceCorrectionHintValue.textContent = kind === "kana"
+        ? `Hiragana: ${word.kana || "không có"}`
+        : `Nghĩa: ${word.meaning}`;
+      sentenceCorrectionHintValue.hidden = false;
+    }
+
+    function acceptCorrectionMeaning() {
+      const word = sentenceCorrectionState?.corrections?.[0];
+      const rawMeaning = inputCorrectionMeaning.value.trim();
+      const romajiOK = word && inputCorrectionRomaji.value.trim().length > 0 &&
+        romajiAnswerVariants(word.romaji).has(normRomaji(inputCorrectionRomaji.value));
+      if (!word || !rawMeaning || !romajiOK) return;
+      const key = wordKey(word);
+      const aliases = Array.isArray(meaningAliases[key]) ? meaningAliases[key] : [];
+      if (!aliases.some(alias => stripAccents(alias) === stripAccents(rawMeaning))) {
+        aliases.push(rawMeaning);
+        meaningAliases[key] = aliases;
+        saveMeaningAliases();
+      }
+      finishCurrentSentenceCorrection("Đã ghi nhớ nghĩa này. Tiếp tục sửa từ kế tiếp.");
+    }
+
+    function checkCorrectionRomajiThenFocusMeaning() {
+      const word = sentenceCorrectionState?.corrections?.[0];
+      if (!word) return;
+      const romajiOK = inputCorrectionRomaji.value.trim().length > 0 &&
+        romajiAnswerVariants(word.romaji).has(normRomaji(inputCorrectionRomaji.value));
+      inputCorrectionRomaji.classList.toggle("correct", romajiOK);
+      inputCorrectionRomaji.classList.toggle("wrong", !romajiOK);
+      if (!romajiOK) {
+        resultMsg.textContent = "Romaji của từ chưa đúng — hãy viết lại rồi nhấn Enter.";
+        inputCorrectionRomaji.focus();
+        return;
+      }
+      resultMsg.textContent = "Romaji đúng. Hãy nhập nghĩa tiếng Việt rồi nhấn Enter.";
+      inputCorrectionMeaning.focus();
+    }
+
+    function finishSentenceRemediation(item, onComplete, message) {
+      sentenceCorrectionState = null;
+      sentenceRewriteState = null;
+      sentenceCorrection.hidden = true;
+      btnAcceptMeaning.hidden = true;
+      resultBox.classList.remove("bad");
+      resultBox.classList.add("show", "ok");
+      resultSeal.classList.remove("bad");
+      resultSeal.classList.add("ok");
+      resultSeal.textContent = "✓";
+      resultMsg.textContent = message || "Đã sửa đúng phần bị sai.";
+      ansWord.textContent = item.kanji || "";
+      ansKana.textContent = item.hiragana || item.kana || "";
+      ansRomaji.textContent = item.romaji || "";
+      ansMeaning.textContent = item.meaning || "";
+      btnCheck.disabled = true;
+      btnCheck.textContent = "Kiểm tra";
+      btnNext.disabled = false;
+      if (typeof onComplete === "function") onComplete();
+      if (!isPhoneDevice()) btnNext.focus();
+    }
+
+    function beginSentenceRewrite(item, onComplete, retryParts = {}) {
+      const retryReading = retryParts.reading !== false;
+      const retryMeaning = retryParts.meaning !== false;
+      const showAnswerFirst = Boolean(retryParts.showAnswerFirst);
+      const previousMeaning = inputMeaning.value.trim();
+      sentenceRewriteState = {
+        item,
+        onComplete,
+        retryReading,
+        retryMeaning,
+        pendingMeaning: showAnswerFirst && retryMeaning ? previousMeaning : "",
+        showingCorrectionAnswer: showAnswerFirst,
+      };
+      sentenceCorrectionState = null;
+      sentenceCorrection.hidden = true;
+      const isVietnamesePrompt = contentType === "grammar" && item.direction !== "ja-vi";
+      kanjiDisplay.textContent = isVietnamesePrompt ? item.meaning : item.kanji;
+      typeDisplay.textContent = retryReading && retryMeaning
+        ? "Viết lại các phần chưa đúng"
+        : retryReading ? "Nhập lại phần Romaji chưa đúng" : "Nhập lại nghĩa tiếng Việt";
+      readingField.style.display = retryReading ? "block" : "none";
+      meaningField.style.display = !isVietnamesePrompt && retryMeaning ? "block" : "none";
+      readingField.querySelector("label").textContent = "Viết lại câu bằng Romaji";
+      inputReading.placeholder = "Không tính khoảng trắng và dấu câu";
+      inputReading.value = retryReading ? "" : (item.romaji || "");
+      inputMeaning.value = retryMeaning
+        ? (showAnswerFirst ? previousMeaning : "")
+        : (item.meaning || "");
+      inputReading.classList.remove("correct", "wrong");
+      inputMeaning.classList.remove("correct", "wrong");
+      if (!showAnswerFirst) {
+        resultBox.classList.remove("show", "ok", "bad");
+        resultSeal.classList.remove("ok", "bad");
+      }
+      btnAcceptMeaning.hidden = !(showAnswerFirst && retryMeaning && previousMeaning);
+      btnAcceptMeaning.textContent = showAnswerFirst
+        ? "Nghĩa này vẫn đúng — ghi nhớ và cho qua"
+        : "Vẫn đúng nghĩa — ghi nhớ câu trả lời này";
+      btnCheck.disabled = false;
+      btnCheck.textContent = showAnswerFirst
+        ? "Ẩn đáp án và nhập lại nghĩa"
+        : retryReading && retryMeaning
+          ? "Kiểm tra các phần đã sửa"
+          : retryReading ? "Kiểm tra lại Romaji" : "Kiểm tra lại nghĩa";
+      btnNext.disabled = true;
+      if (!isPhoneDevice()) (retryReading ? inputReading : inputMeaning).focus();
+    }
+
+    function checkSentenceRewrite() {
+      const state = sentenceRewriteState;
+      if (!state) return;
+      const { item, onComplete } = state;
+      if (state.showingCorrectionAnswer) {
+        state.showingCorrectionAnswer = false;
+        state.pendingMeaning = "";
+        inputMeaning.value = "";
+        inputMeaning.classList.remove("correct", "wrong");
+        resultBox.classList.remove("show", "ok", "bad");
+        resultSeal.classList.remove("ok", "bad");
+        btnAcceptMeaning.hidden = true;
+        btnCheck.textContent = "Kiểm tra lại nghĩa";
+        btnNext.disabled = true;
+        if (!isPhoneDevice()) inputMeaning.focus();
+        return;
+      }
+      if (!ensureSentenceInputsComplete(item)) return;
+      const isVietnamesePrompt = contentType === "grammar" && item.direction !== "ja-vi";
+      const readingOK = !state.retryReading || (inputReading.value.trim().length > 0 &&
+        romajiAnswerVariants(item.romaji).has(normRomaji(inputReading.value)));
+      const meaningOK = !state.retryMeaning || isVietnamesePrompt ||
+        similarVietnameseMeaning(inputMeaning.value, [item.meaning, ...learnedMeaningParts(item)]);
+      inputReading.classList.toggle("correct", readingOK);
+      inputReading.classList.toggle("wrong", !readingOK);
+      if (!isVietnamesePrompt) {
+        inputMeaning.classList.toggle("correct", meaningOK);
+        inputMeaning.classList.toggle("wrong", !meaningOK);
+      }
+      state.pendingMeaning = readingOK && !meaningOK && !isVietnamesePrompt
+        ? inputMeaning.value.trim()
+        : "";
+      btnAcceptMeaning.hidden = !state.pendingMeaning;
+      btnAcceptMeaning.textContent = "Nghĩa này vẫn đúng — ghi nhớ và cho qua";
+      if (!readingOK || !meaningOK) {
+        resultBox.classList.add("show", "bad");
+        resultSeal.classList.add("bad");
+        resultSeal.textContent = "✕";
+        resultMsg.textContent = !readingOK && !meaningOK
+          ? "Romaji và nghĩa vẫn chưa đúng. Hãy sửa lại."
+          : !readingOK ? "Romaji vẫn chưa đúng. Hãy sửa từ sai trước."
+          : "Romaji đúng nhưng nghĩa chưa đúng. Hãy diễn đạt lại.";
+        ansWord.textContent = item.kanji || "";
+        ansKana.textContent = item.hiragana || item.kana || "";
+        ansRomaji.textContent = item.romaji || "";
+        ansMeaning.textContent = item.meaning || "";
+        state.showingCorrectionAnswer = readingOK && !meaningOK && !isVietnamesePrompt;
+        if (state.showingCorrectionAnswer) {
+          btnCheck.disabled = false;
+          btnCheck.textContent = "Ẩn đáp án và nhập lại nghĩa";
+          btnNext.disabled = true;
+        }
+        if (!readingOK) {
+          sentenceRewriteState = null;
+          if (startSentenceCorrection(item, inputReading.value, () => beginSentenceRewrite(item, onComplete, {
+            reading: false,
+            meaning: state.retryMeaning,
+          }))) return;
+          sentenceRewriteState = state;
+        }
+        if (!isPhoneDevice()) (readingOK ? inputMeaning : inputReading).focus();
+        return;
+      }
+      finishSentenceRemediation(
+        item,
+        onComplete,
+        state.retryReading && state.retryMeaning
+          ? "Đã sửa đúng các phần bị sai."
+          : state.retryReading ? "Đã sửa đúng Romaji." : "Đã sửa đúng nghĩa của câu.",
+      );
+    }
+
     function renderRecallStage(item) {
       const stages = getRecallStages(item);
       const step = stages[Math.min(recallProgress.step, stages.length - 1)];
       const isExample = step.kind === "example";
+      const readOnlyMode = isReadOnlyReviewMode();
       grammarRecallProgress.textContent = `Bước ${recallProgress.step + 1}/${stages.length} · ${step.label}`;
       kanjiDisplay.textContent = isExample ? (step.example.kanji || "") : (item.grammarRecall?.pattern || item.structure);
-      inputGrammarRecall.hidden = isExample;
+      inputGrammarRecall.hidden = isExample || readOnlyMode;
       inputGrammarRecall.placeholder = step.kind === "meaning" ? "Nhập nghĩa tiếng Việt..."
         : step.kind === "note" ? "Nhập cách dùng ngắn gọn..."
         : "Nhập cấu trúc / cách chia...";
       inputGrammarRecall.value = "";
       inputGrammarRecall.classList.remove("correct", "wrong");
-      readingField.style.display = isExample ? "block" : "none";
-      meaningField.style.display = isExample ? "block" : "none";
+      readingField.style.display = isExample && !readOnlyMode ? "block" : "none";
+      meaningField.style.display = isExample && !readOnlyMode ? "block" : "none";
       readingField.querySelector("label").textContent = "Cách đọc (Romaji)";
       inputReading.placeholder = "Nhập Romaji của câu Kanji...";
       inputReading.value = "";
@@ -4587,25 +5176,31 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       resultBox.classList.remove("show", "ok", "bad");
       resultSeal.classList.remove("ok", "bad");
       btnAcceptMeaning.hidden = true;
+      btnAcceptMeaning.textContent = "Vẫn đúng nghĩa — ghi nhớ câu trả lời này";
+      sentenceCorrectionState = null;
+      sentenceRewriteState = null;
+      sentenceCorrection.hidden = true;
       recallProgress.pendingMeaning = null;
       recallProgress.stageChecked = false;
+      recallProgress.showingCorrectionAnswer = false;
       btnCheck.disabled = false;
-      btnCheck.textContent = "Kiểm tra";
+      btnCheck.textContent = readOnlyMode ? "Xem đáp án" : "Kiểm tra";
       btnNext.disabled = true;
       btnNext.textContent = recallProgress.step === stages.length - 1 ? "Hoàn thành mẫu →" : "Bước tiếp theo →";
-      if (!isPhoneDevice()) (isExample ? inputReading : inputGrammarRecall).focus();
+      if (!readOnlyMode && !isPhoneDevice()) (isExample ? inputReading : inputGrammarRecall).focus();
     }
 
     function finishRecallCard(item) {
       const wasWrong = recallProgress.mistakes;
       const itemWrongKey = wrongWordKey(item);
-      if (wasWrong) {
+      const readOnlyMode = isReadOnlyReviewMode();
+      if (!readOnlyMode && wasWrong) {
         wrongCount++;
         if (!missed.some(entry => wordKey(entry) === wordKey(item))) missed.push(item);
         sessionMistakeKeys.add(itemWrongKey);
         if (!wrongSet.has(itemWrongKey)) { wrongSet.add(itemWrongKey); saveWrongSet(); updateWrongBadge(); }
-        if (retryWrongEnabled) order.splice(idx + 1, 0, item);
-      } else {
+        if (retryWrongEnabled) order.splice(Math.min(idx + 4, order.length), 0, item);
+      } else if (!readOnlyMode) {
         correctCount++;
         // Nếu mẫu đã từng sai trong lượt này thì vẫn giữ trong phần cần ôn,
         // kể cả khi lần hỏi lại sau đó đã trả lời đúng.
@@ -4624,10 +5219,17 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       const labels = resultBox.querySelectorAll(".answer-grid dt");
       const values = resultBox.querySelectorAll(".answer-grid dd");
       [...labels, ...values].forEach(node => { node.hidden = true; });
-      resultBox.classList.add("show",wasWrong ? "bad":"ok");
-      resultSeal.classList.add(wasWrong ? "bad":"ok");
-      resultSeal.textContent = wasWrong ? "✕":"✓";
-      resultMsg.textContent = wasWrong ? "Hoàn thành — có bước sai" : "Hoàn thành";
+      resultBox.classList.remove("ok", "bad");
+      resultSeal.classList.remove("ok", "bad");
+      resultBox.classList.add("show");
+      if (!readOnlyMode) {
+        resultBox.classList.add(wasWrong ? "bad" : "ok");
+        resultSeal.classList.add(wasWrong ? "bad" : "ok");
+      }
+      resultSeal.textContent = readOnlyMode ? "👁" : wasWrong ? "✕" : "✓";
+      resultMsg.textContent = readOnlyMode
+        ? "Đã xem hết mẫu ngữ pháp — không chấm đúng sai."
+        : wasWrong ? "Hoàn thành — có bước sai" : "Hoàn thành";
       btnAcceptMeaning.hidden = true;
       btnCheck.disabled = true;
       btnNext.disabled = false;
@@ -4641,6 +5243,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       const item = order[idx];
       recallProgress.step++;
       recallProgress.attempts = 0;
+      recallProgress.showingCorrectionAnswer = false;
       if (recallProgress.step < getRecallStages(item).length) renderRecallStage(item);
       else finishRecallCard(item);
     }
@@ -4655,9 +5258,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         const example = stage.example;
         const readingOK = inputReading.value.trim().length > 0 && romajiAnswerVariants(example.romaji).has(normRomaji(inputReading.value));
         const typedMeaning = stripAccents(inputMeaning.value);
-        const meaningOK = typedMeaning.length > 0 && meaningParts(example.meaning).some(opt =>
-          opt === typedMeaning || (opt.length >= 8 && typedMeaning.length >= 8 && (opt.includes(typedMeaning) || typedMeaning.includes(opt)))
-        );
+        const meaningOK = similarVietnameseMeaning(typedMeaning, [example.meaning]);
         isCorrect = readingOK && meaningOK;
         inputReading.classList.add(readingOK ? "correct" : "wrong");
         inputMeaning.classList.add(meaningOK ? "correct" : "wrong");
@@ -4669,12 +5270,40 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         ansKana.textContent = example.hiragana || "";
         ansRomaji.textContent = example.romaji || "";
         ansMeaning.textContent = example.meaning || "";
+        if (!isCorrect && retryWrongEnabled) {
+          const finishExampleRepair = () => { btnNext.disabled = false; };
+          const continueAfterWordRepair = () => {
+            if (!meaningOK) {
+              beginSentenceRewrite(example, finishExampleRepair, { reading: false, meaning: true });
+            } else {
+              finishSentenceRemediation(
+                example,
+                finishExampleRepair,
+                "Đã sửa đúng các từ Romaji sai. Nghĩa câu đã đúng nên không cần nhập lại.",
+              );
+            }
+          };
+          if (!readingOK) {
+            if (!startSentenceCorrection(example, inputReading.value, continueAfterWordRepair)) {
+              beginSentenceRewrite(example, finishExampleRepair, { reading: true, meaning: !meaningOK });
+            }
+          } else {
+            beginSentenceRewrite(example, finishExampleRepair, {
+              reading: false,
+              meaning: true,
+              showAnswerFirst: true,
+            });
+          }
+        }
       } else {
         const raw = inputGrammarRecall.value.trim();
-        isCorrect = stage.kind === "meaning" || stage.kind === "note"
+        isCorrect = stage.kind === "meaning"
           ? recallMeaningMatches(stage, raw)
-          : acceptableRecallAnswers(stage).includes(normalizeGrammarInput(raw));
-        inputGrammarRecall.classList.add(isCorrect ? "correct" : "wrong");
+          : stage.kind === "note"
+            ? recallMeaningMatches(stage, raw) || acceptableRecallAnswers(stage, item).includes(normalizeGrammarInput(raw))
+            : acceptableRecallAnswers(stage, item).includes(normalizeGrammarInput(raw));
+        inputGrammarRecall.classList.toggle("correct", isCorrect);
+        inputGrammarRecall.classList.toggle("wrong", !isCorrect);
         const labels = resultBox.querySelectorAll(".answer-grid dt");
         const values = resultBox.querySelectorAll(".answer-grid dd");
         [...labels, ...values].forEach((node, index) => { node.hidden = index % 4 !== 3; });
@@ -4687,23 +5316,89 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         ansMeaning.textContent = stage.answer || "";
       }
       if (!isCorrect) {
-        recallProgress.mistakeCount = Math.max(0, Number(recallProgress.mistakeCount) || 0) + 1;
+        // Một bước sai chỉ tính một lỗi dù người học phải thử lại nhiều lần.
+        if ((Number(recallProgress.attempts) || 0) === 0) {
+          recallProgress.mistakeCount = Math.max(0, Number(recallProgress.mistakeCount) || 0) + 1;
+        }
+        recallProgress.attempts = (Number(recallProgress.attempts) || 0) + 1;
         recallProgress.mistakes = true;
       }
-      const rawMeaning = stage.kind === "meaning" ? inputGrammarRecall.value.trim() : "";
-      recallProgress.pendingMeaning = !isCorrect && rawMeaning
-        ? { rawMeaning, itemKey: wordKey(item), step: recallProgress.step }
+      const rawRecallAnswer = stage.kind === "example" ? "" : inputGrammarRecall.value.trim();
+      const canConfirmAlternative = ["meaning", "structure", "note"].includes(stage.kind);
+      recallProgress.pendingMeaning = !isCorrect && rawRecallAnswer && canConfirmAlternative
+        ? {
+            rawMeaning: rawRecallAnswer,
+            itemKey: wordKey(item),
+            step: recallProgress.step,
+            stageKind: stage.kind,
+            stageAnswer: stage.answer,
+          }
         : null;
-      btnAcceptMeaning.hidden = !recallProgress.pendingMeaning;
-      recallProgress.stageChecked = true;
+      const hasSentenceMeaningConfirmation = stage.kind === "example" &&
+        Boolean(sentenceRewriteState?.pendingMeaning);
+      btnAcceptMeaning.hidden = !recallProgress.pendingMeaning && !hasSentenceMeaningConfirmation;
+      btnAcceptMeaning.textContent = hasSentenceMeaningConfirmation
+        ? "Nghĩa này vẫn đúng — ghi nhớ và cho qua"
+        : stage.kind === "structure"
+          ? "Cách viết này vẫn đúng — ghi nhớ và cho qua"
+          : stage.kind === "note"
+            ? "Cách dùng này vẫn đúng — ghi nhớ và cho qua"
+            : "Vẫn đúng nghĩa — ghi nhớ câu trả lời này";
+      const mustRetryStage = !isCorrect && retryWrongEnabled && stage.kind !== "example";
+      recallProgress.stageChecked = !mustRetryStage;
+      recallProgress.showingCorrectionAnswer = mustRetryStage;
+      resultBox.classList.remove("ok", "bad");
+      resultSeal.classList.remove("ok", "bad");
       resultBox.classList.add("show", isCorrect ? "ok" : "bad");
       resultSeal.classList.add(isCorrect ? "ok" : "bad");
       resultSeal.textContent = isCorrect ? "✓" : "✕";
       resultMsg.textContent = isCorrect ? "Đúng" : "Sai";
-      btnCheck.disabled = true;
-      btnNext.disabled = false;
+      if (mustRetryStage) {
+        resultMsg.textContent = stage.kind === "meaning"
+          ? "Sai nghĩa — hãy nhập lại đúng hoặc chọn “Vẫn đúng nghĩa”."
+          : stage.kind === "structure"
+            ? "Sai cấu trúc/cách chia — hãy sửa lại hoặc chọn “Cách viết này vẫn đúng”."
+            : "Sai cách dùng — hãy sửa lại hoặc chọn “Cách dùng này vẫn đúng”.";
+        btnCheck.disabled = false;
+        btnCheck.textContent = "Ẩn đáp án và sửa lại";
+        btnNext.disabled = true;
+        updateStats();
+        if (!isPhoneDevice()) inputGrammarRecall.focus();
+        return;
+      }
+      const activeRepair = Boolean(sentenceCorrectionState || sentenceRewriteState);
+      btnCheck.disabled = !activeRepair;
+      btnCheck.textContent = sentenceCorrectionState
+        ? "Kiểm tra từ"
+        : sentenceRewriteState?.showingCorrectionAnswer
+          ? "Ẩn đáp án và nhập lại nghĩa"
+          : sentenceRewriteState?.retryReading && sentenceRewriteState?.retryMeaning
+            ? "Kiểm tra các phần đã sửa"
+            : sentenceRewriteState?.retryReading
+              ? "Kiểm tra lại Romaji"
+              : sentenceRewriteState ? "Kiểm tra lại nghĩa" : "Kiểm tra";
+      btnNext.disabled = activeRepair;
+      if (sentenceRewriteState && !sentenceRewriteState.showingCorrectionAnswer) {
+        resultBox.classList.remove("show", "ok", "bad");
+        resultSeal.classList.remove("ok", "bad");
+      }
       updateStats();
-      if (!isPhoneDevice()) btnNext.focus();
+      if (!isPhoneDevice() && !activeRepair) btnNext.focus();
+    }
+
+    function prepareRecallStageRetry() {
+      if (!recallProgress.showingCorrectionAnswer) return;
+      recallProgress.showingCorrectionAnswer = false;
+      recallProgress.pendingMeaning = null;
+      btnAcceptMeaning.hidden = true;
+      inputGrammarRecall.value = "";
+      inputGrammarRecall.classList.remove("correct", "wrong");
+      resultBox.classList.remove("show", "ok", "bad");
+      resultSeal.classList.remove("ok", "bad");
+      btnCheck.disabled = false;
+      btnCheck.textContent = "Kiểm tra lại";
+      btnNext.disabled = true;
+      if (!isPhoneDevice()) inputGrammarRecall.focus();
     }
 
     function nextRecallStageOrCard() {
@@ -4740,7 +5435,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         return;
       }
       const item = order[idx];
-      if (!resumeRecall) recallProgress = { step: 0, mistakes: false, mistakeCount: 0, attempts: 0, stageChecked: false, pendingMeaning: null };
+      if (!resumeRecall) recallProgress = { step: 0, mistakes: false, mistakeCount: 0, attempts: 0, stageChecked: false, pendingMeaning: null, showingCorrectionAnswer: false };
       const isRecall = contentType === "grammar" && item.direction === "recall";
       const isImportant = importantSet.has(wordKey(item));
       btnImportantStar.classList.toggle("active", isImportant);
@@ -4761,6 +5456,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         ? "Bấm để đưa từ này trở lại các lượt học"
         : "Từ này dễ — bỏ qua trong các lượt học";
       const isVietnameseToRomaji = contentType === "grammar" && item.direction !== "ja-vi";
+      const isSentenceWriting = contentType === "sentence" || contentType === "grammar";
       kanjiDisplay.textContent = isRecall ? (item.grammarRecall?.pattern || item.structure) : isVietnameseToRomaji
         ? item.meaning
         : studyMode === "meaningToRomaji"
@@ -4808,10 +5504,15 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         isRecall || (studyMode === "kanaToMeaning" && contentType === "vocab") ? "none" : "block";
       meaningField.style.display =
         isRecall || isVietnameseToRomaji || (studyMode === "meaningToRomaji" && contentType === "vocab") ? "none" : "block";
-      readingField.querySelector("label").textContent = isVietnameseToRomaji
-        ? "Viết câu bằng Romaji"
+      const readOnlyMode = isReadOnlyReviewMode();
+      if (readOnlyMode && !isRecall) {
+        readingField.style.display = "none";
+        meaningField.style.display = "none";
+      }
+      readingField.querySelector("label").textContent = isSentenceWriting
+        ? "Viết lại câu bằng Romaji"
         : "Cách đọc (Romaji)";
-      inputReading.placeholder = isVietnameseToRomaji ? "Nhập câu Romaji..." : "vd: hajime";
+      inputReading.placeholder = isSentenceWriting ? "Nhập câu Romaji (không tính khoảng trắng và dấu câu)..." : "vd: hajime";
       inputReading.value = "";
       inputMeaning.value = "";
       inputReading.classList.remove("correct", "wrong");
@@ -4820,8 +5521,12 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       resultSeal.classList.remove("ok", "bad");
       resultBox.querySelectorAll(".answer-grid dt, .answer-grid dd").forEach(node => { node.hidden = false; });
       btnAcceptMeaning.hidden = true;
+      sentenceCorrectionState = null;
+      sentenceRewriteState = null;
+      sentenceCorrection.hidden = true;
       btnStar.disabled = false;
       btnCheck.disabled = false;
+      btnCheck.textContent = readOnlyMode ? "Xem đáp án" : "Kiểm tra";
       btnNext.disabled = true;
       updateListenButton();
       updateStats();
@@ -4832,7 +5537,10 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       const firstAnswerInput = studyMode === "kanaToMeaning" && contentType === "vocab"
         ? inputMeaning
         : inputReading;
-      if (isPhoneDevice()) {
+      if (readOnlyMode) {
+        inputReading.blur();
+        inputMeaning.blur();
+      } else if (isPhoneDevice()) {
         // Trên điện thoại chỉ mở bàn phím khi người học chủ động chạm vào ô nhập.
         firstAnswerInput.blur();
       } else {
@@ -4845,6 +5553,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       const item = order[idx];
       let queuedRetryIndex = -1;
       const isVietnameseToRomaji = contentType === "grammar" && item.direction !== "ja-vi";
+      const isSentenceWriting = contentType === "sentence" || contentType === "grammar";
 
       /* --- check romaji --- */
       const userReading = normRomaji(inputReading.value);
@@ -4868,6 +5577,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
               opt.includes(userMeaning) ||
               userMeaning.includes(opt),
           ) ||
+            (isSentenceWriting && similarVietnameseMeaning(inputMeaning.value, [item.meaning, ...learnedMeaningParts(item)])) ||
             stripAccents(item.meaning) === userMeaning));
 
       if ((studyMode !== "kanaToMeaning" || contentType !== "vocab") && activeVocabHint !== "kana")
@@ -4882,6 +5592,12 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
 
       if (bothOK) {
         resultMsg.textContent = activeVocabHint ? "Chính xác! (đã dùng gợi ý)" : "Chính xác!";
+      } else if (isSentenceWriting) {
+        resultMsg.textContent = readingOK
+          ? "Câu Romaji đúng, nhưng nghĩa tiếng Việt chưa đúng"
+          : meaningOK
+            ? "Nghĩa đúng, nhưng câu Romaji chưa đúng"
+            : "Câu Romaji và nghĩa tiếng Việt đều chưa đúng";
       } else if (isVietnameseToRomaji) {
         resultMsg.textContent = "Câu Romaji chưa đúng";
       } else if (studyMode === "meaningToRomaji") {
@@ -4905,7 +5621,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       ansRomaji.textContent = item.romaji;
       ansMeaning.textContent = item.meaning;
       btnAcceptMeaning.hidden =
-        isVietnameseToRomaji || studyMode === "meaningToRomaji" || activeVocabHint === "meaning" || meaningOK || !userMeaning;
+        isVietnameseToRomaji || studyMode === "meaningToRomaji" || activeVocabHint === "meaning" || meaningOK || !userMeaning || (isSentenceWriting && !readingOK);
 
       if (bothOK) {
         correctCount++;
@@ -4934,11 +5650,15 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
           missed.push(item);
         }
         if (retryWrongEnabled) {
-          // Đưa lại từ sai ngay sau câu hiện tại. Nếu lần sau vẫn sai,
-          // từ này tiếp tục được hỏi lại ngay cho đến khi trả lời đúng.
-          queuedRetryIndex = idx + 1;
+          // Câu dịch/ngữ pháp được hỏi lại cách quãng sau ba câu để buộc nhớ lại,
+          // thay vì lặp ngay khi đáp án vẫn còn trong trí nhớ ngắn hạn.
+          queuedRetryIndex = isSentenceWriting
+            ? Math.min(idx + 4, order.length)
+            : idx + 1;
           order.splice(queuedRetryIndex, 0, item);
-          resultMsg.textContent += " — Từ này sẽ được hỏi lại ngay.";
+          resultMsg.textContent += isSentenceWriting
+            ? " — Sửa từ sai, viết lại câu, rồi câu này sẽ được ôn lại sau vài câu."
+            : " — Từ này sẽ được hỏi lại ngay.";
         } else {
           resultMsg.textContent += " — Đã lưu vào Từ hay sai.";
         }
@@ -4965,15 +5685,144 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       btnCheck.disabled = true;
       btnNext.disabled = false;
       idx++;
+      if (!bothOK && isSentenceWriting && retryWrongEnabled) {
+        const finishCardRepair = () => { btnNext.disabled = false; };
+        const continueAfterWordRepair = () => {
+          if (!meaningOK) {
+            beginSentenceRewrite(item, finishCardRepair, { reading: false, meaning: true });
+          } else {
+            finishSentenceRemediation(
+              item,
+              finishCardRepair,
+              "Đã sửa đúng các từ Romaji sai. Nghĩa câu đã đúng nên không cần nhập lại.",
+            );
+          }
+        };
+        if (!readingOK) {
+          if (!startSentenceCorrection(item, inputReading.value, continueAfterWordRepair)) {
+            beginSentenceRewrite(item, finishCardRepair, { reading: true, meaning: !meaningOK });
+          }
+        } else {
+          beginSentenceRewrite(item, finishCardRepair, {
+            reading: false,
+            meaning: true,
+            showAnswerFirst: true,
+          });
+        }
+      }
       updateListenButton();
       updateStats();
-      btnNext.focus();
+      if (!sentenceCorrectionState) btnNext.focus();
+    }
+
+    function sentenceInputRequirements(item) {
+      if (!item) return { isSentenceEntry: false, needsMeaning: false };
+      if (contentType === "sentence") return { isSentenceEntry: true, needsMeaning: true };
+      if (contentType !== "grammar") return { isSentenceEntry: false, needsMeaning: false };
+      if (item.direction === "recall") {
+        const stage = getRecallStages(item)[recallProgress.step];
+        return { isSentenceEntry: stage?.kind === "example", needsMeaning: stage?.kind === "example" };
+      }
+      return { isSentenceEntry: true, needsMeaning: item.direction === "ja-vi" };
+    }
+
+    function ensureSentenceInputsComplete(item) {
+      const requirements = sentenceInputRequirements(item);
+      if (!requirements.isSentenceEntry) return true;
+      if (!inputReading.value.trim()) {
+        inputReading.setCustomValidity("Hãy nhập câu Romaji trước khi kiểm tra.");
+        inputReading.reportValidity();
+        inputReading.focus();
+        return false;
+      }
+      if (requirements.needsMeaning && !inputMeaning.value.trim()) {
+        inputMeaning.setCustomValidity("Hãy nhập nghĩa tiếng Việt rồi mới kiểm tra.");
+        inputMeaning.reportValidity();
+        inputMeaning.focus();
+        return false;
+      }
+      return true;
+    }
+
+    function revealAnswerForReading(item) {
+      const isRecall = contentType === "grammar" && item.direction === "recall";
+      const labels = resultBox.querySelectorAll(".answer-grid dt");
+      const values = resultBox.querySelectorAll(".answer-grid dd");
+      resultBox.classList.remove("ok", "bad");
+      resultSeal.classList.remove("ok", "bad");
+      resultBox.classList.add("show");
+      resultSeal.textContent = "👁";
+      resultMsg.textContent = "Đáp án tham khảo — chế độ đọc không chấm đúng sai.";
+      btnAcceptMeaning.hidden = true;
+      btnCheck.disabled = true;
+      btnNext.disabled = false;
+
+      if (isRecall) {
+        const stage = getRecallStages(item)[recallProgress.step];
+        if (!stage) return;
+        if (stage.kind === "example") {
+          const example = stage.example;
+          [...labels, ...values].forEach(node => { node.hidden = false; });
+          ["Kanji", "Hiragana", "Romaji", "Nghĩa"].forEach((label, index) => {
+            labels[index].textContent = label;
+          });
+          ansWord.textContent = example.kanji || "";
+          ansKana.textContent = example.hiragana || example.kana || "";
+          ansRomaji.textContent = example.romaji || "";
+          ansMeaning.textContent = example.meaning || "";
+        } else {
+          [...labels, ...values].forEach((node, index) => { node.hidden = index % 4 !== 3; });
+          labels[3].textContent = stage.kind === "meaning"
+            ? "Nghĩa"
+            : stage.kind === "structure" ? "Cấu trúc / cách chia" : "Cách dùng";
+          ansWord.textContent = "";
+          ansKana.textContent = "";
+          ansRomaji.textContent = "";
+          ansMeaning.textContent = stage.answer || "";
+        }
+        recallProgress.stageChecked = true;
+        btnNext.textContent = recallProgress.step === getRecallStages(item).length - 1
+          ? "Hoàn thành mẫu →"
+          : "Bước tiếp theo →";
+        if (!isPhoneDevice()) btnNext.focus();
+        return;
+      }
+
+      [...labels, ...values].forEach(node => { node.hidden = false; });
+      ansWord.textContent = item.kanji || "";
+      ansKana.textContent = item.hiragana || item.kana || "";
+      ansRomaji.textContent = item.romaji || "";
+      ansMeaning.textContent = item.meaning || "";
+      checked = true;
+      answeredWordKeys.add(wordKey(item));
+      idx++;
+      btnNext.textContent = "Câu tiếp theo →";
+      updateListenButton();
+      updateStats();
+      if (!isPhoneDevice()) btnNext.focus();
     }
 
     async function submitAnswer() {
+      if (sentenceCorrectionState) {
+        checkSentenceCorrection();
+        return;
+      }
+      if (sentenceRewriteState) {
+        checkSentenceRewrite();
+        return;
+      }
+      if (contentType === "grammar" && grammarMode === "recall" && recallProgress.showingCorrectionAnswer) {
+        prepareRecallStageRetry();
+        return;
+      }
       if (checked || answerSubmissionPending) return;
       const submittedItem = order[idx];
       if (!submittedItem) return;
+      if (isReadOnlyReviewMode()) {
+        revealAnswerForReading(submittedItem);
+        return;
+      }
+      if (!ensureSentenceInputsComplete(submittedItem)) return;
       if (contentType === "grammar" && submittedItem.direction === "recall") {
         if (!autoSpeechEnabled) {
           checkRecallAnswer();
@@ -5043,28 +5892,101 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     }
 
     function acceptCurrentMeaning() {
+      const rewriteState = sentenceRewriteState;
+      if (rewriteState?.pendingMeaning) {
+        const { item, onComplete, pendingMeaning } = rewriteState;
+        const key = wordKey(item);
+        const aliases = Array.isArray(meaningAliases[key]) ? meaningAliases[key] : [];
+        const normalizedMeaning = stripAccents(pendingMeaning);
+        if (!aliases.some((alias) => stripAccents(alias) === normalizedMeaning)) {
+          aliases.push(pendingMeaning);
+          meaningAliases[key] = aliases;
+          saveMeaningAliases();
+        }
+
+        if (lastAnswer?.item === item && !lastAnswer.meaningOK && lastAnswer.readingOK) {
+          lastAnswer.meaningOK = true;
+          lastAnswer.acceptedByUser = true;
+          wrongCount = Math.max(0, wrongCount - 1);
+          correctCount++;
+          missed = missed.filter((missedItem) => wordKey(missedItem) !== key);
+          const retryIndex = lastAnswer.queuedRetryIndex;
+          if (
+            Number.isInteger(retryIndex) &&
+            retryIndex >= idx &&
+            retryIndex < order.length &&
+            order[retryIndex] === item
+          ) {
+            order.splice(retryIndex, 1);
+          }
+          lastAnswer.queuedRetryIndex = -1;
+        }
+
+        const itemWrongKey = wrongWordKey(item);
+        sessionMistakeKeys.delete(itemWrongKey);
+        if (wrongSet.delete(itemWrongKey)) {
+          saveWrongSet();
+          updateWrongBadge();
+        }
+
+        sentenceRewriteState = null;
+        inputMeaning.classList.remove("wrong");
+        inputMeaning.classList.add("correct");
+        btnAcceptMeaning.hidden = true;
+        resultBox.classList.remove("bad");
+        resultBox.classList.add("show", "ok");
+        resultSeal.classList.remove("bad");
+        resultSeal.classList.add("ok");
+        resultSeal.textContent = "✓";
+        resultMsg.textContent = "Đã ghi nhớ cách diễn đạt này và tính nghĩa của câu là đúng.";
+        ansWord.textContent = item.kanji || "";
+        ansKana.textContent = item.hiragana || item.kana || "";
+        ansRomaji.textContent = item.romaji || "";
+        ansMeaning.textContent = item.meaning || "";
+        btnCheck.disabled = true;
+        btnCheck.textContent = "Kiểm tra";
+        btnNext.disabled = false;
+        if (typeof onComplete === "function") onComplete();
+        updateStats();
+        if (!isPhoneDevice()) btnNext.focus();
+        return;
+      }
+
       const recallItem = order[idx];
       const pendingMeaning = recallProgress.pendingMeaning;
       if (
         contentType === "grammar" &&
         recallItem?.direction === "recall" &&
-        recallProgress.stageChecked &&
         pendingMeaning &&
         pendingMeaning.itemKey === wordKey(recallItem) &&
         pendingMeaning.step === recallProgress.step
       ) {
         const key = wordKey(recallItem);
-        const aliases = Array.isArray(meaningAliases[key]) ? meaningAliases[key] : [];
         const normalizedMeaning = stripAccents(pendingMeaning.rawMeaning);
-        if (!aliases.some((alias) => stripAccents(alias) === normalizedMeaning)) {
-          aliases.push(pendingMeaning.rawMeaning);
-          meaningAliases[key] = aliases;
-          saveMeaningAliases();
+        if (["structure", "note"].includes(pendingMeaning.stageKind)) {
+          const currentStage = getRecallStages(recallItem)[recallProgress.step];
+          const aliasKey = recallStageAliasKey(recallItem, currentStage);
+          const aliases = Array.isArray(recallAnswerAliases[aliasKey]) ? recallAnswerAliases[aliasKey] : [];
+          const normalizedAnswer = normalizeGrammarInput(pendingMeaning.rawMeaning);
+          if (!aliases.some(alias => normalizeGrammarInput(alias) === normalizedAnswer)) {
+            aliases.push(pendingMeaning.rawMeaning);
+            recallAnswerAliases[aliasKey] = aliases;
+            saveRecallAnswerAliases();
+          }
+        } else {
+          const aliases = Array.isArray(meaningAliases[key]) ? meaningAliases[key] : [];
+          if (!aliases.some((alias) => stripAccents(alias) === normalizedMeaning)) {
+            aliases.push(pendingMeaning.rawMeaning);
+            meaningAliases[key] = aliases;
+            saveMeaningAliases();
+          }
         }
 
         recallProgress.mistakeCount = Math.max(0, (Number(recallProgress.mistakeCount) || 0) - 1);
         recallProgress.mistakes = recallProgress.mistakeCount > 0;
         recallProgress.pendingMeaning = null;
+        recallProgress.stageChecked = true;
+        recallProgress.showingCorrectionAnswer = false;
         inputGrammarRecall.classList.remove("wrong");
         inputGrammarRecall.classList.add("correct");
         btnAcceptMeaning.hidden = true;
@@ -5073,7 +5995,14 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         resultSeal.classList.remove("bad");
         resultSeal.classList.add("ok");
         resultSeal.textContent = "✓";
-        resultMsg.textContent = "Đã ghi nhớ nghĩa này";
+        resultMsg.textContent = pendingMeaning.stageKind === "structure"
+          ? "Đã ghi nhớ cách viết Romaji này"
+          : pendingMeaning.stageKind === "note"
+            ? "Đã ghi nhớ cách dùng này"
+            : "Đã ghi nhớ nghĩa này";
+        btnCheck.disabled = true;
+        btnCheck.textContent = "Kiểm tra";
+        btnNext.disabled = false;
         if (!isPhoneDevice()) btnNext.focus();
         return;
       }
@@ -5146,6 +6075,14 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     }
 
     function nextCard() {
+      if (sentenceCorrectionState) {
+        checkSentenceCorrection();
+        return;
+      }
+      if (sentenceRewriteState) {
+        checkSentenceRewrite();
+        return;
+      }
       const item = order[idx];
       if (contentType === "grammar" && grammarMode === "recall" && item?.direction === "recall" && !checked) {
         nextRecallStageOrCard();
@@ -5208,6 +6145,9 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     btnCheck.addEventListener("click", submitAnswer);
     btnHintKana.addEventListener("click", () => showVocabHint("kana"));
     btnHintMeaning.addEventListener("click", () => showVocabHint("meaning"));
+    btnCorrectionHintKana.addEventListener("click", () => showCorrectionHint("kana"));
+    btnCorrectionHintMeaning.addEventListener("click", () => showCorrectionHint("meaning"));
+    btnCorrectionAcceptMeaning.addEventListener("click", acceptCorrectionMeaning);
     btnAcceptMeaning.addEventListener("click", acceptCurrentMeaning);
     btnNext.addEventListener("click", nextCard);
 
@@ -5215,9 +6155,41 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     document.addEventListener("keydown", (e) => {
       if (e.key !== "Enter") return;
       if (quizArea.style.display === "none") return;
+      if (sentenceCorrectionState) {
+        e.preventDefault();
+        if (document.activeElement === inputCorrectionRomaji && !inputCorrectionMeaning.value.trim()) {
+          checkCorrectionRomajiThenFocusMeaning();
+        } else {
+          checkSentenceCorrection();
+        }
+        return;
+      }
+      if (sentenceRewriteState) {
+        e.preventDefault();
+        if (document.activeElement === inputReading && meaningField.style.display !== "none") {
+          inputMeaning.focus();
+        } else {
+          checkSentenceRewrite();
+        }
+        return;
+      }
       if (contentType === "grammar" && grammarMode === "recall") {
         e.preventDefault();
-        if (!checked && recallProgress.stageChecked) nextRecallStageOrCard();
+        const recallItem = order[idx];
+        const recallStage = recallItem?.direction === "recall"
+          ? getRecallStages(recallItem)[recallProgress.step]
+          : null;
+        if (
+          !checked &&
+          !recallProgress.stageChecked &&
+          !recallProgress.showingCorrectionAnswer &&
+          recallStage?.kind === "example" &&
+          document.activeElement === inputReading &&
+          meaningField.style.display !== "none"
+        ) {
+          inputMeaning.focus();
+        } else if (!checked && recallProgress.showingCorrectionAnswer) prepareRecallStageRetry();
+        else if (!checked && recallProgress.stageChecked) nextRecallStageOrCard();
         else if (!checked) submitAnswer();
         else nextCard();
         return;
@@ -5237,6 +6209,9 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       if (!checked) submitAnswer();
       else nextCard();
     });
+
+    inputReading.addEventListener("input", () => inputReading.setCustomValidity(""));
+    inputMeaning.addEventListener("input", () => inputMeaning.setCustomValidity(""));
 
     setModeButtons();
     renderDayOptions();
