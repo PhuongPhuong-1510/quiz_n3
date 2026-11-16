@@ -106,6 +106,24 @@ const VOCAB_DATA_FILES = [
   "c5bai3-trang-125.js",
   "c5bai3-trang-126.js",
   "c5bai3-trang-127.js",
+"c6bai1-trang-141.js",
+
+"c6bai1-trang-142.js",
+"c6bai1-trang-143.js",
+"c6bai1-trang-144.js",
+"c6bai1-trang-145.js",
+"c6bai1-trang-146.js",
+"c6bai1-trang-147.js",
+"c6bai1-trang-148.js",
+"c6bai1-trang-149.js",
+"c6bai1-trang-150.js",
+"c6bai1-trang-151.js",
+"c6bai1-trang-152.js",
+"c6bai1-trang-153.js",
+"c6bai1-trang-154.js",
+"c6bai1-trang-155.js",
+"c6bai1-trang-156.js",
+
   "btvn-bai12.js",
 ];
 
