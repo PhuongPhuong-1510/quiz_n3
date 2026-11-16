@@ -1,7 +1,7 @@
 /* Toàn bộ phần chữ Hán trang 137-141 gộp vào một bộ cuối */
 window.VOCAB_SETS = window.VOCAB_SETS || [];
 window.VOCAB_SETS.push({
-  "name": "chương 6 bài 1 kanji trang 137-141",
+  "name": "chương 6 bài 1 trang 141",
   "words": [
     {
       "kanji": "余る",
