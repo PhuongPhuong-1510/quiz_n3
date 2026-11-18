@@ -101,6 +101,30 @@ const SENTENCE_DATA_FILES = [
 "c6bai1-trang-155.js",
 "c6bai1-trang-156.js",
 
+"c6bai2-trang-164.js",
+"c6bai2-trang-165.js",
+"c6bai2-trang-166.js",
+"c6bai2-trang-167.js",
+"c6bai2-trang-168.js",
+"c6bai2-trang-169.js",
+"c6bai2-trang-170.js",
+"c6bai2-trang-171.js",
+"c6bai2-trang-172.js",
+"c6bai2-trang-173.js",
+"c6bai2-trang-174.js",
+"c6bai2-trang-175.js",
+"c6bai2-trang-176.js",
+
+"c6bai3-trang-184.js",
+"c6bai3-trang-185.js",
+"c6bai3-trang-186.js",
+"c6bai3-trang-187.js",
+"c6bai3-trang-188.js",
+"c6bai3-trang-189.js",
+"c6bai3-trang-190.js",
+"c6bai3-trang-191.js",
+"c6bai3-trang-192.js",
+
 ];
 
 SENTENCE_DATA_FILES.forEach((fileName) => {

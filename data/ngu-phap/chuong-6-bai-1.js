@@ -1,4 +1,9 @@
-/* Ngữ pháp Chương 6 - Bài 1, sáu cấu trúc; examples: ja-vi bài gốc, vi-romaji đáp án trang 157 */
+/*
+NGỮ PHÁP CHƯƠNG 6 - BÀI 1
+Nguồn: PDF Chương 6, trang in 151-157.
+Bao gồm đủ 6 mẫu ngữ pháp; 19 câu ví dụ tiếng Nhật (17 câu đánh số và 2 câu 例 trong phần giải thích); 18 câu dịch tiếng Việt trong phần luyện tập và đủ 18 câu đáp án tiếng Nhật ở trang 157.
+Với direction ja-vi: kanji là câu Nhật, meaning là bản dịch Việt. Với direction vi-romaji: meaning là đề bài tiếng Việt, kanji/hiragana/romaji là đáp án Nhật đối chiếu từ trang đáp án.
+*/
 window.GRAMMAR_SETS = window.GRAMMAR_SETS || [];
 window.GRAMMAR_SETS.push({
   "name": "chương 6 bài 1",
@@ -40,6 +45,20 @@ window.GRAMMAR_SETS.push({
       "examples": [
         {
           "direction": "ja-vi",
+          "kanji": "彼はただの学生でしかない。",
+          "hiragana": "かれはただのがくせいでしかない。",
+          "romaji": "kare wa tada no gakusei de shika nai.",
+          "meaning": "Anh ấy chẳng qua chỉ là một sinh viên bình thường."
+        },
+        {
+          "direction": "ja-vi",
+          "kanji": "それは言い訳でしかない。",
+          "hiragana": "それはいいわけでしかない。",
+          "romaji": "sore wa iiwake de shika nai.",
+          "meaning": "Đó chẳng qua chỉ là một lời biện minh mà thôi."
+        },
+        {
+          "direction": "ja-vi",
           "kanji": "あいつは全然勉強ができないから、今回試験に合格したのは偶然でしかないと思う。",
           "hiragana": "あいつはぜんぜんべんきょうができないから、こんかいしけんにごうかくしたのはぐうぜんでしかないとおもう。",
           "romaji": "aitsu wa zenzen benkyou ga dekinai kara, konkai shiken ni goukaku shitano ha guuzen de shikanai to omou.",
@@ -71,7 +90,7 @@ window.GRAMMAR_SETS.push({
           "kanji": "彼女とは先週別れたから、今はもう他人でしかない。",
           "hiragana": "かのじょとはせんしゅうわかれたから、いまはもうたにんでしかない。",
           "romaji": "kanojo to ha senshuu wakare ta kara, ima wa mou tanin de shikanai.",
-          "meaning": "Tôi đã chia tay cô ấy tuần trước nên giờ cô ấy chỉ còn là người dưng."
+          "meaning": "Tôi đã chia tay cô ấy từ tuần trước nên giờ cô ấy chỉ còn là người dưng mà thôi."
         },
         {
           "direction": "vi-romaji",
@@ -129,21 +148,21 @@ window.GRAMMAR_SETS.push({
           "kanji": "フォーはベトナム人はもちろん、外国人にも愛されている。",
           "hiragana": "ふぉーはべとなむひとはもちろん、がいこくじんにもあいされている。",
           "romaji": "foo wa betonamu hito wa mochiron, gaikokujin ni mo ai sareteiru.",
-          "meaning": "Phở không chỉ được người Việt Nam mà còn được cả người nước ngoài yêu thích."
+          "meaning": "Phở thì người Việt Nam là đương nhiên rồi, nhưng nó cũng được yêu thích bởi người nước ngoài."
         },
         {
           "direction": "vi-romaji",
           "kanji": "日本語の先生だから、日本語はもちろん、教え方も上手じゃなくてはいけません。",
           "hiragana": "にほんごのせんせいだから、にほんごはもちろん、おしえかたもじょうずじゃなくてはいけません。",
           "romaji": "nihongo no sensei da kara, nihongo wa mochiron, oshiekata mo jouzu janakute wa ikemasen.",
-          "meaning": "Vì là giáo viên tiếng Nhật nên không chỉ tiếng Nhật, mà cách dạy cũng phải giỏi."
+          "meaning": "Vì là giáo viên tiếng Nhật nên tiếng Nhật là đương nhiên rồi, nhưng mà cách dạy cũng phải giỏi nữa."
         },
         {
           "direction": "vi-romaji",
           "kanji": "私の旦那は仕事はもちろん、子供の面倒も積極的に手伝ってくれる。",
           "hiragana": "わたしのだんなはしごとはもちろん、こどものめんどうもせっきょくてきにてつだってくれる。",
           "romaji": "watashi no danna wa shigoto wa mochiron, kodomo no mendou mo sekkyokuteki ni tetsudattekureru.",
-          "meaning": "Chồng tôi không chỉ đi làm mà còn tích cực giúp tôi chăm sóc con cái."
+          "meaning": "Chồng của tôi thì công việc là đương nhiên rồi, việc chăm sóc con anh cũng rất tích cực giúp đỡ tôi."
         }
       ]
     },
@@ -211,14 +230,14 @@ window.GRAMMAR_SETS.push({
           "kanji": "好きな人と一緒にいるくらい幸せなことはない。",
           "hiragana": "すきなひとといっしょにいるくらいしあわせなことはない。",
           "romaji": "suki na hito to issho ni iru kurai shiawase nako to hanai.",
-          "meaning": "Chẳng có điều gì hạnh phúc bằng việc ở bên người mình yêu."
+          "meaning": "Chẳng có điều gì hạnh phúc bằng việc ở bên người mình yêu thương."
         },
         {
           "direction": "vi-romaji",
           "kanji": "全力で頑張らなかったことほど後悔することはない。",
           "hiragana": "ぜんりょくでがんばらなかったことほどこうかいすることはない。",
           "romaji": "zenryoku de ganbaranakattako to hodo koukai suruko to hanai.",
-          "meaning": "Chẳng điều gì khiến mình hối hận bằng việc đã không cố gắng hết sức."
+          "meaning": "Chẳng điều gì hối hận bằng việc mình đã không cố gắng hết sức mình."
         }
       ]
     },
@@ -272,21 +291,21 @@ window.GRAMMAR_SETS.push({
           "kanji": "あの子もきれいですが、私ほどではない。",
           "hiragana": "あのこもきれいですが、わたしほどではない。",
           "romaji": "anoko mo kirei de suga, watashi hododehanai.",
-          "meaning": "Con bé ấy cũng xinh nhưng không bằng tôi."
+          "meaning": "Con bé đấy cũng xinh đấy, thế nhưng không bằng tôi."
         },
         {
           "direction": "vi-romaji",
           "kanji": "お父さんも厳しいですが、お母さんほど厳しくないです。",
           "hiragana": "おとうさんもきびしいですが、おかあさんほどきびしくないです。",
           "romaji": "otousan mo kibishii de suga, okaasan hodo kibishikunai de su.",
-          "meaning": "Bố tôi cũng nghiêm khắc nhưng không bằng mẹ tôi."
+          "meaning": "Bố tôi thì cũng nghiêm khắc đấy, nhưng không nghiêm khắc bằng mẹ tôi đâu."
         },
         {
           "direction": "vi-romaji",
           "kanji": "日本も好きですが、ベトナムほどではないです。",
           "hiragana": "にほんもすきですが、べとなむほどではないです。",
           "romaji": "nihon mo suki de suga, betonamu hododehanai de su.",
-          "meaning": "Tôi cũng thích Nhật Bản nhưng không bằng Việt Nam."
+          "meaning": "Nhật thì cũng thích đấy, thế nhưng không thích bằng Việt Nam."
         }
       ]
     },
@@ -354,14 +373,14 @@ window.GRAMMAR_SETS.push({
           "kanji": "このフォーには、牛肉の代わりに鶏肉を入れました。",
           "hiragana": "このふぉーには、ぎゅうにくのかわりにとりにくをいれました。",
           "romaji": "kono foo ni wa, gyuuniku no kawari ni to ri ni kuoiremashita.",
-          "meaning": "Thay vì thịt bò, tôi đã cho thịt gà vào món phở này."
+          "meaning": "Thay vì thịt bò thì tôi đã cho thịt gà vào món phở này."
         },
         {
           "direction": "vi-romaji",
           "kanji": "新しい家具を買う代わりに、古い家具を修理します。",
           "hiragana": "あたらしいかぐをかうかわりに、ふるいかぐをしゅうりします。",
           "romaji": "atarashii kagu o kau kawari ni, furu i kagu o shuuri shimasu.",
-          "meaning": "Thay vì mua nội thất mới, tôi sửa lại nội thất cũ."
+          "meaning": "Thay vì mua nội thất mới thì tôi đã sửa lại các nội thất cũ."
         }
       ]
     },
@@ -412,14 +431,14 @@ window.GRAMMAR_SETS.push({
           "kanji": "部長の代わりに、私が会議に出ます。",
           "hiragana": "ぶちょうのかわりに、わたしがかいぎにでます。",
           "romaji": "buchou no kawari ni, watashi ga kaigi ni demasu.",
-          "meaning": "Tôi sẽ thay trưởng phòng đi họp."
+          "meaning": "Tôi sẽ thay trưởng ban đi họp."
         },
         {
           "direction": "vi-romaji",
           "kanji": "母の代わりに、私が夕食を作りました。",
           "hiragana": "ははのかわりに、わたしがゆうしょくをつくりました。",
           "romaji": "hahano kawari ni, watashi ga yuushoku o tsukurimashita.",
-          "meaning": "Tôi đã nấu cơm tối thay mẹ."
+          "meaning": "Tôi đã thay mẹ nấu cơm tối."
         },
         {
           "direction": "vi-romaji",

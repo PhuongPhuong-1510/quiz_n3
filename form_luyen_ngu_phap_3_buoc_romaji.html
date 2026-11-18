@@ -5799,6 +5799,9 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       btnNext.textContent = "Câu tiếp theo →";
       updateListenButton();
       updateStats();
+      // Read-only mode bypasses submitAnswer's normal auto-speech flow, so
+      // honor the same setting when the user reveals the answer.
+      if (autoSpeechEnabled) void speakJapanese(item, { beforeCheck: true });
       if (!isPhoneDevice()) btnNext.focus();
     }
 
