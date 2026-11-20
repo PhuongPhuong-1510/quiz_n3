@@ -3040,7 +3040,142 @@
     .lookup-loc-text { color:var(--ink); margin-top:2px; overflow-wrap:anywhere; }
     @media(max-width:520px){ .lookup-dialog {padding:17px; max-height:95dvh;} .lookup-edit-grid {grid-template-columns:1fr;}
       .lookup-saved-row {align-items:flex-start; flex-direction:column;} .lookup-saved-actions {align-self:flex-end;} }
-  
+
+      .quiz-choices {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 16px 0 8px;
+    }
+    .quiz-choices[hidden] { display: none !important; }
+    .quiz-choice {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      text-align: left;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.45;
+      cursor: pointer;
+    }
+    .quiz-choice:hover:not(:disabled) {
+      border-color: var(--aizome);
+      background: var(--aizome-soft);
+    }
+    .quiz-choice .opt-key {
+      flex: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--paper-deep);
+      color: var(--ink-soft);
+      font-size: 11px;
+      font-weight: 700;
+      display: inline-grid;
+      place-items: center;
+    }
+    .quiz-choice.correct {
+      border-color: var(--moss);
+      background: var(--moss-soft);
+      color: var(--moss);
+      font-weight: 700;
+    }
+    .quiz-choice.wrong {
+      border-color: var(--seal-red);
+      background: var(--seal-red-soft);
+      color: var(--seal-red);
+    }
+    .quiz-choice:disabled { cursor: default; opacity: 1; }
+    @media (max-width: 600px) {
+      .quiz-choices { grid-template-columns: 1fr; }
+    }
+    body.content-quiz .kanji-display.quiz-sentence-prompt {
+      max-width: 820px;
+      margin-inline: auto;
+      font-size: clamp(19px, 2.8vw, 27px);
+      line-height: 1.65;
+      text-align: left;
+      overflow-wrap: anywhere;
+    }
+    .star-builder[hidden] { display: none !important; }
+    .star-builder { margin: 12px 0 8px; }
+    .star-sentence {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffdf8;
+      font-family: "Shippori Mincho", serif;
+      font-size: clamp(17px, 2.6vw, 22px);
+      line-height: 1.8;
+    }
+    .star-slot {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 68px;
+      min-height: 36px;
+      padding: 4px 10px;
+      border: 1.5px dashed var(--aizome);
+      border-radius: 6px;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Work Sans", sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .star-slot.is-star {
+      border-color: var(--seal-red);
+      background: var(--seal-red-soft);
+      color: var(--seal-red);
+    }
+    .star-slot.filled { border-style: solid; background: #fff; color: var(--ink); }
+    .star-slot.correct { border-color: var(--moss); background: var(--moss-soft); color: var(--moss); }
+    .star-slot.wrong { border-color: var(--seal-red); background: var(--seal-red-soft); color: var(--seal-red); }
+    .star-pool {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .star-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      text-align: left;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .star-chip:hover:not(:disabled) { border-color: var(--aizome); background: var(--aizome-soft); }
+    .star-chip:disabled { opacity: 0.35; cursor: default; }
+    .star-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; }
+    .star-mini-btn {
+      flex: none !important;
+      padding: 6px 11px !important;
+      border: 1px solid var(--line) !important;
+      border-radius: 6px !important;
+      background: #fff !important;
+      color: var(--ink-soft) !important;
+      font-size: 12px !important;
+    }
+    .star-hint-text { font-size: 13px; color: var(--ink-soft); }
+    @media (max-width: 600px) { .star-pool { grid-template-columns: 1fr; } }
   </style>
 </head>
 
@@ -3050,6 +3185,7 @@
       <a class="content-tab" data-content="vocab" href="?phan=tuvung">Từ vựng</a>
       <a class="content-tab" data-content="sentence" href="?phan=cau">Dịch câu</a>
       <a class="content-tab" data-content="grammar" href="?phan=nguphap">Ngữ pháp</a>
+      <a class="content-tab" data-content="quiz" href="?phan=tracnghiem">Trắc nghiệm JLPT</a>
       <a class="content-tab" href="./hoc-lieu.html?phan=tailieu">Xem tài liệu</a>
       <a class="content-tab" href="./hoc-lieu.html?phan=doctruyen">Đọc hiểu</a>
       <a class="content-tab" href="./hoc-lieu.html?phan=nghe">Nghe</a>
@@ -3078,6 +3214,7 @@
       <button type="button" class="mode-btn" data-study-mode="kanaToMeaning">
         Kana → Nghĩa Việt
       </button>
+      
     </div>
     </div>
 
@@ -3093,8 +3230,38 @@
         <button type="button" class="mode-btn" data-grammar-mode="recall">
           Nhật → Nghĩa → Cách chia → Áp dụng
         </button>
+        
       </div>
     </div>
+
+    <div id="jlptQuizModes" hidden>
+      <div class="section-label">Chọn dạng bài trắc nghiệm JLPT</div>
+      <div class="mode-select">
+        <button type="button" class="mode-btn active" data-quiz-mode="kanji-kana">
+          Kanji → Hiragana
+        </button>
+        <button type="button" class="mode-btn" data-quiz-mode="kana-kanji">
+          Hiragana → Kanji
+        </button>
+        <button type="button" class="mode-btn" data-quiz-mode="vocab-cloze">
+          Đục lỗ Từ vựng
+        </button>
+        <button type="button" class="mode-btn" data-quiz-mode="adv-cloze">
+          Đục lỗ Phó từ (Adv)
+        </button>
+        <button type="button" class="mode-btn" data-quiz-mode="gram-pattern-vi">
+          Ngữ pháp: Mẫu → Nghĩa
+        </button>
+        <button type="button" class="mode-btn" data-quiz-mode="gram-vi-pattern">
+          Ngữ pháp: Nghĩa → Mẫu
+        </button>
+        <button type="button" class="mode-btn" data-quiz-mode="gram-star">
+          Sắp xếp câu ★
+        </button>
+      </div>
+    </div>
+
+    
 
     <section class="study-settings" aria-label="Thiết lập lượt học">
     <div class="section-label" id="contentSetLabel">Thiết lập lượt học</div>
@@ -3200,7 +3367,16 @@
           <input type="text" id="inputGrammarRecall" autocomplete="off" autocapitalize="off"
             spellcheck="false" placeholder="Nhập đáp án..." />
         </section>
-
+        <div class="quiz-choices" id="quizChoices" hidden></div>
+        <div class="star-builder" id="starBuilder" hidden>
+          <div class="star-sentence" id="starSentence"></div>
+          <div class="star-pool" id="starPool"></div>
+          <div class="star-tools">
+            <button type="button" class="star-mini-btn" id="btnStarReset">Xếp lại</button>
+            <button type="button" class="star-mini-btn" id="btnStarHint">Gợi ý nghĩa</button>
+            <span class="star-hint-text" id="starHintText" hidden></span>
+          </div>
+        </div>
         <div class="field" id="readingField">
           <label for="inputReading">Cách đọc (romaji)</label>
           <input type="text" id="inputReading" autocomplete="off" placeholder="vd: hajime" spellcheck="false" />
@@ -3354,6 +3530,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         kana: sentence.hiragana,
         type: "Câu ví dụ",
         contentKind: "sentence",
+        setName: set.name,
         contentId: `${set.name}-${index}`,
       })),
     }));
@@ -3390,6 +3567,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
           kana: example.hiragana,
           type: example.direction === "ja-vi" ? "Nhật → Romaji + nghĩa Việt" : "Việt → Romaji",
           contentKind: "grammar",
+          setName: set.name,
           structure: pattern,
           grammarMeaning: grammar.meaning,
           grammarNote: grammarUsage,
@@ -3399,8 +3577,42 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       }),
     }));
     const contentParam = new URLSearchParams(location.search).get("phan");
-    const contentType = contentParam === "cau" ? "sentence" : contentParam === "nguphap" ? "grammar" : "vocab";
-    const CONTENT_SETS = contentType === "sentence" ? SENTENCE_SETS : contentType === "grammar" ? GRAMMAR_SETS : [...VOCAB_SETS, REMEMBER_SET];
+    const contentType =
+      contentParam === "cau" ? "sentence"
+      : contentParam === "nguphap" ? "grammar"
+      : contentParam === "tracnghiem" ? "quiz"
+      : "vocab";
+
+    let quizMode = "kanji-kana";
+    function getQuizDatasetGroup(qMode = quizMode) {
+      if (qMode === "kanji-kana" || qMode === "kana-kanji") return "vocab";
+      if (qMode === "vocab-cloze") return "sentence";
+      if (qMode === "adv-cloze") return "adv";
+      return "grammar";
+    }
+
+    function getQuizContentSets(qMode = quizMode) {
+      const group = getQuizDatasetGroup(qMode);
+      if (group === "vocab") return [...VOCAB_SETS, REMEMBER_SET];
+      if (group === "sentence") return SENTENCE_SETS;
+      if (group === "adv") {
+        // Hiện cả bộ Câu ví dụ lẫn bộ Ngữ pháp ngay trong khung tick Chương / Bài
+        const grammarAsAdvSets = GRAMMAR_SETS.map((set) => ({
+          name: `Ngữ pháp · ${set.name}`,
+          words: (set.words || [])
+            .filter((w) => w.direction !== "recall")
+            .map((w) => ({ ...w, setName: set.name })),
+        }));
+        return [...SENTENCE_SETS, ...grammarAsAdvSets];
+      }
+      return GRAMMAR_SETS;
+    }
+
+    let CONTENT_SETS =
+      contentType === "sentence" ? SENTENCE_SETS
+      : contentType === "grammar" ? GRAMMAR_SETS
+      : contentType === "quiz" ? getQuizContentSets(quizMode)
+      : [...VOCAB_SETS, REMEMBER_SET];
 
     document.body.classList.add(`content-${contentType}`);
     document.querySelectorAll("[data-content]").forEach((tab) => {
@@ -3408,10 +3620,13 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     });
     document.getElementById("vocabStudyModes").hidden = contentType !== "vocab";
     document.getElementById("grammarStudyModes").hidden = contentType !== "grammar";
+    document.getElementById("jlptQuizModes").hidden = contentType !== "quiz";
+
     const pageTitles = {
       vocab: ["語彙", "Từ vựng Nhật Bản"],
       sentence: ["例文", "Luyện dịch câu ví dụ"],
       grammar: ["文法", "Luyện ngữ pháp tiếng Nhật"],
+      quiz: ["試験", "Luyện trắc nghiệm JLPT"],
     };
     const heading = document.querySelector("header h1");
     heading.querySelector(".jp").textContent = pageTitles[contentType][0];
@@ -3420,7 +3635,9 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     document.getElementById("contentSetLabel").textContent = "Thiết lập lượt học";
     document.querySelector(".day-picker-title").textContent = contentType === "vocab"
       ? "Bộ từ luyện tập"
-      : contentType === "sentence" ? "Bộ câu dịch" : "Bộ ngữ pháp";
+      : contentType === "sentence" ? "Bộ câu dịch"
+      : contentType === "quiz" ? "Phạm vi chương / bài"
+      : "Bộ ngữ pháp";
     document.querySelector(".batch-settings label").textContent = `Số ${itemNoun} mỗi lượt`;
     document.querySelector(".batch-settings span").textContent = `Giới hạn số ${itemNoun} trong một lượt học.`;
     document.querySelector(".retry-setting-text strong").textContent = contentType === "vocab"
@@ -3870,36 +4087,45 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     let mode = contentType === "vocab" && new URLSearchParams(location.search).get("ds") === "tucan" ? "saved" : "all";
     let studyMode = "recognize";
     let grammarMode = "ja-vi";
+    function currentDayStoreKey() {
+      return contentType === "quiz"
+        ? `${DAY_STORE_KEY}_${getQuizDatasetGroup(quizMode)}`
+        : DAY_STORE_KEY;
+    }
+
+    function loadSelectedDaysForCurrentSets() {
+      const saved = localStorage.getItem(currentDayStoreKey());
+      const result = new Set();
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) parsed.forEach((d) => result.add(Number(d)));
+        else if (saved === "all" || (contentType === "quiz" && !saved)) {
+          CONTENT_SETS.forEach((_, i) => result.add(i));
+        } else {
+          result.add(Number(saved) || 0);
+        }
+      } catch (_) {
+        if (saved === "all" || (contentType === "quiz" && !saved)) {
+          CONTENT_SETS.forEach((_, i) => result.add(i));
+        } else {
+          result.add(Number(saved) || 0);
+        }
+      }
+      const valid = new Set(
+        [...result].filter((d) => Number.isInteger(d) && d >= 0 && d < CONTENT_SETS.length)
+      );
+      if (valid.size === 0 && CONTENT_SETS.length) valid.add(0);
+      return valid;
+    }
+
+    
     let recallProgress = { step: 0, mistakes: false, mistakeCount: 0, attempts: 0, stageChecked: false, pendingMeaning: null, showingCorrectionAnswer: false };
     const savedBatchSize = localStorage.getItem(BATCH_SIZE_STORE_KEY);
     let batchSize = savedBatchSize === "all"
       ? 0
       : Math.max(1, Number(savedBatchSize) || 20);
     let lastLimitedBatchSize = batchSize || 20;
-    const savedDay = localStorage.getItem(DAY_STORE_KEY);
-    let selectedDays = new Set();
-    try {
-      const parsedDays = JSON.parse(savedDay);
-      if (Array.isArray(parsedDays)) {
-        parsedDays.forEach((day) => selectedDays.add(Number(day)));
-      } else if (savedDay === "all") {
-        CONTENT_SETS.forEach((_, index) => selectedDays.add(index));
-      } else {
-        selectedDays.add(Number(savedDay) || 0);
-      }
-    } catch (e) {
-      if (savedDay === "all") {
-        CONTENT_SETS.forEach((_, index) => selectedDays.add(index));
-      } else {
-        selectedDays.add(Number(savedDay) || 0);
-      }
-    }
-    selectedDays = new Set(
-      [...selectedDays].filter(
-        (day) => Number.isInteger(day) && day >= 0 && day < CONTENT_SETS.length,
-      ),
-    );
-    if (selectedDays.size === 0 && CONTENT_SETS.length) selectedDays.add(0);
+    let selectedDays = loadSelectedDaysForCurrentSets();
     let draftSelectedDays = new Set(selectedDays);
     let daySearchQuery = "";
 
@@ -3943,6 +4169,582 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     const voiceStatus = document.getElementById("voiceStatus");
     const inputReading = document.getElementById("inputReading");
     const inputMeaning = document.getElementById("inputMeaning");
+
+    const quizChoices = document.getElementById("quizChoices");
+    const starBuilder = document.getElementById("starBuilder");
+    const starSentence = document.getElementById("starSentence");
+    const starPool = document.getElementById("starPool");
+    const btnStarReset = document.getElementById("btnStarReset");
+    const btnStarHint = document.getElementById("btnStarHint");
+    const starHintText = document.getElementById("starHintText");
+
+    const clozeCache = new WeakMap();
+    const advClozeCache = new WeakMap();
+    const starQuestionCache = new WeakMap();
+    let starState = null;
+    let cachedAdverbVocab = null;
+    let cachedGrammarExamples = null;
+    const jaWordSegmenter =
+      typeof Intl !== "undefined" && Intl.Segmenter
+        ? new Intl.Segmenter("ja", { granularity: "word" })
+        : null;
+
+    function isChoiceQuizMode() {
+      return contentType === "quiz" && quizMode !== "gram-star";
+    }
+    function isStarQuizMode() {
+      return contentType === "quiz" && quizMode === "gram-star";
+    }
+
+    // --- 1. Đục lỗ Từ vựng (có xử lý chia thể động từ / tính từ) ---
+    function matchWordInSentence(sentenceText, word) {
+      const k = String(word.kanji || "").trim();
+      if (!k) return null;
+      if (sentenceText.includes(k)) return { matchedText: k, priority: 2 };
+
+      const hasKanji = /\p{Script=Han}/u.test(k);
+      if (!hasKanji || k.length < 2) return null;
+      const type = String(word.type || "");
+      const isVerb = /^\(V/i.test(type) || /[うくぐすつぬぶむる]$/.test(k);
+      const isIAdj = /^\(A-?i/i.test(type) || /い$/.test(k);
+      if (!isVerb && !isIAdj) return null;
+
+      const stem = k.slice(0, -1);
+      if (!sentenceText.includes(stem)) return null;
+      const escapedStem = stem.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const suffixPattern = isIAdj
+        ? "(?:い|く(?:て|ない|なかった)?|かった|ければ|さ)"
+        : "(?:[いきぎしちにびみ]?(?:ます|ました|ません(?:でした)?|たい|たかった)|[あかがさたなばまわ]?(?:ない|なかった|れる|れた|れない|せる|せた)|[えけげせてねべめ](?:ない|る|た|ば)|(?:られる|られた|られない|させる|させた|れば|よう)|[おこごそとのぼも]う|[っいん]?て|[っいん]?た|[んい]で|[んい]だ)";
+      const match = sentenceText.match(new RegExp(escapedStem + suffixPattern));
+      return match ? { matchedText: match[0], priority: 1 } : null;
+    }
+
+    function findClozeTarget(item) {
+      if (clozeCache.has(item)) return clozeCache.get(item);
+      const sentenceText = String(item.kanji || "");
+      const normName = (s) => String(s || "").normalize("NFKC").toLowerCase().replace(/\s+/g, " ").trim();
+      const targetSetName = normName(item.setName);
+
+      const pickBest = (words, minLen = 1) => {
+        const hits = [];
+        for (const w of words) {
+          const k = String(w.kanji || "").trim();
+          if (k.length < minLen) continue;
+          const hit = matchWordInSentence(sentenceText, w);
+          if (hit) hits.push({ word: w, ...hit });
+        }
+        if (!hits.length) return null;
+        hits.sort((a, b) => {
+          const aHan = /\p{Script=Han}/u.test(a.word.kanji) ? 1 : 0;
+          const bHan = /\p{Script=Han}/u.test(b.word.kanji) ? 1 : 0;
+          return bHan - aHan || b.priority - a.priority || b.matchedText.length - a.matchedText.length;
+        });
+        return hits[0];
+      };
+
+      const samePage = VOCAB_SETS.find((s) => normName(s.name) === targetSetName);
+      let best = samePage ? pickBest(samePage.words || [], 1) : null;
+      if (!best) best = pickBest(VOCAB_SETS.flatMap((s) => s.words || []), 2);
+
+      const res = best
+        ? { targetWord: best.word, blankedSentence: sentenceText.replace(best.matchedText, "（   ）") }
+        : null;
+      clozeCache.set(item, res);
+      return res;
+    }
+
+    // --- 2. Đục lỗ Phó từ (Adv) & Tượng thanh / Tượng hình ---
+    function cleanAdvTerm(text) {
+      return String(text || "").normalize("NFKC").replace(/[（(].*?[）)]/g, "").replace(/[～〜~・]/g, "").trim();
+    }
+
+    function isAdverbWord(word) {
+      const type = String(word?.type || "");
+      if (/(?:\badv\b|phó\s*từ|pho\s*tu|副)/i.test(type)) return true;
+      const hira = cleanAdvTerm(word?.kana || word?.kanji || "").replace(
+        /[\u30A1-\u30F6]/g,
+        (ch) => String.fromCharCode(ch.charCodeAt(0) - 96)
+      );
+      if (!hira || hira.length < 3) return false;
+      return (
+        /^([\u3041-\u3096]{2})\1$/.test(hira) ||
+        /^[\u3041-\u3096]{1,2}っ[\u3041-\u3096]{1,2}り$/.test(hira) ||
+        /^[\u3041-\u3096]{1,3}(?:っと|りと)$/.test(hira)
+      );
+    }
+
+    function advShapeGroup(word) {
+      const hira = cleanAdvTerm(word?.kana || word?.kanji || "").replace(
+        /[\u30A1-\u30F6]/g,
+        (ch) => String.fromCharCode(ch.charCodeAt(0) - 96)
+      );
+      if (/^([\u3041-\u3096]{2})\1$/.test(hira)) return "abab";
+      if (/^[\u3041-\u3096]{1,2}っ[\u3041-\u3096]{1,2}り$/.test(hira)) return "ttari";
+      if (/(?:っと|りと)$/.test(hira)) return "tto";
+      if (/に$/.test(hira)) return "ni";
+      return "other";
+    }
+
+    function getAllAdverbVocab() {
+      if (cachedAdverbVocab) return cachedAdverbVocab;
+      const all = removeDuplicateWords([...VOCAB_SETS.flatMap((s) => s.words || []), ...REMEMBER_WORDS]);
+      cachedAdverbVocab = all.filter((w) => isAdverbWord(w) && (cleanAdvTerm(w.kanji) || cleanAdvTerm(w.kana)));
+      return cachedAdverbVocab;
+    }
+
+    function getGrammarExampleSentences() {
+      if (cachedGrammarExamples) return cachedGrammarExamples;
+      const seen = new Set();
+      const list = [];
+      GRAMMAR_SETS.forEach((set) => {
+        (set.words || []).forEach((w, i) => {
+          if (w.direction === "recall" || !w.kanji) return;
+          const norm = normJapanese(w.kanji);
+          if (!norm || seen.has(norm)) return;
+          seen.add(norm);
+          list.push({
+            ...w,
+            setName: set.name,
+            type: `Ví dụ ngữ pháp · ${w.structure || set.name}`,
+            contentId: `gram-adv-${set.name}-${i}`,
+          });
+        });
+      });
+      cachedGrammarExamples = list;
+      return cachedGrammarExamples;
+    }
+
+    function sentenceHasWholeToken(sentenceText, term) {
+      if (!sentenceText.includes(term)) return false;
+      if (term.length >= 3 || /\p{Script=Han}/u.test(term)) return true;
+      if (jaWordSegmenter) {
+        for (const seg of jaWordSegmenter.segment(sentenceText)) {
+          if (seg.segment === term) return true;
+        }
+        return false;
+      }
+      return false;
+    }
+
+    function findAdvClozeTarget(item) {
+      if (advClozeCache.has(item)) return advClozeCache.get(item);
+      const sentenceText = String(item.kanji || "");
+      const hits = [];
+      for (const word of getAllAdverbVocab()) {
+        const kForm = cleanAdvTerm(word.kanji);
+        const hForm = cleanAdvTerm(word.kana);
+        let matchedText = "";
+        if (kForm && kForm.length >= 2 && sentenceHasWholeToken(sentenceText, kForm)) matchedText = kForm;
+        else if (hForm && hForm.length >= 2 && sentenceHasWholeToken(sentenceText, hForm)) matchedText = hForm;
+        if (matchedText) {
+          hits.push({ targetWord: word, matchedText, isKanaForm: !/\p{Script=Han}/u.test(matchedText) });
+        }
+      }
+      hits.sort((a, b) => b.matchedText.length - a.matchedText.length);
+      const best = hits[0];
+      const res = best ? { ...best, blankedSentence: sentenceText.replace(best.matchedText, "（   ）") } : null;
+      advClozeCache.set(item, res);
+      return res;
+    }
+
+    // --- 3. Sắp xếp câu dấu sao ★ (dùng Intl.Segmenter gom Bunsetsu xoay quanh mẫu ngữ pháp) ---
+    const ATTACH_PREV = new Set([
+      "は","が","を","に","で","と","へ","の","も","や","か","ね","よ","わ","さ","ぞ","ぜ","な",
+      "から","まで","より","ほど","だけ","しか","ばかり","ながら","ので","のに","けど","けれど",
+      "けれども","し","て","た","だ","ない","なく","なかっ","ます","まし","ません","たい","たかっ",
+      "れる","られる","せる","させる","です","でし","だろう","でしょう","よう","そう","らしい",
+      "みたい","すぎる","すぎ","ちゃう","じゃう","しまう","しまっ","いる","いた","おく","ある",
+      "みる","くる","いく","こと","もの","とき","ため","うち","ほう","方","人","日","月","年","歳","円","回","個",
+      "、",",","」","』","）",")","・"
+    ]);
+    const ATTACH_NEXT = new Set(["お","ご","「","『","（","(","第","約","毎"]);
+
+    function extractGrammarCore(structure) {
+      const cleaned = String(structure || "")
+        .normalize("NFKC")
+        .replace(/[A-Za-z0-9＋+～〜~・／\/（）()\[\]\s]/g, " ")
+        .trim()
+        .split(/\s+/)
+        .filter((part) => /[\u3040-\u30ff\p{Script=Han}]/u.test(part) && part.length >= 2);
+      cleaned.sort((a, b) => b.length - a.length);
+      return cleaned[0] || "";
+    }
+
+    function segmentBunsetsu(sentence) {
+      const raw = String(sentence || "").trim();
+      const punctMatch = raw.match(/[。！？!?]+$/);
+      const trailingPunct = punctMatch ? punctMatch[0] : "";
+      const body = trailingPunct ? raw.slice(0, -trailingPunct.length) : raw;
+      if (!jaWordSegmenter || !body) return { chunks: [], trailingPunct };
+
+      const tokens = [...jaWordSegmenter.segment(body)].map((s) => s.segment).filter(Boolean);
+      const chunks = [];
+      let pendingPrefix = "";
+
+      for (let i = 0; i < tokens.length; i++) {
+        const tok = tokens[i];
+        if (ATTACH_NEXT.has(tok)) {
+          pendingPrefix += tok;
+          continue;
+        }
+        const shouldAttachPrev =
+          chunks.length > 0 &&
+          !pendingPrefix &&
+          (ATTACH_PREV.has(tok) || /^[っんーぁぃぅぇぉゃゅょ]+$/.test(tok) || (/^[ぁ-ゖ]{1}$/.test(tok) && !/^[木の葉目手口火水]/.test(tok)));
+
+        if (shouldAttachPrev) {
+          chunks[chunks.length - 1] += tok;
+        } else {
+          chunks.push(pendingPrefix + tok);
+          pendingPrefix = "";
+        }
+      }
+      if (pendingPrefix && chunks.length) chunks[chunks.length - 1] += pendingPrefix;
+      return { chunks, trailingPunct };
+    }
+
+    function buildStarQuestion(item) {
+      if (starQuestionCache.has(item)) return starQuestionCache.get(item);
+      const { chunks, trailingPunct } = segmentBunsetsu(item.kanji);
+      if (chunks.length < 4) {
+        starQuestionCache.set(item, null);
+        return null;
+      }
+
+      const core = extractGrammarCore(item.structure);
+      let gIdx = core ? chunks.findIndex((c) => c.includes(core)) : -1;
+      if (gIdx < 0) gIdx = Math.floor(chunks.length / 2);
+
+      // Cắt cửa sổ đúng 4 cụm liên tiếp bao quanh mẫu ngữ pháp
+      let start = Math.max(0, Math.min(chunks.length - 4, gIdx - 2));
+      if (chunks.length >= 6 && start === 0) start = 1;
+      if (chunks.length >= 6 && start + 4 === chunks.length) start = chunks.length - 5;
+
+      const prefix = chunks.slice(0, start).join("");
+      const correctChunks = chunks.slice(start, start + 4);
+      const suffix = chunks.slice(start + 4).join("") + trailingPunct;
+
+      let shuffled = shuffle(correctChunks.map((text, idx) => ({ text, origIdx: idx })));
+      for (let tries = 0; tries < 6 && shuffled.every((x, i) => x.origIdx === i); tries++) {
+        shuffled = shuffle(shuffled);
+      }
+      if (shuffled.every((x, i) => x.origIdx === i)) [shuffled[0], shuffled[1]] = [shuffled[1], shuffled[0]];
+
+      const res = { prefix, suffix, correctChunks, shuffled };
+      starQuestionCache.set(item, res);
+      return res;
+    }
+
+    function renderStarQuestion(item) {
+      const q = buildStarQuestion(item);
+      if (!q) return;
+      starState = { item, ...q, slots: [null, null, null, null] };
+      starHintText.hidden = true;
+      starHintText.textContent = item.meaning || "";
+      kanjiDisplay.classList.add("quiz-sentence-prompt");
+      kanjiDisplay.textContent = "Sắp xếp 4 mảnh ghép vào đúng thứ tự (ô ★ là vị trí câu hỏi JLPT)";
+      typeDisplay.textContent = `Sắp xếp câu ★ · ${item.setName || ""}`;
+      redrawStarUI();
+    }
+
+    function redrawStarUI() {
+      if (!starState) return;
+      const { prefix, suffix, shuffled, slots } = starState;
+      starSentence.replaceChildren();
+      if (prefix) starSentence.append(document.createTextNode(prefix));
+
+      slots.forEach((poolIdx, slotIdx) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "star-slot" + (slotIdx === 2 ? " is-star" : "") + (poolIdx !== null ? " filled" : "");
+        btn.textContent = poolIdx !== null ? shuffled[poolIdx].text : slotIdx === 2 ? "★" : "＿＿";
+        btn.disabled = checked;
+        btn.addEventListener("click", () => {
+          if (checked || starState.slots[slotIdx] === null) return;
+          starState.slots[slotIdx] = null;
+          redrawStarUI();
+        });
+        starSentence.append(btn);
+      });
+      if (suffix) starSentence.append(document.createTextNode(suffix));
+
+      const used = new Set(slots.filter((x) => x !== null));
+      const letters = ["A", "B", "C", "D"];
+      starPool.replaceChildren();
+      shuffled.forEach((piece, poolIdx) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "star-chip";
+        btn.disabled = checked || used.has(poolIdx);
+        btn.innerHTML = `<span class="opt-key">${letters[poolIdx]}</span><span></span>`;
+        btn.lastElementChild.textContent = piece.text;
+        btn.addEventListener("click", () => {
+          if (checked || used.has(poolIdx)) return;
+          const emptyIdx = starState.slots.indexOf(null);
+          if (emptyIdx < 0) return;
+          starState.slots[emptyIdx] = poolIdx;
+          redrawStarUI();
+        });
+        starPool.append(btn);
+      });
+
+      btnCheck.disabled = checked || slots.some((x) => x === null);
+    }
+
+    function checkStarAnswer() {
+      if (checked || !starState || starState.slots.some((x) => x === null)) return;
+      const { item, prefix, suffix, correctChunks, shuffled, slots } = starState;
+      const userChunks = slots.map((i) => shuffled[i].text);
+      const isCorrect =
+        userChunks.join("") === correctChunks.join("") ||
+        normJapanese(prefix + userChunks.join("") + suffix) === normJapanese(item.kanji);
+
+      const slotEls = starSentence.querySelectorAll(".star-slot");
+      slotEls.forEach((el, i) => {
+        el.disabled = true;
+        el.classList.add(userChunks[i] === correctChunks[i] ? "correct" : "wrong");
+      });
+      starPool.querySelectorAll(".star-chip").forEach((b) => (b.disabled = true));
+
+      const labels = resultBox.querySelectorAll(".answer-grid dt");
+      ["Câu đúng", "Ngữ pháp", "Vị trí ★", "Nghĩa"].forEach((t, i) => { if (labels[i]) labels[i].textContent = t; });
+      ansWord.textContent = item.kanji || "";
+      ansKana.textContent = item.structure || "—";
+      ansRomaji.textContent = correctChunks[2] || "";
+      ansMeaning.textContent = item.meaning || "";
+      btnAcceptMeaning.hidden = true;
+
+      finalizeQuizResult(item, isCorrect);
+    }
+
+    btnStarReset.addEventListener("click", () => {
+      if (!starState || checked) return;
+      starState.slots = [null, null, null, null];
+      redrawStarUI();
+    });
+    btnStarHint.addEventListener("click", () => {
+      if (!starState) return;
+      starHintText.hidden = !starHintText.hidden;
+    });
+
+    // --- 4. Tạo đề & chấm chung cho 6 chế độ 4 đáp án ---
+    function buildQuizData(item) {
+      if (quizMode === "kanji-kana") {
+        const targetKana = normJapanese(item.kana);
+        const pool = getAllWords().filter((w) => w.kana && normJapanese(w.kana) !== targetKana);
+        const sameLen = shuffle(pool.filter((w) => w.kana.length === item.kana.length));
+        const others = shuffle(pool.filter((w) => w.kana.length !== item.kana.length));
+        const seen = new Set([targetKana]);
+        const choices = [{ label: item.kana, isCorrect: true }];
+        for (const w of [...sameLen, ...others]) {
+          const k = normJapanese(w.kana);
+          if (seen.has(k)) continue;
+          seen.add(k);
+          choices.push({ label: w.kana, isCorrect: false });
+          if (choices.length === 4) break;
+        }
+        return { prompt: item.kanji, isSentence: false, choices: shuffle(choices) };
+      }
+
+      if (quizMode === "kana-kanji") {
+        const targetKana = normJapanese(item.kana);
+        const targetKanji = normJapanese(item.kanji);
+        const pool = getAllWords().filter(
+          (w) => /\p{Script=Han}/u.test(w.kanji || "") && normJapanese(w.kana) !== targetKana && normJapanese(w.kanji) !== targetKanji
+        );
+        const seen = new Set([targetKanji]);
+        const choices = [{ label: item.kanji, isCorrect: true }];
+        for (const w of shuffle(pool)) {
+          const k = normJapanese(w.kanji);
+          if (seen.has(k)) continue;
+          seen.add(k);
+          choices.push({ label: w.kanji, isCorrect: false });
+          if (choices.length === 4) break;
+        }
+        return { prompt: item.kana, isSentence: false, choices: shuffle(choices) };
+      }
+
+      if (quizMode === "gram-pattern-vi" || quizMode === "gram-vi-pattern") {
+        const isPatternToVi = quizMode === "gram-pattern-vi";
+        const allRecall = getAllWords().filter((w) => w.direction === "recall" && wordKey(w) !== wordKey(item));
+        const correctLabel = isPatternToVi ? item.meaning : item.structure;
+        const seen = new Set([stripAccents(correctLabel)]);
+        const choices = [{ label: correctLabel, isCorrect: true }];
+        for (const w of shuffle(allRecall)) {
+          const label = isPatternToVi ? w.meaning : w.structure;
+          const norm = stripAccents(label);
+          if (!label || seen.has(norm)) continue;
+          seen.add(norm);
+          choices.push({ label, isCorrect: false });
+          if (choices.length === 4) break;
+        }
+        return { prompt: isPatternToVi ? item.structure : item.meaning, isSentence: true, choices: shuffle(choices) };
+      }
+
+      if (quizMode === "vocab-cloze") {
+        const cloze = findClozeTarget(item);
+        const target = cloze.targetWord;
+        const allVocab = removeDuplicateWords(VOCAB_SETS.flatMap((s) => s.words || []));
+        const pool = allVocab.filter((w) => w.kanji && w.kanji !== target.kanji);
+        const sameType = shuffle(pool.filter((w) => w.type && w.type === target.type));
+        const others = shuffle(pool.filter((w) => !w.type || w.type !== target.type));
+        const seen = new Set([target.kanji]);
+        const choices = [{ label: target.kanji, isCorrect: true }];
+        for (const w of [...sameType, ...others]) {
+          if (seen.has(w.kanji)) continue;
+          seen.add(w.kanji);
+          choices.push({ label: w.kanji, isCorrect: false });
+          if (choices.length === 4) break;
+        }
+        return { prompt: cloze.blankedSentence, isSentence: true, targetWord: target, choices: shuffle(choices) };
+      }
+
+      if (quizMode === "adv-cloze") {
+        const cloze = findAdvClozeTarget(item);
+        const target = cloze.targetWord;
+        const targetShape = advShapeGroup(target);
+        const pickLabel = (w) =>
+          cloze.isKanaForm ? cleanAdvTerm(w.kana || w.kanji) : cleanAdvTerm(w.kanji || w.kana);
+        const correctLabel = pickLabel(target);
+        const advPool = getAllAdverbVocab().filter(
+          (w) => wordKey(w) !== wordKey(target) && pickLabel(w) && pickLabel(w) !== correctLabel
+        );
+        const sameShape = shuffle(advPool.filter((w) => advShapeGroup(w) === targetShape));
+        const otherShape = shuffle(advPool.filter((w) => advShapeGroup(w) !== targetShape));
+        const seenLabels = new Set([correctLabel]);
+        const seenMeanings = new Set([stripAccents(target.meaning || "")]);
+        const choices = [{ label: correctLabel, isCorrect: true }];
+        for (const w of [...sameShape, ...otherShape]) {
+          const label = pickLabel(w);
+          const normM = stripAccents(w.meaning || "");
+          if (seenLabels.has(label) || (normM && seenMeanings.has(normM))) continue;
+          seenLabels.add(label);
+          if (normM) seenMeanings.add(normM);
+          choices.push({ label, isCorrect: false });
+          if (choices.length === 4) break;
+        }
+        return { prompt: cloze.blankedSentence, isSentence: true, targetWord: target, choices: shuffle(choices) };
+      }
+      return null;
+    }
+
+    function renderQuizChoices(item) {
+      const data = buildQuizData(item);
+      if (!data) return;
+      kanjiDisplay.classList.toggle("quiz-sentence-prompt", Boolean(data.isSentence));
+      kanjiDisplay.textContent = data.prompt;
+      quizChoices.replaceChildren();
+      const letters = ["A", "B", "C", "D"];
+      data.choices.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "quiz-choice";
+        btn.dataset.correct = String(opt.isCorrect);
+        btn.innerHTML = `<span class="opt-key">${letters[i]}</span><span></span>`;
+        btn.lastElementChild.textContent = opt.label;
+        btn.addEventListener("click", () => handleQuizChoice(item, btn, data.targetWord));
+        quizChoices.appendChild(btn);
+      });
+    }
+
+    function finalizeQuizResult(item, isCorrect) {
+      resultBox.classList.add("show", isCorrect ? "ok" : "bad");
+      resultSeal.classList.add(isCorrect ? "ok" : "bad");
+      resultSeal.textContent = isCorrect ? "✓" : "✕";
+      resultMsg.textContent = isCorrect ? "Chính xác!" : "Chưa đúng!";
+
+      const itemWrongKey = wrongWordKey(item);
+      if (isCorrect) {
+        correctCount++;
+        if (!sessionMistakeKeys.has(itemWrongKey)) {
+          missed = missed.filter((m) => wordKey(m) !== wordKey(item));
+        }
+        if (mode === "wrong" && !sessionMistakeKeys.has(itemWrongKey) && wrongSet.delete(itemWrongKey)) {
+          saveWrongSet();
+          updateWrongBadge();
+        }
+      } else {
+        wrongCount++;
+        if (!missed.some((m) => wordKey(m) === wordKey(item))) missed.push(item);
+        if (retryWrongEnabled) {
+          order.splice(idx + 1, 0, item);
+          resultMsg.textContent += " — Sẽ hỏi lại ngay.";
+        } else {
+          resultMsg.textContent += " — Đã lưu vào danh sách hay sai.";
+        }
+        sessionMistakeKeys.add(itemWrongKey);
+        if (!wrongSet.has(itemWrongKey)) {
+          wrongSet.add(itemWrongKey);
+          saveWrongSet();
+          updateWrongBadge();
+        }
+      }
+
+      checked = true;
+      answeredWordKeys.add(wordKey(item));
+      btnCheck.disabled = true;
+      btnNext.disabled = false;
+      idx++;
+      updateListenButton();
+      updateStats();
+      if (autoSpeechEnabled) void speakJapanese(item, { beforeCheck: true });
+      if (!isPhoneDevice()) btnNext.focus();
+    }
+
+    function handleQuizChoice(item, clickedBtn, targetWord) {
+      if (checked) return;
+      const isCorrect = clickedBtn.dataset.correct === "true";
+
+      quizChoices.querySelectorAll(".quiz-choice").forEach((btn) => {
+        btn.disabled = true;
+        if (btn.dataset.correct === "true") btn.classList.add("correct");
+      });
+      if (!isCorrect) clickedBtn.classList.add("wrong");
+
+      if (quizMode === "vocab-cloze" || quizMode === "adv-cloze") {
+        kanjiDisplay.textContent = item.kanji;
+      }
+
+      const labels = resultBox.querySelectorAll(".answer-grid dt");
+      if (quizMode === "gram-pattern-vi" || quizMode === "gram-vi-pattern") {
+        ["Cấu trúc", "Cách dùng", "Ví dụ", "Nghĩa"].forEach((t, i) => { if (labels[i]) labels[i].textContent = t; });
+        ansWord.textContent = item.structure || "";
+        ansKana.textContent = item.grammarNote || "—";
+        ansRomaji.textContent = item.grammarExamples?.[0]?.kanji || "—";
+        ansMeaning.textContent = item.meaning || "";
+      } else {
+        ["Từ / Câu", "Hiragana", "Romaji", "Nghĩa"].forEach((t, i) => { if (labels[i]) labels[i].textContent = t; });
+        ansWord.textContent = targetWord
+          ? `${item.kanji}  (Từ ẩn: ${targetWord.kanji} [${targetWord.kana}] — ${targetWord.meaning})`
+          : item.kanji;
+        ansKana.textContent = item.kana || item.hiragana || "";
+        ansRomaji.textContent = item.romaji || "";
+        ansMeaning.textContent = item.meaning || "";
+      }
+      btnAcceptMeaning.hidden = true;
+      finalizeQuizResult(item, isCorrect);
+    }
+
+    document.querySelectorAll("[data-quiz-mode]").forEach((button) => {
+      button.addEventListener("click", () => {
+        if (quizMode === button.dataset.quizMode) return;
+        saveCurrentSession();
+        const oldGroup = getQuizDatasetGroup(quizMode);
+        quizMode = button.dataset.quizMode;
+        const newGroup = getQuizDatasetGroup(quizMode);
+        document.querySelectorAll("[data-quiz-mode]").forEach((b) => {
+          b.classList.toggle("active", b.dataset.quizMode === quizMode);
+        });
+        if (newGroup !== oldGroup) {
+          CONTENT_SETS = getQuizContentSets(quizMode);
+          selectedDays = loadSelectedDaysForCurrentSets();
+          draftSelectedDays = new Set(selectedDays);
+        }
+        renderDayOptions();
+        updateWrongBadge();
+        init();
+      });
+    });
     const readingField = document.getElementById("readingField");
     const meaningField = document.getElementById("meaningField");
     const vocabHints = document.getElementById("vocabHints");
@@ -4072,7 +4874,10 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
 
     function updateListenButton() {
       const item = getDisplayedItem();
-      const hidesAnswer = item && contentType === "grammar" && item.direction !== "ja-vi" && !checked;
+      const hidesAnswer = item && !checked && (
+        (contentType === "grammar" && item.direction !== "ja-vi") ||
+        (contentType === "quiz" && quizMode !== "gram-pattern-vi")
+      );
       const supported = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
       btnListen.disabled = !item || !supported || hidesAnswer;
       btnListen.title = !supported
@@ -4213,7 +5018,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     updateBatchControls();
 
     function quizSessionKey() {
-      return `${contentType}::${studyMode}::${grammarMode}::${mode}`;
+      return `${contentType}::${studyMode}::${grammarMode}::${quizMode}::${mode}`;
     }
 
     function saveCurrentSession() {
@@ -4261,24 +5066,83 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     }
 
     function filterForGrammarMode(items) {
-      if (contentType !== "grammar") return items;
-      return items.filter((item) => grammarMode === "recall"
-        ? item.direction === "recall"
-        : grammarMode === "ja-vi"
-          ? item.direction === "ja-vi"
-          : item.direction === "vi-romaji" || item.direction === "vi-ja");
+      if (contentType === "grammar") {
+        return items.filter((item) =>
+          grammarMode === "recall"
+            ? item.direction === "recall"
+            : grammarMode === "ja-vi"
+              ? item.direction === "ja-vi"
+              : item.direction === "vi-romaji" || item.direction === "vi-ja"
+        );
+      }
+      if (contentType === "quiz") {
+        if (quizMode === "gram-pattern-vi" || quizMode === "gram-vi-pattern") {
+          return items.filter((item) => item.direction === "recall");
+        }
+        if (quizMode === "gram-star") {
+          return items.filter((item) => item.direction !== "recall");
+        }
+      }
+      return items;
+    }
+    function currentUnitLabel() {
+      if (contentType === "vocab") return "từ";
+      if (contentType === "grammar" && grammarMode === "recall") return "mẫu";
+      if (contentType === "quiz") {
+        if (quizMode === "kanji-kana" || quizMode === "kana-kanji") return "từ";
+        if (quizMode === "gram-pattern-vi" || quizMode === "gram-vi-pattern") return "mẫu";
+        return "câu";
+      }
+      return "câu";
+    }
+
+    function filterItemsForCurrentMode(items) {
+      const list = filterForGrammarMode(items);
+      if (contentType !== "quiz") return list;
+
+      if (quizMode === "kanji-kana" || quizMode === "kana-kanji") {
+        return list.filter(
+          (w) => /\p{Script=Han}/u.test(String(w.kanji || "")) && w.kana && w.kanji !== w.kana
+        );
+      }
+      if (quizMode === "vocab-cloze") {
+        return list.filter((item) => Boolean(findClozeTarget(item)));
+      }
+      if (quizMode === "adv-cloze") {
+        const seen = new Set();
+        return list.filter((item) => {
+          const k = normJapanese(item.kanji);
+          if (!k || seen.has(k)) return false;
+          seen.add(k);
+          return Boolean(findAdvClozeTarget(item));
+        });
+      }
+      if (quizMode === "gram-star") {
+        const seen = new Set();
+        return list.filter((item) => {
+          const k = normJapanese(item.kanji);
+          if (!k || seen.has(k)) return false;
+          seen.add(k);
+          return Boolean(buildStarQuestion(item));
+        });
+      }
+      return list;
     }
 
     function getModeSource() {
       const source = mode === "saved" && contentType === "vocab"
         ? REMEMBER_WORDS.filter((item) => !skippedSet.has(wordKey(item)))
         : mode === "wrong"
-        ? getAllWords().filter((item) => wrongSet.has(wrongWordKey(item)) && !skippedSet.has(wordKey(item)))
-        : mode === "important"
-          ? getAllWords().filter((item) => importantSet.has(wordKey(item)) && !skippedSet.has(wordKey(item)))
-          : getDailyWords().filter((item) => !skippedSet.has(wordKey(item)));
-      return filterForGrammarMode(source);
+          ? getAllWords().filter((item) => wrongSet.has(wrongWordKey(item)) && !skippedSet.has(wordKey(item)))
+          : mode === "important"
+            ? getAllWords().filter((item) => importantSet.has(wordKey(item)) && !skippedSet.has(wordKey(item)))
+            : getDailyWords().filter((item) => !skippedSet.has(wordKey(item)));
+
+      return filterItemsForCurrentMode(source);
     }
+    
+
+    
 
     function takeNextBatch(source) {
       const key = quizSessionKey();
@@ -4397,7 +5261,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
 
       const appliedAll = selectedDays.size === CONTENT_SETS.length;
       const partText = appliedAll ? "Tất cả" : `${selectedDays.size} phần`;
-      const unit = contentType === "vocab" ? "từ" : contentType === "grammar" && grammarMode === "recall" ? "mẫu" : "câu";
+      const unit = currentUnitLabel();      
       dailyCount.textContent = `${partText} · ${filterForGrammarMode(getDailyWords()).length} ${unit}`;
       draftSelectionCount.textContent = `${draftSelectedDays.size} phần được chọn`;
       btnSelectAllDays.disabled = allSelected;
@@ -4418,14 +5282,14 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       caption.textContent = text;
       const wordCount = document.createElement("span");
       wordCount.className = "day-check-count";
-      wordCount.textContent = `${count} ${contentType === "vocab" ? "từ" : contentType === "grammar" && grammarMode === "recall" ? "mẫu" : "câu"}`;
+      wordCount.textContent = `${count} ${currentUnitLabel()}`;
       label.append(input, caption, wordCount);
       return label;
     }
 
     function applySelectedDays() {
       selectedDays = new Set(draftSelectedDays);
-      localStorage.setItem(DAY_STORE_KEY, JSON.stringify([...selectedDays]));
+localStorage.setItem(currentDayStoreKey(), JSON.stringify([...selectedDays]));      
       clearQuizProgress();
       renderDayOptions();
       closeDayPicker();
@@ -4523,7 +5387,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     });
 
     batchSizeInput.addEventListener("change", () => {
-      const available = Math.max(1, filterForGrammarMode(getDailyWords())
+      const available = Math.max(1, filterItemsForCurrentMode(getDailyWords())
         .filter((item) => !skippedSet.has(wordKey(item))).length);
       batchSize = Math.min(available, Math.max(1, Math.floor(Number(batchSizeInput.value) || 1)));
       lastLimitedBatchSize = batchSize;
@@ -4542,9 +5406,14 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     });
 
     function updateWrongBadge() {
-      wrongCountBadge.textContent = wrongSet.size;
-      modeWrongBtn.disabled = wrongSet.size === 0 && mode !== "wrong";
-    }
+    const count = contentType === "quiz"
+      ? filterItemsForCurrentMode(
+          getAllWords().filter((item) => wrongSet.has(wrongWordKey(item)) && !skippedSet.has(wordKey(item)))
+        ).length
+      : wrongSet.size;
+    wrongCountBadge.textContent = count;
+    modeWrongBtn.disabled = count === 0 && mode !== "wrong";
+  }
 
     function updateSkippedBadge() {
       skippedCountBadge.textContent = skippedSet.size;
@@ -4773,7 +5642,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       sessionMistakeKeys = new Set();
       sessionComplete = false;
       quizSessions.delete(sessionKey);
-      const currentUnit = contentType === "grammar" && grammarMode === "recall" ? "mẫu" : itemNoun;
+      const currentUnit = currentUnitLabel();      
       batchHint.textContent = batchSize > 0 && source.length > batchSize
         ? `Mỗi lượt ${batchSize} ${currentUnit}; lượt sau lấy phần chưa xuất hiện.`
         : `Lượt này có tất cả ${source.length} ${currentUnit}.`;
@@ -5463,7 +6332,12 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       }
       const item = order[idx];
       if (!resumeRecall) recallProgress = { step: 0, mistakes: false, mistakeCount: 0, attempts: 0, stageChecked: false, pendingMeaning: null, showingCorrectionAnswer: false };
-      const isRecall = contentType === "grammar" && item.direction === "recall";
+const isRecall = contentType === "grammar" && grammarMode === "recall" && item.direction === "recall";
+      const inChoiceQuiz = isChoiceQuizMode();
+      const inStarQuiz = isStarQuizMode();
+      const inAnyQuiz = inChoiceQuiz || inStarQuiz;
+      starState = null;
+      kanjiDisplay.classList.remove("quiz-sentence-prompt");    
       const isImportant = importantSet.has(wordKey(item));
       btnImportantStar.classList.toggle("active", isImportant);
       btnImportantStar.textContent = isImportant ? "★" : "☆";
@@ -5499,7 +6373,8 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       btnHintMeaning.setAttribute("aria-pressed", "false");
       btnHintKana.disabled = false;
       btnHintMeaning.disabled = false;
-      grammarContext.hidden = contentType !== "grammar" || isRecall;
+      grammarContext.hidden = contentType !== "grammar" || isRecall || inAnyQuiz;
+
       grammarRecall.hidden = !isRecall;
       if (contentType === "grammar" && !isRecall) {
         grammarContext.replaceChildren();
@@ -5527,12 +6402,19 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
           grammarContext.append(explanation);
         }
       }
+      quizChoices.hidden = !inChoiceQuiz;
+      starBuilder.hidden = !inStarQuiz;
+      btnCheck.style.display = inChoiceQuiz ? "none" : "";
+      if (inChoiceQuiz) renderQuizChoices(item);
+      if (inStarQuiz) renderStarQuestion(item);
+
       readingField.style.display =
-        isRecall || (studyMode === "kanaToMeaning" && contentType === "vocab") ? "none" : "block";
+        isRecall || inAnyQuiz || (studyMode === "kanaToMeaning" && contentType === "vocab") ? "none" : "block";
       meaningField.style.display =
-        isRecall || isVietnameseToRomaji || (studyMode === "meaningToRomaji" && contentType === "vocab") ? "none" : "block";
+        isRecall || inAnyQuiz || isVietnameseToRomaji || (studyMode === "meaningToRomaji" && contentType === "vocab") ? "none" : "block";
+
       const readOnlyMode = isReadOnlyReviewMode();
-      if (readOnlyMode && !isRecall) {
+      if (readOnlyMode && !isRecall && !inAnyQuiz) {
         readingField.style.display = "none";
         meaningField.style.display = "none";
       }
@@ -5552,8 +6434,8 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       sentenceRewriteState = null;
       sentenceCorrection.hidden = true;
       btnStar.disabled = false;
-      btnCheck.disabled = false;
-      btnCheck.textContent = readOnlyMode ? "Xem đáp án" : "Kiểm tra";
+      btnCheck.disabled = inStarQuiz;
+      btnCheck.textContent = inStarQuiz ? "Kiểm tra thứ tự" : readOnlyMode ? "Xem đáp án" : "Kiểm tra";
       btnNext.disabled = true;
       updateListenButton();
       updateStats();
@@ -5833,6 +6715,8 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     }
 
     async function submitAnswer() {
+      if (isChoiceQuizMode()) return;
+      if (isStarQuizMode()) { checkStarAnswer(); return; }
       if (sentenceCorrectionState) {
         checkSentenceCorrection();
         return;
@@ -6710,7 +7594,11 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       showLookupTab(tab);
       lookupQuery.value=selection.length<=90 ? selection : '';
       if(selection)doLookupSearch();
-      else {lookupResults.replaceChildren();setLookupStatus('Bôi đen từ trong câu hoặc gõ từ vào ô tìm kiếm.');}
+      else {
+        lookupResults.replaceChildren();
+        lookupLocations.hidden = true;
+        setLookupStatus('Bôi đen từ trong câu hoặc gõ từ vào ô tìm kiếm.');
+      }
       setTimeout(()=>{(tab==='saved'?lookupDialog:lookupQuery).focus();},0);
     }
 
@@ -6849,8 +7737,45 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
   </script>
   <script>
   if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./sw.js").catch(() => {});
+    const showOfflineToast = (text, autoHide = false) => {
+      let el = document.getElementById("offlineToast");
+      if (!el) {
+        el = document.createElement("div");
+        el.id = "offlineToast";
+        el.style.cssText =
+          "position:fixed;bottom:14px;right:14px;z-index:9999;padding:8px 14px;" +
+          "border-radius:8px;background:#20221f;color:#fff;font-size:12px;" +
+          "box-shadow:0 4px 14px rgba(0,0,0,.2);";
+        document.body.appendChild(el);
+      }
+      el.textContent = text;
+      el.hidden = false;
+      if (autoHide) setTimeout(() => (el.hidden = true), 4500);
+    };
+
+    navigator.serviceWorker.addEventListener("message", (event) => {
+      const { type, done, total, failed } = event.data || {};
+      if (type === "PDF_PROGRESS") {
+        showOfflineToast(`Đang tải PDF offline: ${done}/${total}` + (failed ? ` (lỗi: ${failed})` : ""));
+      } else if (type === "PDF_DONE") {
+        showOfflineToast(
+          `Offline sẵn sàng! PDF: ${done - failed}/${total}` +
+            (failed ? ` (lỗi ${failed} file)` : ""),
+          true
+        );
+      }
+    });
+
+    window.addEventListener("load", async () => {
+      try {
+        await navigator.serviceWorker.register("./sw.js");
+        const reg = await navigator.serviceWorker.ready;
+        if (navigator.onLine) {
+          (reg.active || navigator.serviceWorker.controller)?.postMessage({
+            type: "START_PDF_CACHE",
+          });
+        }
+      } catch (_) {}
     });
   }
 </script>
