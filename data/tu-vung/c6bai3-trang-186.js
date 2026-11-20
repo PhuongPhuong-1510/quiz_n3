@@ -1,91 +1,280 @@
-/* Câu ví dụ từ vựng Chương 6 - Bài 3, trang 186. */
-window.SENTENCE_SETS = window.SENTENCE_SETS || [];
-window.SENTENCE_SETS.push({
+/* Từ vựng Chương 6 - Bài 3, trang 186. */
+window.VOCAB_SETS = window.VOCAB_SETS || [];
+window.VOCAB_SETS.push({
   "name": "chương 6 bài 3 trang 186",
-  "sentences": [
+  "words": [
     {
-      "kanji": "この映画は後半になると面白くなってくる。",
-      "hiragana": "このえいがはこうはんになるとおもしろくなってくる。",
-      "romaji": "kono eiga wa kouhan ni naru to omoshiroku nattekuru。",
-      "meaning": "Bộ phim này sang đến nửa sau rất thú vị."
+      "kanji": "後半",
+      "kana": "こうはん",
+      "romaji": "kouhan",
+      "meaning": "nửa sau; hiệp hai",
+      "type": "(N)"
     },
     {
-      "kanji": "試合の前半と後半の間に休憩がある。",
-      "hiragana": "しあいのぜんはんとこうはんのあいだにきゅうけいがある。",
-      "romaji": "shiai no zenhan to kouhan no aida ni kyuukei ga aru。",
-      "meaning": "Có thời gian nghỉ giữa hiệp một và hiệp hai của trận đấu."
+      "kanji": "効力",
+      "kana": "こうりょく",
+      "romaji": "kouryoku",
+      "meaning": "hiệu lực, tác dụng",
+      "type": "(N)"
     },
     {
-      "kanji": "この契約は来月から効力を持つ。",
-      "hiragana": "このけいやくはらいげつからこうりょくをもつ。",
-      "romaji": "kono keiyaku wa raigetsu kara kouryoku o motsu。",
-      "meaning": "Hợp đồng này có hiệu lực từ tháng sau."
+      "kanji": "高齢",
+      "kana": "こうれい",
+      "romaji": "kourei",
+      "meaning": "tuổi cao, lớn tuổi",
+      "type": "(N)"
     },
     {
-      "kanji": "この薬はすぐに効力が出る。",
-      "hiragana": "このくすりはすぐにこうりょくがでる。",
-      "romaji": "kono kusuri wa suguni kouryoku ga deru。",
-      "meaning": "Thuốc này phát huy tác dụng ngay lập tức."
+      "kanji": "国語",
+      "kana": "こくご",
+      "romaji": "kokugo",
+      "meaning": "quốc ngữ, ngôn ngữ chính của một nước",
+      "type": "(N)"
     },
     {
-      "kanji": "現在、日本は、高齢化社会になっている。",
-      "hiragana": "げんざい、にほんは、こうれいかしゃかいになっている。",
-      "romaji": "genzai、nihon ha、koureikashakai ni natteiru。",
-      "meaning": "Hiện nay Nhật Bản đang trở thành một xã hội già hóa dân số."
+      "kanji": "国際",
+      "kana": "こくさい",
+      "romaji": "kokusai",
+      "meaning": "quốc tế",
+      "type": "(N)"
     },
     {
-      "kanji": "高齢者には、親切に接する。",
-      "hiragana": "こうれいしゃには、しんせつにせっする。",
-      "romaji": "koureisha niha、shinsetsu ni sessuru。",
-      "meaning": "Cư xử thân thiện với những người cao tuổi."
+      "kanji": "国会",
+      "kana": "こっかい",
+      "romaji": "kokkai",
+      "meaning": "quốc hội",
+      "type": "(N)"
     },
     {
-      "kanji": "この話は、小学校の国語の教科書に載っている。",
-      "hiragana": "このはなしは、しょうがっこうのこくごのきょうかしょにのっている。",
-      "romaji": "kono hanashi ha、shougakkou no kokugo no kyoukasho ni notteiru。",
-      "meaning": "Câu chuyện này có trong sách Quốc ngữ của tiểu học."
+      "kanji": "科学",
+      "kana": "かがく",
+      "romaji": "kagaku",
+      "meaning": "khoa học",
+      "type": "(N)"
     },
     {
-      "kanji": "弟は国際結婚をした。",
-      "hiragana": "おとうとはこくさいけっこんをした。",
-      "romaji": "otouto wa kokusaikekkon o shita。",
-      "meaning": "Em trai tôi đã kết hôn với người nước ngoài."
+      "kanji": "経営学",
+      "kana": "けいえいがく",
+      "romaji": "keieigaku",
+      "meaning": "quản trị kinh doanh",
+      "type": "(N)"
     },
     {
-      "kanji": "将来は国際的な仕事がしたい。",
-      "hiragana": "しょうらいはこくさいてきなしごとがしたい。",
-      "romaji": "shourai wa kokusaiteki na shigoto ga shitai。",
-      "meaning": "Tương lai tôi muốn làm một công việc mang tính quốc tế."
+      "kanji": "作物",
+      "kana": "さくもつ",
+      "romaji": "sakumotsu",
+      "meaning": "nông sản, hoa màu, cây trồng",
+      "type": "(N)"
     },
     {
-      "kanji": "国会で新しい法律が決まった。",
-      "hiragana": "こっかいであたらしいほうりつがきまった。",
-      "romaji": "kokkai de atarashii houritsu ga kimatta。",
-      "meaning": "Quốc hội đã thông qua luật mới."
+      "kanji": "参考",
+      "kana": "さんこう",
+      "romaji": "sankou",
+      "meaning": "tham khảo",
+      "type": "(N / Nする)"
     },
     {
-      "kanji": "科学の進歩によって、生活が便利になりました。",
-      "hiragana": "かがくのしんぽによって、せいかつがべんりになりました。",
-      "romaji": "kagaku no shinpo ni yotte、seikatsu ga benri ni narimashita。",
-      "meaning": "Nhờ vào sự tiến bộ của khoa học, cuộc sống đã trở nên tiện lợi hơn."
+      "kanji": "映画",
+      "kana": "えいが",
+      "romaji": "eiga",
+      "meaning": "phim điện ảnh",
+      "type": "(N)"
     },
     {
-      "kanji": "将来、自分の会社を作るために、大学で経営学を学んでいます。",
-      "hiragana": "しょうらい、じぶんのかいしゃをつくるために、だいがくでけいえいがくをまなんでいます。",
-      "romaji": "shourai、jibun no kaisha o tsukuru tame ni、daigaku de keieigaku o manandeimasu。",
-      "meaning": "Tôi đang học ngành quản trị kinh doanh ở đại học để sau này tự mở công ty."
+      "kanji": "面白い",
+      "kana": "おもしろい",
+      "romaji": "omoshiroi",
+      "meaning": "thú vị, hay, buồn cười",
+      "type": "(Aい)"
     },
     {
-      "kanji": "畑でとれた作物をお店に並べる。",
-      "hiragana": "はたけでとれたさくもつをおみせにならべる。",
-      "romaji": "hatake de toreta sakumotsu o omise ni naraberu。",
-      "meaning": "Bày nông sản thu hoạch được ở ruộng ra cửa hàng."
+      "kanji": "試合",
+      "kana": "しあい",
+      "romaji": "shiai",
+      "meaning": "trận đấu, cuộc thi đấu",
+      "type": "(N / Nする)"
     },
     {
-      "kanji": "先生のアドバイスを参考にして、作文を書き直した。",
-      "hiragana": "せんせいのあどばいすをさんこうにして、さくぶんをかきなおした。",
-      "romaji": "sensei no adobaisu o sankou ni shite、sakubun o kakinaoshita。",
-      "meaning": "Tôi đã viết lại bài văn dựa trên lời khuyên của giáo viên."
+      "kanji": "前半",
+      "kana": "ぜんはん",
+      "romaji": "zenhan",
+      "meaning": "nửa đầu; hiệp một",
+      "type": "(N)"
+    },
+    {
+      "kanji": "休憩",
+      "kana": "きゅうけい",
+      "romaji": "kyuukei",
+      "meaning": "nghỉ giải lao",
+      "type": "(N / Nする)"
+    },
+    {
+      "kanji": "契約",
+      "kana": "けいやく",
+      "romaji": "keiyaku",
+      "meaning": "hợp đồng, ký kết",
+      "type": "(N / Nする)"
+    },
+    {
+      "kanji": "来月",
+      "kana": "らいげつ",
+      "romaji": "raigetsu",
+      "meaning": "tháng sau",
+      "type": "(N)"
+    },
+    {
+      "kanji": "持つ",
+      "kana": "もつ",
+      "romaji": "motsu",
+      "meaning": "cầm, mang; có, sở hữu",
+      "type": "(V)"
+    },
+    {
+      "kanji": "薬",
+      "kana": "くすり",
+      "romaji": "kusuri",
+      "meaning": "thuốc",
+      "type": "(N)"
+    },
+    {
+      "kanji": "現在",
+      "kana": "げんざい",
+      "romaji": "genzai",
+      "meaning": "hiện tại, hiện nay",
+      "type": "(N / Adv)"
+    },
+    {
+      "kanji": "高齢化社会",
+      "kana": "こうれいかしゃかい",
+      "romaji": "koureikashakai",
+      "meaning": "xã hội già hóa dân số",
+      "type": "(N)"
+    },
+    {
+      "kanji": "高齢者",
+      "kana": "こうれいしゃ",
+      "romaji": "koureisha",
+      "meaning": "người cao tuổi",
+      "type": "(N)"
+    },
+    {
+      "kanji": "親切",
+      "kana": "しんせつ",
+      "romaji": "shinsetsu",
+      "meaning": "tốt bụng, tử tế",
+      "type": "(Aな / N)"
+    },
+    {
+      "kanji": "接する",
+      "kana": "せっする",
+      "romaji": "sessuru",
+      "meaning": "tiếp xúc, đối xử, tiếp cận",
+      "type": "(V)"
+    },
+    {
+      "kanji": "小学校",
+      "kana": "しょうがっこう",
+      "romaji": "shougakkou",
+      "meaning": "trường tiểu học",
+      "type": "(N)"
+    },
+    {
+      "kanji": "教科書",
+      "kana": "きょうかしょ",
+      "romaji": "kyoukasho",
+      "meaning": "sách giáo khoa",
+      "type": "(N)"
+    },
+    {
+      "kanji": "載る",
+      "kana": "のる",
+      "romaji": "noru",
+      "meaning": "được đăng, được ghi/đưa lên",
+      "type": "(V)"
+    },
+    {
+      "kanji": "結婚",
+      "kana": "けっこん",
+      "romaji": "kekkon",
+      "meaning": "kết hôn, hôn nhân",
+      "type": "(N / Nする)"
+    },
+    {
+      "kanji": "将来",
+      "kana": "しょうらい",
+      "romaji": "shourai",
+      "meaning": "tương lai",
+      "type": "(N)"
+    },
+    {
+      "kanji": "国際的",
+      "kana": "こくさいてき",
+      "romaji": "kokusaiteki",
+      "meaning": "mang tính quốc tế",
+      "type": "(Aな)"
+    },
+    {
+      "kanji": "法律",
+      "kana": "ほうりつ",
+      "romaji": "houritsu",
+      "meaning": "pháp luật, luật",
+      "type": "(N)"
+    },
+    {
+      "kanji": "進歩",
+      "kana": "しんぽ",
+      "romaji": "shinpo",
+      "meaning": "tiến bộ",
+      "type": "(N / Nする)"
+    },
+    {
+      "kanji": "便利",
+      "kana": "べんり",
+      "romaji": "benri",
+      "meaning": "tiện lợi",
+      "type": "(Aな)"
+    },
+    {
+      "kanji": "学ぶ",
+      "kana": "まなぶ",
+      "romaji": "manabu",
+      "meaning": "học, học tập",
+      "type": "(V)"
+    },
+    {
+      "kanji": "畑",
+      "kana": "はたけ",
+      "romaji": "hatake",
+      "meaning": "ruộng, nông trại",
+      "type": "(N)"
+    },
+    {
+      "kanji": "並べる",
+      "kana": "ならべる",
+      "romaji": "naraberu",
+      "meaning": "xếp, bày ra",
+      "type": "(V)"
+    },
+    {
+      "kanji": "アドバイス",
+      "kana": "あどばいす",
+      "romaji": "adobaisu",
+      "meaning": "lời khuyên",
+      "type": "(N)"
+    },
+    {
+      "kanji": "作文",
+      "kana": "さくぶん",
+      "romaji": "sakubun",
+      "meaning": "bài văn, bài viết",
+      "type": "(N)"
+    },
+    {
+      "kanji": "書き直す",
+      "kana": "かきなおす",
+      "romaji": "kakinaosu",
+      "meaning": "viết lại, sửa lại bài viết",
+      "type": "(V)"
     }
   ]
 });

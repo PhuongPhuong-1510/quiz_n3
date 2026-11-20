@@ -1,97 +1,266 @@
-/* Câu ví dụ từ vựng Chương 6 - Bài 3, trang 188. */
-window.SENTENCE_SETS = window.SENTENCE_SETS || [];
-window.SENTENCE_SETS.push({
+/* Từ vựng Chương 6 - Bài 3, trang 188. */
+window.VOCAB_SETS = window.VOCAB_SETS || [];
+window.VOCAB_SETS.push({
   "name": "chương 6 bài 3 trang 188",
-  "sentences": [
+  "words": [
     {
-      "kanji": "先生は私の話を疑っているようだ。",
-      "hiragana": "せんせいはわたしのはなしをうたがっているようだ。",
-      "romaji": "sensei wa watashi no hanashi o utagatteiru you da。",
-      "meaning": "Có vẻ như thầy/cô đang nghi ngờ lời nói của tôi."
+      "kanji": "疑う",
+      "kana": "うたがう",
+      "romaji": "utagau",
+      "meaning": "nghi ngờ, nghi hoặc",
+      "type": "(V)"
     },
     {
-      "kanji": "今までの経験を、仕事に役立てたい。",
-      "hiragana": "いままでのけいけんを、しごとにやくだてたい。",
-      "romaji": "imamade no keiken o、shigoto ni yakudatetai。",
-      "meaning": "Tôi muốn tận dụng kinh nghiệm đã có vào công việc."
+      "kanji": "役立てる",
+      "kana": "やくだてる",
+      "romaji": "yakudateru",
+      "meaning": "áp dụng, tận dụng, làm cho có ích",
+      "type": "(V)"
     },
     {
-      "kanji": "家族と一緒に新しい年を迎える。",
-      "hiragana": "かぞくといっしょにあたらしいとしをむかえる。",
-      "romaji": "kazoku to issho ni atarashii toshi o mukaeru。",
-      "meaning": "Tôi đón năm mới cùng gia đình."
+      "kanji": "迎える",
+      "kana": "むかえる",
+      "romaji": "mukaeru",
+      "meaning": "đón, chào đón",
+      "type": "(V)"
     },
     {
-      "kanji": "会社の入り口でお客様を出迎えた。",
-      "hiragana": "かいしゃのいりぐちでおきゃくさまをでむかえた。",
-      "romaji": "kaisha no iriguchi de okyakusama o demukaeta。",
-      "meaning": "Tôi đón khách ngay tại cổng công ty."
+      "kanji": "出迎える",
+      "kana": "でむかえる",
+      "romaji": "demukaeru",
+      "meaning": "đi đón, đón tận nơi/cửa",
+      "type": "(V)"
     },
     {
-      "kanji": "子供を連れて散歩に行く。",
-      "hiragana": "こどもをつれてさんぽにいく。",
-      "romaji": "kodomo o tsurete sanpo ni iku。",
-      "meaning": "Tôi dẫn con đi dạo."
+      "kanji": "連れる",
+      "kana": "つれる",
+      "romaji": "tsureru",
+      "meaning": "dẫn theo, đưa theo",
+      "type": "(V)"
     },
     {
-      "kanji": "今月の売り上げがぐんと落ち込んでしまった。",
-      "hiragana": "こんげつのうりあげがぐんとおちこんでしまった。",
-      "romaji": "kongetsu no uriage ga gunto ochikondeshimatta。",
-      "meaning": "Doanh thu tháng này đã sụt giảm đáng kể."
+      "kanji": "落ち込む",
+      "kana": "おちこむ",
+      "romaji": "ochikomu",
+      "meaning": "giảm sút; suy sụp, chán nản",
+      "type": "(V)"
     },
     {
-      "kanji": "テストの成績が悪くて、落ち込んでいる。",
-      "hiragana": "てすとのせいせきがわるくて、おちこんでいる。",
-      "romaji": "tesuto no seiseki ga warukute、ochikondeiru。",
-      "meaning": "Kết quả bài kiểm tra kém nên tôi đang vô cùng chán nản."
+      "kanji": "詰め込む",
+      "kana": "つめこむ",
+      "romaji": "tsumekomu",
+      "meaning": "nhồi nhét, nhét đầy",
+      "type": "(V)"
     },
     {
-      "kanji": "袋に野菜を詰め込む。",
-      "hiragana": "ふくろにやさいをつめこむ。",
-      "romaji": "fukuro ni yasai o tsumekomu。",
-      "meaning": "Nhét rau vào túi."
+      "kanji": "追い込む",
+      "kana": "おいこむ",
+      "romaji": "oikomu",
+      "meaning": "dồn vào thế bí, dồn ép",
+      "type": "(V)"
     },
     {
-      "kanji": "スーツケースに荷物を詰め込む。",
-      "hiragana": "すーつけーすににもつをつめこむ。",
-      "romaji": "suutsukeesu ni nimotsu o tsumekomu。",
-      "meaning": "Nhồi nhét đồ vào trong va-li."
+      "kanji": "書き込む",
+      "kana": "かきこむ",
+      "romaji": "kakikomu",
+      "meaning": "viết/ghi vào (giấy, mẫu đơn...)",
+      "type": "(V)"
     },
     {
-      "kanji": "お弁当におかずを詰め込む。",
-      "hiragana": "おべんとうにおかずをつめこむ。",
-      "romaji": "obentou ni okazu o tsumekomu。",
-      "meaning": "Nhồi nhét thức ăn kèm vào trong hộp cơm."
+      "kanji": "座り込む",
+      "kana": "すわりこむ",
+      "romaji": "suwarikomu",
+      "meaning": "ngồi bệt xuống; ngồi lì lại",
+      "type": "(V)"
     },
     {
-      "kanji": "上司の一言で、精神的に追い込まれた。",
-      "hiragana": "じょうしのひとことで、せいしんてきにおいこまれた。",
-      "romaji": "joushi no hitokoto de、seishinteki ni oikomareta。",
-      "meaning": "Chỉ vì một câu nói của cấp trên mà tôi bị dồn ép về mặt tinh thần."
+      "kanji": "経験",
+      "kana": "けいけん",
+      "romaji": "keiken",
+      "meaning": "kinh nghiệm, trải nghiệm",
+      "type": "(N / Nする)"
     },
     {
-      "kanji": "社長は、今回の事件で辞任に追い込まれた。",
-      "hiragana": "しゃちょうは、こんかいのじけんでじにんにおいこまれた。",
-      "romaji": "shachou ha、konkai no jiken de jinin ni oikomareta。",
-      "meaning": "Vì vụ việc này, giám đốc bị buộc phải từ chức."
+      "kanji": "家族",
+      "kana": "かぞく",
+      "romaji": "kazoku",
+      "meaning": "gia đình",
+      "type": "(N)"
     },
     {
-      "kanji": "アンケート用紙に意見を書き込んだ。",
-      "hiragana": "あんけーとようしにいけんをかきこんだ。",
-      "romaji": "ankeetoyoushi ni iken o kakikonda。",
-      "meaning": "Tôi đã viết ý kiến vào phiếu khảo sát."
+      "kanji": "一緒",
+      "kana": "いっしょ",
+      "romaji": "issho",
+      "meaning": "cùng nhau, cùng một chỗ",
+      "type": "(N / Aな)"
     },
     {
-      "kanji": "申し込み用紙に名前を書き込んだ。",
-      "hiragana": "もうしこみようしになまえをかきこんだ。",
-      "romaji": "moushikomiyoushi ni namae o kakikonda。",
-      "meaning": "Tôi đã ghi tên vào đơn đăng ký."
+      "kanji": "入り口",
+      "kana": "いりぐち",
+      "romaji": "iriguchi",
+      "meaning": "lối vào, cửa vào",
+      "type": "(N)"
     },
     {
-      "kanji": "疲れすぎて、床に座り込んでしまった。",
-      "hiragana": "つかれすぎて、ゆかにすわりこんでしまった。",
-      "romaji": "tsukaresugite、yuka ni suwarikondeshimatta。",
-      "meaning": "Vì quá mệt nên tôi ngồi bệt xuống sàn."
+      "kanji": "お客様",
+      "kana": "おきゃくさま",
+      "romaji": "okyakusama",
+      "meaning": "quý khách, khách hàng",
+      "type": "(N)"
+    },
+    {
+      "kanji": "子供",
+      "kana": "こども",
+      "romaji": "kodomo",
+      "meaning": "trẻ em, con cái",
+      "type": "(N)"
+    },
+    {
+      "kanji": "散歩",
+      "kana": "さんぽ",
+      "romaji": "sanpo",
+      "meaning": "đi dạo, tản bộ",
+      "type": "(N / Nする)"
+    },
+    {
+      "kanji": "売り上げ",
+      "kana": "うりあげ",
+      "romaji": "uriage",
+      "meaning": "doanh thu, doanh số",
+      "type": "(N)"
+    },
+    {
+      "kanji": "成績",
+      "kana": "せいせき",
+      "romaji": "seiseki",
+      "meaning": "thành tích, kết quả (học tập/thi cử)",
+      "type": "(N)"
+    },
+    {
+      "kanji": "悪い",
+      "kana": "わるい",
+      "romaji": "warui",
+      "meaning": "xấu, không tốt",
+      "type": "(Aい)"
+    },
+    {
+      "kanji": "袋",
+      "kana": "ふくろ",
+      "romaji": "fukuro",
+      "meaning": "túi, bao",
+      "type": "(N)"
+    },
+    {
+      "kanji": "野菜",
+      "kana": "やさい",
+      "romaji": "yasai",
+      "meaning": "rau củ",
+      "type": "(N)"
+    },
+    {
+      "kanji": "スーツケース",
+      "kana": "すーつけーす",
+      "romaji": "suutsukeesu",
+      "meaning": "va-li",
+      "type": "(N)"
+    },
+    {
+      "kanji": "荷物",
+      "kana": "にもつ",
+      "romaji": "nimotsu",
+      "meaning": "hành lý, đồ đạc",
+      "type": "(N)"
+    },
+    {
+      "kanji": "おかず",
+      "kana": "おかず",
+      "romaji": "okazu",
+      "meaning": "thức ăn ăn kèm cơm",
+      "type": "(N)"
+    },
+    {
+      "kanji": "上司",
+      "kana": "じょうし",
+      "romaji": "joushi",
+      "meaning": "cấp trên, sếp",
+      "type": "(N)"
+    },
+    {
+      "kanji": "精神的",
+      "kana": "せいしんてき",
+      "romaji": "seishinteki",
+      "meaning": "mang tính tinh thần, về mặt tinh thần",
+      "type": "(Aな)"
+    },
+    {
+      "kanji": "事件",
+      "kana": "じけん",
+      "romaji": "jiken",
+      "meaning": "vụ việc, vụ án, sự kiện",
+      "type": "(N)"
+    },
+    {
+      "kanji": "社長",
+      "kana": "しゃちょう",
+      "romaji": "shachou",
+      "meaning": "giám đốc, chủ tịch công ty",
+      "type": "(N)"
+    },
+    {
+      "kanji": "辞任",
+      "kana": "じにん",
+      "romaji": "jinin",
+      "meaning": "từ chức, sự từ chức",
+      "type": "(N / Nする)"
+    },
+    {
+      "kanji": "アンケート",
+      "kana": "あんけーと",
+      "romaji": "ankeeto",
+      "meaning": "bảng khảo sát, phiếu khảo sát",
+      "type": "(N)"
+    },
+    {
+      "kanji": "用紙",
+      "kana": "ようし",
+      "romaji": "youshi",
+      "meaning": "giấy mẫu, mẫu giấy",
+      "type": "(N)"
+    },
+    {
+      "kanji": "意見",
+      "kana": "いけん",
+      "romaji": "iken",
+      "meaning": "ý kiến, quan điểm",
+      "type": "(N)"
+    },
+    {
+      "kanji": "申し込み",
+      "kana": "もうしこみ",
+      "romaji": "moushikomi",
+      "meaning": "đơn đăng ký, việc đăng ký",
+      "type": "(N)"
+    },
+    {
+      "kanji": "名前",
+      "kana": "なまえ",
+      "romaji": "namae",
+      "meaning": "tên",
+      "type": "(N)"
+    },
+    {
+      "kanji": "疲れる",
+      "kana": "つかれる",
+      "romaji": "tsukareru",
+      "meaning": "mệt mỏi",
+      "type": "(V)"
+    },
+    {
+      "kanji": "床",
+      "kana": "ゆか",
+      "romaji": "yuka",
+      "meaning": "sàn nhà",
+      "type": "(N)"
     }
   ]
 });

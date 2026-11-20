@@ -1,103 +1,238 @@
-/* Câu ví dụ từ vựng Chương 6 - Bài 3, trang 184. */
-window.SENTENCE_SETS = window.SENTENCE_SETS || [];
-window.SENTENCE_SETS.push({
+/* Từ vựng Chương 6 - Bài 3, trang 184. */
+window.VOCAB_SETS = window.VOCAB_SETS || [];
+window.VOCAB_SETS.push({
   "name": "chương 6 bài 3 trang 184",
-  "sentences": [
+  "words": [
     {
-      "kanji": "命は何よりも大切だ。",
-      "hiragana": "いのちはなによりもたいせつだ。",
-      "romaji": "inochi wa naniyorimo taisetsuda。",
-      "meaning": "Mạng sống quan trọng hơn bất cứ thứ gì."
+      "kanji": "命",
+      "kana": "いのち",
+      "romaji": "inochi",
+      "meaning": "sinh mệnh, mạng sống",
+      "type": "(N)"
     },
     {
-      "kanji": "この電車の事故で、多くの命が失われた。",
-      "hiragana": "このでんしゃのじこで、おおくのいのちがうしなわれた。",
-      "romaji": "kono densha no jiko de、ooku no inochi ga ushinawareta。",
-      "meaning": "Nhiều sinh mạng đã bị mất trong vụ tai nạn tàu điện này."
+      "kanji": "寿命",
+      "kana": "じゅみょう",
+      "romaji": "jumyou",
+      "meaning": "tuổi thọ",
+      "type": "(N)"
     },
     {
-      "kanji": "日本の平均寿命は年々延びている。",
-      "hiragana": "にほんのへいきんじゅみょうはねんねんのびている。",
-      "romaji": "nihon no heikinjumyou wa nennen nobiteiru。",
-      "meaning": "Tuổi thọ trung bình của Nhật Bản đang tăng lên từng năm."
+      "kanji": "印",
+      "kana": "しるし",
+      "romaji": "shirushi",
+      "meaning": "dấu hiệu, biểu tượng",
+      "type": "(N)"
     },
     {
-      "kanji": "自分がチェックしたとわかるよう、印をつけた。",
-      "hiragana": "じぶんがちぇっくしたとわかるよう、しるしをつけた。",
-      "romaji": "jibun ga chekku shita to wakaru you、shirushi o tsuketa。",
-      "meaning": "Tôi đã đánh dấu để người ta biết đó là phần mình đã kiểm tra."
+      "kanji": "印刷",
+      "kana": "いんさつ",
+      "romaji": "insatsu",
+      "meaning": "in ấn",
+      "type": "(N / Nする)"
     },
     {
-      "kanji": "地図の印を頼りに目的地まで行った。",
-      "hiragana": "ちずのしるしをたよりにもくてきちまでいった。",
-      "romaji": "chizu no shirushi o tayori ni mokutekichi made itta。",
-      "meaning": "Dựa vào ký hiệu trên bản đồ, tôi đã đến được đích."
+      "kanji": "迎え",
+      "kana": "むかえ",
+      "romaji": "mukae",
+      "meaning": "sự đón tiếp",
+      "type": "(N)"
     },
     {
-      "kanji": "会議の資料を印刷する。",
-      "hiragana": "かいぎのしりょうをいんさつする。",
-      "romaji": "kaigi no shiryou o insatsusuru。",
-      "meaning": "Tôi in tài liệu cho cuộc họp."
+      "kanji": "定員",
+      "kana": "ていいん",
+      "romaji": "teiin",
+      "meaning": "số người quy định, sức chứa",
+      "type": "(N)"
     },
     {
-      "kanji": "このコピー機は、スマホから写真を印刷できる。",
-      "hiragana": "このこぴーきは、すまほからしゃしんをいんさつできる。",
-      "romaji": "kono kopiiki ha、sumaho kara shashin o insatsu dekiru。",
-      "meaning": "Máy photocopy này có thể in ảnh từ điện thoại."
+      "kanji": "定期",
+      "kana": "ていき",
+      "romaji": "teiki",
+      "meaning": "định kỳ; vé tháng",
+      "type": "(N)"
     },
     {
-      "kanji": "駅前にホテルの迎えの車が来ている。",
-      "hiragana": "えきまえにほてるのむかえのくるまがきている。",
-      "romaji": "ekimae ni hoteru no mukae no kuruma ga kiteiru。",
-      "meaning": "Xe đón của khách sạn đã đến trước ga."
+      "kanji": "生徒",
+      "kana": "せいと",
+      "romaji": "seito",
+      "meaning": "học sinh",
+      "type": "(N)"
     },
     {
-      "kanji": "このバスの定員は40名だ。",
-      "hiragana": "このばすのていいんはよんじゅうめいだ。",
-      "romaji": "kono basu no teiin wa yonjuumei da。",
-      "meaning": "Số người quy định của xe buýt này là 40 người."
+      "kanji": "徒歩",
+      "kana": "とほ",
+      "romaji": "toho",
+      "meaning": "đi bộ",
+      "type": "(N)"
     },
     {
-      "kanji": "健康のために、定期的にジムに通っている。",
-      "hiragana": "けんこうのために、ていきてきにじむにかよっている。",
-      "romaji": "kenkou no tameni、teikiteki ni jimu ni kayotteiru。",
-      "meaning": "Tôi đi tập gym định kỳ để tốt cho sức khỏe."
+      "kanji": "市役所",
+      "kana": "しやくしょ",
+      "romaji": "shiyakusho",
+      "meaning": "tòa thị chính",
+      "type": "(N)"
     },
     {
-      "kanji": "このクラスには30人の生徒がいます。",
-      "hiragana": "このくらすにはさんじゅうにんのせいとがいます。",
-      "romaji": "kono kurasu ni wa sanjuunin no seito ga imasu。",
-      "meaning": "Lớp này có 30 học sinh."
+      "kanji": "手段",
+      "kana": "しゅだん",
+      "romaji": "shudan",
+      "meaning": "phương pháp, cách thức, phương tiện",
+      "type": "(N)"
     },
     {
-      "kanji": "職場は家から徒歩で5分くらいだ。",
-      "hiragana": "しょくばはいえからとほでごふんくらいだ。",
-      "romaji": "shokuba wa ie kara toho de gofun kurai da。",
-      "meaning": "Nơi làm việc cách nhà tôi khoảng 5 phút đi bộ."
+      "kanji": "何より",
+      "kana": "なにより",
+      "romaji": "naniyori",
+      "meaning": "hơn bất cứ điều gì, trên hết",
+      "type": "(Adv)"
     },
     {
-      "kanji": "駅から徒歩10分くらいのアパートを探しています。",
-      "hiragana": "えきからとほじゅっぷんくらいのあぱーとをさがしています。",
-      "romaji": "eki kara toho juppun kurai no apaato o sagashiteimasu。",
-      "meaning": "Tôi đang tìm một căn hộ cách ga khoảng 10 phút đi bộ."
+      "kanji": "事故",
+      "kana": "じこ",
+      "romaji": "jiko",
+      "meaning": "tai nạn, sự cố",
+      "type": "(N)"
     },
     {
-      "kanji": "日曜日に市役所でコンサートが開催される。",
-      "hiragana": "にちようびにしやくしょでこんさーとがかいさいされる。",
-      "romaji": "nichiyoubi ni shiyakusho de konsaato ga kaisaisareru。",
-      "meaning": "Một buổi hòa nhạc sẽ được tổ chức tại tòa thị chính vào Chủ nhật."
+      "kanji": "失う",
+      "kana": "うしなう",
+      "romaji": "ushinau",
+      "meaning": "mất, đánh mất",
+      "type": "(V)"
     },
     {
-      "kanji": "SNSはコミュニケーションを取る一つの手段だ。",
-      "hiragana": "えすえぬえすはこみゅにけーしょんをとるひとつのしゅだんだ。",
-      "romaji": "esuenuesu wa komyunikeeshon o toru hitotsu no shudan da。",
-      "meaning": "SNS là một trong những phương thức giao tiếp."
+      "kanji": "平均",
+      "kana": "へいきん",
+      "romaji": "heikin",
+      "meaning": "trung bình",
+      "type": "(N)"
     },
     {
-      "kanji": "家を出る前に、利用する交通手段を決める。",
-      "hiragana": "いえをでるまえに、りようするこうつうしゅだんをきめる。",
-      "romaji": "ie o deru mae ni、riyousuru koutsuushudan o kimeru。",
-      "meaning": "Quyết định phương tiện di chuyển trước khi ra khỏi nhà."
+      "kanji": "年々",
+      "kana": "ねんねん",
+      "romaji": "nennen",
+      "meaning": "từng năm, năm này qua năm khác",
+      "type": "(Adv)"
+    },
+    {
+      "kanji": "延びる",
+      "kana": "のびる",
+      "romaji": "nobiru",
+      "meaning": "kéo dài, tăng lên",
+      "type": "(V)"
+    },
+    {
+      "kanji": "自分",
+      "kana": "じぶん",
+      "romaji": "jibun",
+      "meaning": "bản thân, chính mình",
+      "type": "(N)"
+    },
+    {
+      "kanji": "地図",
+      "kana": "ちず",
+      "romaji": "chizu",
+      "meaning": "bản đồ",
+      "type": "(N)"
+    },
+    {
+      "kanji": "目的地",
+      "kana": "もくてきち",
+      "romaji": "mokutekichi",
+      "meaning": "điểm đến, nơi cần đến",
+      "type": "(N)"
+    },
+    {
+      "kanji": "資料",
+      "kana": "しりょう",
+      "romaji": "shiryou",
+      "meaning": "tài liệu, tư liệu",
+      "type": "(N)"
+    },
+    {
+      "kanji": "写真",
+      "kana": "しゃしん",
+      "romaji": "shashin",
+      "meaning": "ảnh, bức ảnh",
+      "type": "(N)"
+    },
+    {
+      "kanji": "健康",
+      "kana": "けんこう",
+      "romaji": "kenkou",
+      "meaning": "sức khỏe; khỏe mạnh",
+      "type": "(N / Aな)"
+    },
+    {
+      "kanji": "通う",
+      "kana": "かよう",
+      "romaji": "kayou",
+      "meaning": "đi đi về về, thường xuyên lui tới",
+      "type": "(V)"
+    },
+    {
+      "kanji": "職場",
+      "kana": "しょくば",
+      "romaji": "shokuba",
+      "meaning": "nơi làm việc, công sở",
+      "type": "(N)"
+    },
+    {
+      "kanji": "開催",
+      "kana": "かいさい",
+      "romaji": "kaisai",
+      "meaning": "sự tổ chức; tổ chức (sự kiện)",
+      "type": "(N / Nする)"
+    },
+    {
+      "kanji": "交通",
+      "kana": "こうつう",
+      "romaji": "koutsuu",
+      "meaning": "giao thông, sự đi lại",
+      "type": "(N)"
+    },
+    {
+      "kanji": "利用",
+      "kana": "りよう",
+      "romaji": "riyou",
+      "meaning": "sử dụng, tận dụng",
+      "type": "(N / Nする)"
+    },
+    {
+      "kanji": "決める",
+      "kana": "きめる",
+      "romaji": "kimeru",
+      "meaning": "quyết định, xác định",
+      "type": "(V)"
+    },
+    {
+      "kanji": "コピー機",
+      "kana": "こぴーき",
+      "romaji": "kopiiki",
+      "meaning": "máy photocopy",
+      "type": "(N)"
+    },
+    {
+      "kanji": "スマホ",
+      "kana": "すまほ",
+      "romaji": "sumaho",
+      "meaning": "điện thoại thông minh",
+      "type": "(N)"
+    },
+    {
+      "kanji": "駅前",
+      "kana": "えきまえ",
+      "romaji": "ekimae",
+      "meaning": "khu vực trước nhà ga",
+      "type": "(N)"
+    },
+    {
+      "kanji": "交通手段",
+      "kana": "こうつうしゅだん",
+      "romaji": "koutsuushudan",
+      "meaning": "phương tiện giao thông",
+      "type": "(N)"
     }
   ]
 });

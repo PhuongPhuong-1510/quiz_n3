@@ -1,0 +1,9 @@
+{
+  "name": "Luyện tập tiếng Nhật N3",
+  "short_name": "Quiz N3",
+  "start_url": "./form_luyen_ngu_phap_3_buoc_romaji.html?phan=tuvung",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f2efe8",
+  "theme_color": "#a43b2d"
+}

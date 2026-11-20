@@ -1,91 +1,280 @@
-/* Câu ví dụ từ vựng Chương 6 - Bài 3, trang 187. */
-window.SENTENCE_SETS = window.SENTENCE_SETS || [];
-window.SENTENCE_SETS.push({
+/* Từ vựng Chương 6 - Bài 3, trang 187. */
+window.VOCAB_SETS = window.VOCAB_SETS || [];
+window.VOCAB_SETS.push({
   "name": "chương 6 bài 3 trang 187",
-  "sentences": [
+  "words": [
     {
-      "kanji": "試験を受けるので、参考書を買っておくことにした。",
-      "hiragana": "しけんをうけるので、さんこうしょをかっておくことにした。",
-      "romaji": "shiken o ukeru node、sankousho o katteoku koto ni shita。",
-      "meaning": "Vì sắp thi nên tôi quyết định mua sẵn sách tham khảo."
+      "kanji": "参考書",
+      "kana": "さんこうしょ",
+      "romaji": "sankousho",
+      "meaning": "sách tham khảo",
+      "type": "(N)"
     },
     {
-      "kanji": "四季の中では春が好きです。",
-      "hiragana": "しきのなかでははるがすきです。",
-      "romaji": "shiki no naka de wa haru ga suki desu。",
-      "meaning": "Trong bốn mùa thì tôi thích nhất mùa xuân."
+      "kanji": "四季",
+      "kana": "しき",
+      "romaji": "shiki",
+      "meaning": "bốn mùa",
+      "type": "(N)"
     },
     {
-      "kanji": "この国は資源が豊富だ。",
-      "hiragana": "このくにはしげんがほうふだ。",
-      "romaji": "kono kuni wa shigen ga houfu da。",
-      "meaning": "Đất nước này rất giàu tài nguyên."
+      "kanji": "資源",
+      "kana": "しげん",
+      "romaji": "shigen",
+      "meaning": "tài nguyên",
+      "type": "(N)"
     },
     {
-      "kanji": "新たなエネルギー資源として、海洋資源が注目されている。",
-      "hiragana": "あらたなえねるぎーしげんとして、かいようしげんがちゅうもくされている。",
-      "romaji": "arata na enerugiishigen toshite、kaiyoushigen ga chuumoku sareteiru。",
-      "meaning": "Tài nguyên biển đang được chú ý như một nguồn năng lượng mới."
+      "kanji": "湿度",
+      "kana": "しつど",
+      "romaji": "shitsudo",
+      "meaning": "độ ẩm",
+      "type": "(N)"
     },
     {
-      "kanji": "雨が降ると、湿度が高くなる。",
-      "hiragana": "あめがふると、しつどがたかくなる。",
-      "romaji": "ame ga furu to、shitsudo ga takaku naru。",
-      "meaning": "Khi trời mưa thì độ ẩm tăng cao."
+      "kanji": "品物",
+      "kana": "しなもの",
+      "romaji": "shinamono",
+      "meaning": "hàng hóa, mặt hàng",
+      "type": "(N)"
     },
     {
-      "kanji": "今日は湿度が10％で空気が乾いている。",
-      "hiragana": "きょうはしつどがじゅっぱーせんとでくうきがかわいている。",
-      "romaji": "kyou wa shitsudo ga juppaasento de kuuki ga kawaiteiru。",
-      "meaning": "Vì hôm nay độ ẩm là 10% nên không khí hanh khô."
+      "kanji": "始発",
+      "kana": "しはつ",
+      "romaji": "shihatsu",
+      "meaning": "chuyến đầu tiên trong ngày (tàu, xe)",
+      "type": "(N)"
     },
     {
-      "kanji": "この店は安くていい品物が多いです。",
-      "hiragana": "このみせはやすくていいしなものがおおいです。",
-      "romaji": "kono mise wa yasukute ii shinamono ga ooi desu。",
-      "meaning": "Cửa hàng này có nhiều mặt hàng rẻ mà chất lượng tốt."
+      "kanji": "氏名",
+      "kana": "しめい",
+      "romaji": "shimei",
+      "meaning": "họ tên",
+      "type": "(N)"
     },
     {
-      "kanji": "始発の電車はいつも空いています。",
-      "hiragana": "しはつのでんしゃはいつもすいています。",
-      "romaji": "shihatsu no densha wa itsumo suiteimasu。",
-      "meaning": "Chuyến tàu điện đầu tiên trong ngày lúc nào cũng vắng."
+      "kanji": "ピクニック",
+      "kana": "ぴくにっく",
+      "romaji": "pikunikku",
+      "meaning": "chuyến dã ngoại, picnic",
+      "type": "(N)"
     },
     {
-      "kanji": "書類に氏名を書いてください。",
-      "hiragana": "しょるいにしめいをかいてください。",
-      "romaji": "shorui ni shimei o kaitekudasai。",
-      "meaning": "Xin hãy điền họ tên vào hồ sơ."
+      "kanji": "印象的",
+      "kana": "いんしょうてき",
+      "romaji": "inshouteki",
+      "meaning": "gây ấn tượng, đầy ấn tượng",
+      "type": "(Aな)"
     },
     {
-      "kanji": "ピクニックのためにお弁当を作りました。",
-      "hiragana": "ぴくにっくのためにおべんとうをつくりました。",
-      "romaji": "pikunikku no tame ni obentou o tsukurimashita。",
-      "meaning": "Tôi đã chuẩn bị cơm hộp cho chuyến dã ngoại."
+      "kanji": "貧しい",
+      "kana": "まずしい",
+      "romaji": "mazushii",
+      "meaning": "nghèo, nghèo khó",
+      "type": "(Aい)"
     },
     {
-      "kanji": "昨日の映画は印象的なシーンが多かったです。",
-      "hiragana": "きのうのえいがはいんしょうてきなしーんがおおかったです。",
-      "romaji": "kinou no eiga wa inshouteki na shiin ga ookatta desu。",
-      "meaning": "Bộ phim hôm qua có rất nhiều cảnh gây ấn tượng."
+      "kanji": "厚い",
+      "kana": "あつい",
+      "romaji": "atsui",
+      "meaning": "dày; sâu sắc, nồng hậu (tình cảm/sự tin tưởng)",
+      "type": "(Aい)"
     },
     {
-      "kanji": "彼女は貧しい家庭に生まれた。",
-      "hiragana": "かのじょはまずしいかていにうまれた。",
-      "romaji": "kanojo wa mazushii katei ni umareta。",
-      "meaning": "Cô ấy sinh ra trong một gia đình nghèo khó."
+      "kanji": "試験",
+      "kana": "しけん",
+      "romaji": "shiken",
+      "meaning": "kỳ thi, bài thi",
+      "type": "(N / Nする)"
     },
     {
-      "kanji": "この辺は冬、寒いので、厚いコートが必要だ。",
-      "hiragana": "このへんはふゆ、さむいので、あついこーとがひつようだ。",
-      "romaji": "konohen wa fuyu、samui node、atsui kooto ga hitsuyou da。",
-      "meaning": "Khu vực này vào mùa đông lạnh, nên cần mặc áo khoác dày."
+      "kanji": "受ける",
+      "kana": "うける",
+      "romaji": "ukeru",
+      "meaning": "nhận; tham gia/dự thi",
+      "type": "(V)"
     },
     {
-      "kanji": "鈴木さんは優秀なので、部長からの信頼が厚い。",
-      "hiragana": "すずきさんはゆうしゅうなので、ぶちょうからのしんらいがあつい。",
-      "romaji": "suzukisan wa yuushuu na node、buchou kara no shinrai ga atsui。",
-      "meaning": "Anh Suzuki giỏi nên rất được trưởng ban tin tưởng."
+      "kanji": "買う",
+      "kana": "かう",
+      "romaji": "kau",
+      "meaning": "mua",
+      "type": "(V)"
+    },
+    {
+      "kanji": "春",
+      "kana": "はる",
+      "romaji": "haru",
+      "meaning": "mùa xuân",
+      "type": "(N)"
+    },
+    {
+      "kanji": "豊富",
+      "kana": "ほうふ",
+      "romaji": "houfu",
+      "meaning": "phong phú, dồi dào",
+      "type": "(Aな / N)"
+    },
+    {
+      "kanji": "新た",
+      "kana": "あらた",
+      "romaji": "arata",
+      "meaning": "mới, mới mẻ",
+      "type": "(Aな)"
+    },
+    {
+      "kanji": "エネルギー",
+      "kana": "えねるぎー",
+      "romaji": "enerugii",
+      "meaning": "năng lượng",
+      "type": "(N)"
+    },
+    {
+      "kanji": "海洋",
+      "kana": "かいよう",
+      "romaji": "kaiyou",
+      "meaning": "đại dương, biển",
+      "type": "(N)"
+    },
+    {
+      "kanji": "注目",
+      "kana": "ちゅうもく",
+      "romaji": "chuumoku",
+      "meaning": "sự chú ý; chú ý",
+      "type": "(N / Nする)"
+    },
+    {
+      "kanji": "雨",
+      "kana": "あめ",
+      "romaji": "ame",
+      "meaning": "mưa",
+      "type": "(N)"
+    },
+    {
+      "kanji": "降る",
+      "kana": "ふる",
+      "romaji": "furu",
+      "meaning": "rơi, đổ (mưa/tuyết)",
+      "type": "(V)"
+    },
+    {
+      "kanji": "高い",
+      "kana": "たかい",
+      "romaji": "takai",
+      "meaning": "cao; đắt",
+      "type": "(Aい)"
+    },
+    {
+      "kanji": "空気",
+      "kana": "くうき",
+      "romaji": "kuuki",
+      "meaning": "không khí",
+      "type": "(N)"
+    },
+    {
+      "kanji": "乾く",
+      "kana": "かわく",
+      "romaji": "kawaku",
+      "meaning": "khô, khô ráo",
+      "type": "(V)"
+    },
+    {
+      "kanji": "安い",
+      "kana": "やすい",
+      "romaji": "yasui",
+      "meaning": "rẻ",
+      "type": "(Aい)"
+    },
+    {
+      "kanji": "空く",
+      "kana": "すく",
+      "romaji": "suku",
+      "meaning": "trống, vắng; đói",
+      "type": "(V)"
+    },
+    {
+      "kanji": "書類",
+      "kana": "しょるい",
+      "romaji": "shorui",
+      "meaning": "giấy tờ, hồ sơ, tài liệu",
+      "type": "(N)"
+    },
+    {
+      "kanji": "お弁当",
+      "kana": "おべんとう",
+      "romaji": "obentou",
+      "meaning": "cơm hộp",
+      "type": "(N)"
+    },
+    {
+      "kanji": "シーン",
+      "kana": "しーん",
+      "romaji": "shiin",
+      "meaning": "cảnh, phân đoạn (phim)",
+      "type": "(N)"
+    },
+    {
+      "kanji": "家庭",
+      "kana": "かてい",
+      "romaji": "katei",
+      "meaning": "gia đình, hộ gia đình",
+      "type": "(N)"
+    },
+    {
+      "kanji": "生まれる",
+      "kana": "うまれる",
+      "romaji": "umareru",
+      "meaning": "được sinh ra, sinh ra",
+      "type": "(V)"
+    },
+    {
+      "kanji": "冬",
+      "kana": "ふゆ",
+      "romaji": "fuyu",
+      "meaning": "mùa đông",
+      "type": "(N)"
+    },
+    {
+      "kanji": "寒い",
+      "kana": "さむい",
+      "romaji": "samui",
+      "meaning": "lạnh",
+      "type": "(Aい)"
+    },
+    {
+      "kanji": "コート",
+      "kana": "こーと",
+      "romaji": "kooto",
+      "meaning": "áo khoác dài, áo măng tô",
+      "type": "(N)"
+    },
+    {
+      "kanji": "必要",
+      "kana": "ひつよう",
+      "romaji": "hitsuyou",
+      "meaning": "cần thiết, sự cần thiết",
+      "type": "(Aな / N)"
+    },
+    {
+      "kanji": "優秀",
+      "kana": "ゆうしゅう",
+      "romaji": "yuushuu",
+      "meaning": "ưu tú, xuất sắc",
+      "type": "(Aな)"
+    },
+    {
+      "kanji": "部長",
+      "kana": "ぶちょう",
+      "romaji": "buchou",
+      "meaning": "trưởng phòng, trưởng ban",
+      "type": "(N)"
+    },
+    {
+      "kanji": "信頼",
+      "kana": "しんらい",
+      "romaji": "shinrai",
+      "meaning": "sự tin tưởng, tín nhiệm",
+      "type": "(N / Nする)"
     }
   ]
 });

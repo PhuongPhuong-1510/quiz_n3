@@ -1,103 +1,294 @@
-/* Câu ví dụ từ vựng Chương 6 - Bài 3, trang 189. */
-window.SENTENCE_SETS = window.SENTENCE_SETS || [];
-window.SENTENCE_SETS.push({
+/* Từ vựng Chương 6 - Bài 3, trang 189. */
+window.VOCAB_SETS = window.VOCAB_SETS || [];
+window.VOCAB_SETS.push({
   "name": "chương 6 bài 3 trang 189",
-  "sentences": [
+  "words": [
     {
-      "kanji": "貯金がついに500万円に達した。",
-      "hiragana": "ちょきんがついにごひゃくまんえんにたっした。",
-      "romaji": "chokin ga tsuini gohyakumanen ni tasshita。",
-      "meaning": "Cuối cùng thì số tiền tiết kiệm đã đạt tới 5 triệu yên."
+      "kanji": "達する",
+      "kana": "たっする",
+      "romaji": "tassuru",
+      "meaning": "đạt tới, đạt được",
+      "type": "(V)"
     },
     {
-      "kanji": "今日の最高気温は40度に達した。",
-      "hiragana": "きょうのさいこうきおんはよんじゅうどにたっした。",
-      "romaji": "kyou no saikoukion wa yonjuudo ni tasshita。",
-      "meaning": "Nhiệt độ cao nhất hôm nay đã đạt tới 40 độ."
+      "kanji": "投げる",
+      "kana": "なげる",
+      "romaji": "nageru",
+      "meaning": "ném",
+      "type": "(V)"
     },
     {
-      "kanji": "投げたボールを犬が追いかけていった。",
-      "hiragana": "なげたぼーるをいぬがおいかけていった。",
-      "romaji": "nageta booru o inu ga oikaketeitta。",
-      "meaning": "Con chó chạy đuổi theo quả bóng mà tôi ném."
+      "kanji": "投げ捨てる",
+      "kana": "なげすてる",
+      "romaji": "nagesuteru",
+      "meaning": "ném bỏ, vứt đi",
+      "type": "(V)"
     },
     {
-      "kanji": "ゴミを道に投げ捨てないでください。",
-      "hiragana": "ごみをみちになげすてないでください。",
-      "romaji": "gomi o michi ni nagesutenaidekudasai。",
-      "meaning": "Xin đừng vứt rác ra đường."
+      "kanji": "乾く",
+      "kana": "かわく",
+      "romaji": "kawaku",
+      "meaning": "khô, ráo",
+      "type": "(V)"
     },
     {
-      "kanji": "手紙を読まずに投げ捨てた。",
-      "hiragana": "てがみをよまずになげすてた。",
-      "romaji": "tegami o yomazu ni nagesuteta。",
-      "meaning": "Tôi đã ném lá thư đi mà không đọc."
+      "kanji": "叩く",
+      "kana": "たたく",
+      "romaji": "tataku",
+      "meaning": "vỗ (vai/tay); đánh, đấm; chỉ trích",
+      "type": "(V)"
     },
     {
-      "kanji": "夏は洗濯物がすぐ乾く。",
-      "hiragana": "なつはせんたくものがすぐかわく。",
-      "romaji": "natsu wa sentakumono ga sugu kawaku。",
-      "meaning": "Mùa hè thì đồ giặt nhanh khô."
+      "kanji": "扱う",
+      "kana": "あつかう",
+      "romaji": "atsukau",
+      "meaning": "sử dụng, thao tác, xử lý; bán; đối xử",
+      "type": "(V)"
     },
     {
-      "kanji": "疲れている父親の肩を、子供が叩いてあげている。",
-      "hiragana": "つかれているちちおやのかたを、こどもがたたいてあげている。",
-      "romaji": "tsukareteiru chichioya no kata o、kodomo ga tataiteageteiru。",
-      "meaning": "Đứa trẻ đang vỗ (đấm bóp) vai cho người bố đang mệt."
+      "kanji": "再生",
+      "kana": "さいせい",
+      "romaji": "saisei",
+      "meaning": "tái sinh, hồi phục; phát lại; tái chế",
+      "type": "(N / Nする)"
     },
     {
-      "kanji": "男の子が女の子を叩いて、泣かせてしまった。",
-      "hiragana": "おとこのこがおんなのこをたたいて、なかせてしまった。",
-      "romaji": "otokonoko ga onnanoko o tataite、nakaseteshimatta。",
-      "meaning": "Cậu bé đã đánh cô bé làm cô bé khóc."
+      "kanji": "採点",
+      "kana": "さいてん",
+      "romaji": "saiten",
+      "meaning": "chấm điểm, cho điểm",
+      "type": "(N / Nする)"
     },
     {
-      "kanji": "有名人はネットで叩かれやすい。",
-      "hiragana": "ゆうめいじんはねっとでたたかれやすい。",
-      "romaji": "yuumeijin wa netto de tatakareyasui。",
-      "meaning": "Người nổi tiếng dễ bị chỉ trích trên mạng."
+      "kanji": "貯金",
+      "kana": "ちょきん",
+      "romaji": "chokin",
+      "meaning": "tiền tiết kiệm; tiết kiệm tiền",
+      "type": "(N / Nする)"
     },
     {
-      "kanji": "このコップは割れやすいので丁寧に扱ってください。",
-      "hiragana": "このこっぷはわれやすいのでていねいにあつかってください。",
-      "romaji": "kono koppu wa wareyasui node teinei ni atsukattekudasai。",
-      "meaning": "Cái cốc này dễ vỡ nên hãy sử dụng cẩn thận."
+      "kanji": "ついに",
+      "kana": "ついに",
+      "romaji": "tsuini",
+      "meaning": "cuối cùng, rốt cuộc",
+      "type": "(Adv)"
     },
     {
-      "kanji": "子供服は３階で扱っております。",
-      "hiragana": "こどもふくはさんがいであつかっております。",
-      "romaji": "kodomofuku wa sangai de atsukatteorimasu。",
-      "meaning": "Quần áo trẻ em được bán ở tầng 3."
+      "kanji": "最高気温",
+      "kana": "さいこうきおん",
+      "romaji": "saikoukion",
+      "meaning": "nhiệt độ cao nhất",
+      "type": "(N)"
     },
     {
-      "kanji": "「子供みたいに扱わないで！」",
-      "hiragana": "こどもみたいにあつかわないで",
-      "romaji": "kodomo mitai ni atsukawanaide",
-      "meaning": "「Đừng đối xử với tôi như trẻ con!」"
+      "kanji": "度",
+      "kana": "ど",
+      "romaji": "do",
+      "meaning": "độ (nhiệt độ, góc...)",
+      "type": "(N)"
     },
     {
-      "kanji": "私は森を再生するプロジェクトに参加している。",
-      "hiragana": "わたしはもりをさいせいするぷろじぇくとにさんかしている。",
-      "romaji": "watashi wa mori o saiseisuru purojekuto ni sankashiteiru。",
-      "meaning": "Tôi đang tham gia vào một dự án phục hồi rừng."
+      "kanji": "ボール",
+      "kana": "ぼーる",
+      "romaji": "booru",
+      "meaning": "quả bóng",
+      "type": "(N)"
     },
     {
-      "kanji": "音楽を再生する。",
-      "hiragana": "おんがくをさいせいする。",
-      "romaji": "ongaku o saiseisuru。",
-      "meaning": "Tôi bật nhạc lên."
+      "kanji": "犬",
+      "kana": "いぬ",
+      "romaji": "inu",
+      "meaning": "chó",
+      "type": "(N)"
     },
     {
-      "kanji": "プラスチックは再生して、新しい商品にできる。",
-      "hiragana": "ぷらすちっくはさいせいして、あたらしいしょうひんにできる。",
-      "romaji": "purasuchikku wa saiseishite、atarashii shouhin ni dekiru。",
-      "meaning": "Nhựa sau khi được tái chế có thể trở thành sản phẩm mới."
+      "kanji": "追いかける",
+      "kana": "おいかける",
+      "romaji": "oikakeru",
+      "meaning": "đuổi theo, chạy theo",
+      "type": "(V)"
     },
     {
-      "kanji": "先生はテストが終わった後、すぐに採点を始めました。",
-      "hiragana": "せんせいはてすとがおわったあと、すぐにさいてんをはじめました。",
-      "romaji": "sensei wa tesuto ga owatta ato、suguni saiten o hajimemashita。",
-      "meaning": "Sau khi bài kiểm tra kết thúc, cô giáo đã bắt đầu chấm điểm ngay."
+      "kanji": "ゴミ",
+      "kana": "ごみ",
+      "romaji": "gomi",
+      "meaning": "rác",
+      "type": "(N)"
+    },
+    {
+      "kanji": "道",
+      "kana": "みち",
+      "romaji": "michi",
+      "meaning": "đường, con đường",
+      "type": "(N)"
+    },
+    {
+      "kanji": "手紙",
+      "kana": "てがみ",
+      "romaji": "tegami",
+      "meaning": "lá thư",
+      "type": "(N)"
+    },
+    {
+      "kanji": "読む",
+      "kana": "よむ",
+      "romaji": "yomu",
+      "meaning": "đọc",
+      "type": "(V)"
+    },
+    {
+      "kanji": "夏",
+      "kana": "なつ",
+      "romaji": "natsu",
+      "meaning": "mùa hè",
+      "type": "(N)"
+    },
+    {
+      "kanji": "洗濯物",
+      "kana": "せんたくもの",
+      "romaji": "sentakumono",
+      "meaning": "quần áo cần giặt/đã giặt",
+      "type": "(N)"
+    },
+    {
+      "kanji": "すぐ",
+      "kana": "すぐ",
+      "romaji": "sugu",
+      "meaning": "ngay, lập tức",
+      "type": "(Adv)"
+    },
+    {
+      "kanji": "父親",
+      "kana": "ちちおや",
+      "romaji": "chichioya",
+      "meaning": "người cha, bố",
+      "type": "(N)"
+    },
+    {
+      "kanji": "肩",
+      "kana": "かた",
+      "romaji": "kata",
+      "meaning": "vai",
+      "type": "(N)"
+    },
+    {
+      "kanji": "男の子",
+      "kana": "おとこのこ",
+      "romaji": "otokonoko",
+      "meaning": "bé trai, con trai",
+      "type": "(N)"
+    },
+    {
+      "kanji": "女の子",
+      "kana": "おんなのこ",
+      "romaji": "onnanoko",
+      "meaning": "bé gái, con gái",
+      "type": "(N)"
+    },
+    {
+      "kanji": "泣く",
+      "kana": "なく",
+      "romaji": "naku",
+      "meaning": "khóc",
+      "type": "(V)"
+    },
+    {
+      "kanji": "有名人",
+      "kana": "ゆうめいじん",
+      "romaji": "yuumeijin",
+      "meaning": "người nổi tiếng",
+      "type": "(N)"
+    },
+    {
+      "kanji": "ネット",
+      "kana": "ねっと",
+      "romaji": "netto",
+      "meaning": "mạng internet",
+      "type": "(N)"
+    },
+    {
+      "kanji": "割れる",
+      "kana": "われる",
+      "romaji": "wareru",
+      "meaning": "bị vỡ, nứt",
+      "type": "(V)"
+    },
+    {
+      "kanji": "コップ",
+      "kana": "こっぷ",
+      "romaji": "koppu",
+      "meaning": "cốc, ly",
+      "type": "(N)"
+    },
+    {
+      "kanji": "丁寧",
+      "kana": "ていねい",
+      "romaji": "teinei",
+      "meaning": "cẩn thận, lịch sự, chu đáo",
+      "type": "(Aな)"
+    },
+    {
+      "kanji": "子供服",
+      "kana": "こどもふく",
+      "romaji": "kodomofuku",
+      "meaning": "quần áo trẻ em",
+      "type": "(N)"
+    },
+    {
+      "kanji": "森",
+      "kana": "もり",
+      "romaji": "mori",
+      "meaning": "rừng",
+      "type": "(N)"
+    },
+    {
+      "kanji": "プロジェクト",
+      "kana": "ぷろじぇくと",
+      "romaji": "purojekuto",
+      "meaning": "dự án",
+      "type": "(N)"
+    },
+    {
+      "kanji": "参加",
+      "kana": "さんか",
+      "romaji": "sanka",
+      "meaning": "tham gia",
+      "type": "(N / Nする)"
+    },
+    {
+      "kanji": "音楽",
+      "kana": "おんがく",
+      "romaji": "ongaku",
+      "meaning": "âm nhạc",
+      "type": "(N)"
+    },
+    {
+      "kanji": "プラスチック",
+      "kana": "ぷらすちっく",
+      "romaji": "purasuchikku",
+      "meaning": "nhựa, chất dẻo",
+      "type": "(N)"
+    },
+    {
+      "kanji": "商品",
+      "kana": "しょうひん",
+      "romaji": "shouhin",
+      "meaning": "sản phẩm, hàng hóa",
+      "type": "(N)"
+    },
+    {
+      "kanji": "終わる",
+      "kana": "おわる",
+      "romaji": "owaru",
+      "meaning": "kết thúc, hoàn thành",
+      "type": "(V)"
+    },
+    {
+      "kanji": "始める",
+      "kana": "はじめる",
+      "romaji": "hajimeru",
+      "meaning": "bắt đầu",
+      "type": "(V)"
     }
   ]
 });

@@ -5,6 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>語彙練習 — Từ vựng Bài 1</title>
+  <link rel="manifest" href="./manifest.json" />
+<meta name="theme-color" content="#a43b2d" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -4308,7 +4310,14 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         groups.get(groupName).push({ vocabSet, setIndex });
       });
 
-      groups.forEach((items, groupName) => {
+      // Dữ liệu nạp thêm có thể được đăng ký trước các bộ cũ; sắp xếp tên
+      // nhóm theo thứ tự số để Chương 6 Bài 3 không nhảy lên đầu danh sách.
+      [...groups.entries()]
+        .sort(([nameA], [nameB]) => nameA.localeCompare(nameB, "vi", {
+          numeric: true,
+          sensitivity: "base",
+        }))
+        .forEach(([groupName, items]) => {
         const group = document.createElement("details");
         group.className = "day-group";
         group.dataset.group = groupName;
@@ -4359,7 +4368,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         });
         group.appendChild(itemList);
         dayChecklist.appendChild(group);
-      });
+        });
 
       if (groups.size === 0) {
         const empty = document.createElement("div");
@@ -6649,6 +6658,13 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     });
     updateRememberBadge();
   </script>
+  <script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./sw.js").catch(() => {});
+    });
+  }
+</script>
 </body>
 
 </html>

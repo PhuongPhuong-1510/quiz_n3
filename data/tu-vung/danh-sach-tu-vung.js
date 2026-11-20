@@ -138,7 +138,6 @@ const VOCAB_DATA_FILES = [
 "c6bai2-trang-174.js",
 "c6bai2-trang-175.js",
 "c6bai2-trang-176.js",
-
 "c6bai3-trang-183.js",
 "c6bai3-trang-184.js",
 "c6bai3-trang-185.js",
