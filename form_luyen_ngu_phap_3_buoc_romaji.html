@@ -3028,6 +3028,16 @@
     .lookup-saved-actions button {padding:5px 8px; font-size:12px;}
     .lookup-source-link {font-size:12px; color:var(--aizome); text-decoration:underline;}
     body.lookup-modal-open {overflow:hidden;}
+    .lookup-options { display:flex; flex-wrap:wrap; gap:12px; margin:6px 0 8px; font-size:12px; color:var(--ink-soft); }
+    .lookup-options label { display:inline-flex; align-items:center; gap:5px; cursor:pointer; user-select:none; }
+    .lookup-options input { accent-color:var(--seal-red); }
+    .lookup-locations { margin:0 0 12px; padding:10px 12px; border:1px solid var(--line); border-radius:7px; background:#fffaf4; }
+    .lookup-locations[hidden] { display:none !important; }
+    .lookup-locations-title { font-size:12px; font-weight:750; color:var(--seal-red); margin:0 0 7px; }
+    .lookup-locations-list { display:grid; gap:6px; max-height:170px; overflow-y:auto; }
+    .lookup-loc-row { padding:6px 8px; border-left:3px solid var(--aizome); background:#fff; border-radius:4px; font-size:12px; line-height:1.5; }
+    .lookup-loc-meta { font-weight:750; color:var(--aizome); font-size:11px; }
+    .lookup-loc-text { color:var(--ink); margin-top:2px; overflow-wrap:anywhere; }
     @media(max-width:520px){ .lookup-dialog {padding:17px; max-height:95dvh;} .lookup-edit-grid {grid-template-columns:1fr;}
       .lookup-saved-row {align-items:flex-start; flex-direction:column;} .lookup-saved-actions {align-self:flex-end;} }
   
@@ -3276,8 +3286,16 @@
           <button type="submit">Tìm</button>
         </form>
         <div class="lookup-small">Tìm đúng từ đã nhập trong giáo trình, sau đó tra từ điển. Nghĩa tiếng Việt được tự điền khi dịch vụ hỗ trợ; hãy kiểm tra theo ngữ cảnh trước khi lưu.</div>
+        <div class="lookup-options">
+          <label><input type="checkbox" id="lookupKanjiFallback" checked> Tìm từ chứa cùng Kanji nếu không khớp tuyệt đối</label>
+          <label><input type="checkbox" id="lookupShowSource" checked> Hiện chương / bài / trang chứa từ này</label>
+        </div>
         <p class="lookup-status" id="lookupStatus" aria-live="polite"></p>
         <div id="lookupResults" class="lookup-results" aria-label="Kết quả tra từ"></div>
+        <div id="lookupLocations" class="lookup-locations" hidden>
+          <div class="lookup-locations-title" id="lookupLocationsTitle">Xuất hiện trong dữ liệu</div>
+          <div class="lookup-locations-list" id="lookupLocationsList"></div>
+        </div>
         <div class="lookup-edit">
           <div class="lookup-edit-title">Thông tin từ muốn lưu</div>
           <div class="lookup-edit-grid">
@@ -6326,29 +6344,154 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       return 0;
     }
 
-    function lookupLocal(query) {
-      const q=normLookup(query);
-      const all=[...REMEMBER_WORDS, ...VOCAB_SETS.flatMap(s=>s.words || [])];
-      // Chỉ lấy từ TRÙNG KHỚP; không gợi ý từ gần giống vào kết quả chính.
-      return all.map(w=>normalizeLookupItem(w,'Giáo trình / đã lưu'))
-        .filter(w=>w.kanji && lookupExactScore(w,q)>0)
-        .sort((a,b)=>lookupExactScore(b,q)-lookupExactScore(a,q))
-        .slice(0,12);
+    const lookupKanjiFallbackToggle = document.getElementById("lookupKanjiFallback");
+    const lookupShowSourceToggle = document.getElementById("lookupShowSource");
+    const lookupLocations = document.getElementById("lookupLocations");
+    const lookupLocationsTitle = document.getElementById("lookupLocationsTitle");
+    const lookupLocationsList = document.getElementById("lookupLocationsList");
+
+    // Chỉ trích xuất các chữ Kanji (Hán tự), bỏ Hiragana/Katakana/dấu câu
+    function extractKanjiChars(text) {
+      const matches = normLookup(text).match(/\p{Script=Han}/gu) || [];
+      return [...new Set(matches)];
     }
 
-    function uniqueLookupResults(items, query='') {
-      const seen=new Map();
-      for(const item of items){
-        if(!item.kanji || (query && !lookupExactScore(item,query))) continue;
-        const key=(normLookup(item.kanji)+'\u0000'+lookupToHiragana(item.kana));
-        const old=seen.get(key);
-        // Nếu từ cũ chưa có nghĩa Việt, cập nhật bằng kết quả dịch tự động.
-        if(!old) seen.set(key,item);
-        else if(!old.meaning && item.meaning) seen.set(key,{...old,meaning:item.meaning,
-          englishMeaning:old.englishMeaning||item.englishMeaning,
-          translatedBy:item.translatedBy||'', translationWarning:item.translationWarning||''});
+    function allLocalVocabWithSource() {
+      const fromSaved = REMEMBER_WORDS.map(w => normalizeLookupItem(w, "★ Từ cần nhớ"));
+      const fromSets = VOCAB_SETS.flatMap(set =>
+        (set.words || []).map(w => normalizeLookupItem(w, set.name || "Giáo trình"))
+      );
+      return [...fromSaved, ...fromSets];
+    }
+
+    function lookupLocal(query) {
+      const q = normLookup(query);
+      return allLocalVocabWithSource()
+        .filter(w => w.kanji && lookupExactScore(w, q) > 0)
+        .sort((a, b) => lookupExactScore(b, q) - lookupExactScore(a, q))
+        .slice(0, 12);
+    }
+
+    // Chế độ dự phòng: lọc các từ có chứa chữ Kanji giống với từ đang tra
+    function lookupLocalByKanji(query) {
+      const kanjiChars = extractKanjiChars(query);
+      if (!kanjiChars.length) return [];
+      const kanjiText = kanjiChars.join("");
+
+      return allLocalVocabWithSource()
+        .map(w => {
+          const wordKanji = extractKanjiChars(w.kanji);
+          if (!wordKanji.length) return null;
+          const matched = kanjiChars.filter(ch => wordKanji.includes(ch)).length;
+          if (!matched) return null;
+          const containsAll = matched === kanjiChars.length ? 1 : 0;
+          const containsSeq = normLookup(w.kanji).includes(kanjiText) ? 1 : 0;
+          return {
+            item: { ...w, source: `Chứa Kanji (${matched}/${kanjiChars.length}) · ${w.source}` },
+            containsSeq,
+            containsAll,
+            matched,
+            len: normLookup(w.kanji).length
+          };
+        })
+        .filter(Boolean)
+        .sort((a, b) =>
+          b.containsSeq - a.containsSeq ||
+          b.containsAll - a.containsAll ||
+          b.matched - a.matched ||
+          a.len - b.len
+        )
+        .map(x => x.item)
+        .slice(0, 18);
+    }
+
+    // Tìm xem từ hoặc câu đang tra thuộc file/bộ dữ liệu (name) nào
+    function renderLookupLocations(query, allowKanjiFallback) {
+      lookupLocationsList.replaceChildren();
+      if (!lookupShowSourceToggle?.checked) {
+        lookupLocations.hidden = true;
+        return;
       }
-      return [...seen.values()].sort((a,b)=>query?lookupExactScore(b,query)-lookupExactScore(a,query):0).slice(0,18);
+
+      const q = normLookup(query);
+      const qHira = lookupToHiragana(q);
+      const kanjiChars = extractKanjiChars(q);
+
+      const sources = [
+        { kind: "Từ vựng", sets: VOCAB_SETS },
+        { kind: "Câu ví dụ", sets: SENTENCE_SETS },
+        { kind: "Ngữ pháp", sets: GRAMMAR_SETS }
+      ];
+
+      const exactMatches = [];
+      const kanjiMatches = [];
+
+      for (const group of sources) {
+        for (const set of group.sets) {
+          const setName = set.name || "Không rõ tên bộ";
+          for (const item of set.words || []) {
+            if (item.direction === "recall") continue;
+            const textKanji = normLookup(item.kanji);
+            const textKana = lookupToHiragana(item.kana || item.hiragana || "");
+            const isExactHit = (q && textKanji.includes(q)) || (qHira && textKana.includes(qHira));
+
+            if (isExactHit) {
+              exactMatches.push({ kind: group.kind, setName, kanji: item.kanji, meaning: item.meaning });
+            } else if (allowKanjiFallback && kanjiChars.length) {
+              const matched = kanjiChars.filter(ch => textKanji.includes(ch)).length;
+              if (matched > 0) {
+                kanjiMatches.push({ kind: group.kind, setName, kanji: item.kanji, meaning: item.meaning, matched });
+              }
+            }
+          }
+        }
+      }
+
+      const finalList = exactMatches.length
+        ? exactMatches.slice(0, 20)
+        : kanjiMatches.sort((a, b) => b.matched - a.matched).slice(0, 15);
+
+      if (!finalList.length) {
+        lookupLocations.hidden = true;
+        return;
+      }
+
+      lookupLocationsTitle.textContent = exactMatches.length
+        ? `Tìm thấy trong ${finalList.length} mục dữ liệu (trùng trực tiếp):`
+        : `Không có mục trùng tuyệt đối — gợi ý ${finalList.length} mục chứa cùng Kanji:`;
+
+      finalList.forEach(entry => {
+        const row = document.createElement("div");
+        row.className = "lookup-loc-row";
+        const meta = document.createElement("div");
+        meta.className = "lookup-loc-meta";
+        meta.textContent = `${entry.kind} · ${entry.setName}`;
+        const text = document.createElement("div");
+        text.className = "lookup-loc-text";
+        text.textContent = `${entry.kanji} — ${entry.meaning || ""}`;
+        row.append(meta, text);
+        lookupLocationsList.appendChild(row);
+      });
+
+      lookupLocations.hidden = false;
+    }
+
+    function uniqueLookupResults(items, query = '', allowFuzzy = false) {
+      const seen = new Map();
+      for (const item of items) {
+        if (!item.kanji || (!allowFuzzy && query && !lookupExactScore(item, query))) continue;
+        const key = (normLookup(item.kanji) + '\u0000' + lookupToHiragana(item.kana));
+        const old = seen.get(key);
+        if (!old) seen.set(key, item);
+        else if (!old.meaning && item.meaning) seen.set(key, {
+          ...old, meaning: item.meaning,
+          englishMeaning: old.englishMeaning || item.englishMeaning,
+          translatedBy: item.translatedBy || '', translationWarning: item.translationWarning || ''
+        });
+      }
+      return [...seen.values()]
+        .sort((a, b) => (!allowFuzzy && query) ? lookupExactScore(b, query) - lookupExactScore(a, query) : 0)
+        .slice(0, 18);
     }
 
     function makeLookupCandidate(raw) {
@@ -6461,42 +6604,88 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     }
 
     async function doLookupSearch() {
-      const q=lookupQuery.value.normalize('NFKC').trim();
-      if(!q){setLookupStatus('Bạn hãy nhập một từ cần tra.','error');lookupQuery.focus();return;}
-      if(q.length>90){setLookupStatus('Chỉ tra một từ hoặc cụm ngắn (tối đa 90 ký tự).','error');return;}
-      document.getElementById('lookupExternal').href=urlForJdict(q);
-      const requestId=++lookupRequestSequence;
-      lookupSelection=-1;
-      lookupCandidates=uniqueLookupResults(lookupLocal(q),q);
+      const q = lookupQuery.value.normalize('NFKC').trim();
+      if (!q) { setLookupStatus('Bạn hãy nhập một từ cần tra.', 'error'); lookupQuery.focus(); return; }
+      if (q.length > 90) { setLookupStatus('Chỉ tra một từ hoặc cụm ngắn (tối đa 90 ký tự).', 'error'); return; }
+      document.getElementById('lookupExternal').href = urlForJdict(q);
+      const requestId = ++lookupRequestSequence;
+      const allowKanjiFallback = Boolean(lookupKanjiFallbackToggle?.checked);
+
+      lookupSelection = -1;
+      const exactLocal = uniqueLookupResults(lookupLocal(q), q, false);
+      const fuzzyLocal = (!exactLocal.length && allowKanjiFallback)
+        ? uniqueLookupResults(lookupLocalByKanji(q), q, true)
+        : [];
+      const usingFallback = !exactLocal.length && fuzzyLocal.length > 0;
+
+      lookupCandidates = exactLocal.length ? exactLocal : fuzzyLocal;
       drawLookupResults();
-      lookupWord.value=q;
-      lookupKana.value=/^[\u3040-\u30ffー]+$/.test(q)?q:'';
-      lookupRomaji.value=kanaToRomaji(lookupKana.value);
-      lookupMeaning.value='';
-      lookupType.value='Từ mới';
-      lookupEnglishNote.hidden=true;
-      if(lookupCandidates.length){chooseLookupCandidate(0);}
-      setLookupStatus(lookupCandidates.length ? 'Đã tìm trong bộ từ. Đang kiểm tra thêm từ điển trực tuyến…' : 'Đang tìm trong từ điển trực tuyến…');
-      const external=await searchExternalDictionary(q);
-      if(requestId!==lookupRequestSequence || lookupOverlay.hidden) return;
-      const alreadySelected=lookupSelection>=0;
-      lookupCandidates=uniqueLookupResults([...lookupCandidates,...external],q);
+      renderLookupLocations(q, allowKanjiFallback);
+
+      lookupWord.value = q;
+      lookupKana.value = /^[\u3040-\u30ffー]+$/.test(q) ? q : '';
+      lookupRomaji.value = kanaToRomaji(lookupKana.value);
+      lookupMeaning.value = '';
+      lookupType.value = 'Từ mới';
+      lookupEnglishNote.hidden = true;
+      if (lookupCandidates.length) { chooseLookupCandidate(0); }
+
+      setLookupStatus(
+        exactLocal.length
+          ? 'Đã tìm trong bộ từ. Đang kiểm tra thêm từ điển trực tuyến…'
+          : usingFallback
+            ? 'Không có từ trùng tuyệt đối — đang hiện các từ chứa cùng chữ Kanji và kiểm tra từ điển…'
+            : 'Đang tìm trong từ điển trực tuyến…'
+      );
+
+      const external = await searchExternalDictionary(q);
+      if (requestId !== lookupRequestSequence || lookupOverlay.hidden) return;
+
+      // Nếu từ điển online tìm được từ trùng tuyệt đối thì ưu tiên hiển thị cùng kết quả trùng
+      const mergedExact = uniqueLookupResults([...exactLocal, ...external], q, false);
+      const alreadySelected = lookupSelection >= 0;
+
+      if (mergedExact.length) {
+        lookupCandidates = mergedExact;
+      } else if (usingFallback) {
+        lookupCandidates = fuzzyLocal;
+      } else {
+        lookupCandidates = [];
+      }
+
       drawLookupResults();
-      if(lookupCandidates.length && (!alreadySelected || !lookupMeaning.value.trim())){
-        const index=alreadySelected ? Math.max(0,lookupCandidates.findIndex(w=>w.kanji===lookupWord.value && w.kana===lookupKana.value))
-          : Math.max(0,lookupCandidates.findIndex(w=>w.meaning));
+      if (lookupCandidates.length && (!alreadySelected || !lookupMeaning.value.trim())) {
+        const index = alreadySelected
+          ? Math.max(0, lookupCandidates.findIndex(w => w.kanji === lookupWord.value && w.kana === lookupKana.value))
+          : Math.max(0, lookupCandidates.findIndex(w => w.meaning));
         chooseLookupCandidate(index);
       }
-      if(lookupCandidates.length){
-        const hasVietnameseMeaning=lookupCandidates.some(item=>item.meaning);
-        setLookupStatus(hasVietnameseMeaning
-          ? `Đã tìm thấy ${lookupCandidates.length} từ trùng khớp và điền nghĩa Việt (nếu có). Hãy kiểm tra trước khi lưu.`
-          : `Đã tìm thấy ${lookupCandidates.length} từ trùng khớp, nhưng dịch vụ chưa trả được nghĩa Việt. Bạn có thể nhập thủ công.`,
-          hasVietnameseMeaning?'ok':'error');
+
+      if (mergedExact.length) {
+        const hasVietnameseMeaning = mergedExact.some(item => item.meaning);
+        setLookupStatus(
+          hasVietnameseMeaning
+            ? `Đã tìm thấy ${mergedExact.length} từ trùng khớp và điền nghĩa Việt (nếu có).`
+            : `Đã tìm thấy ${mergedExact.length} từ trùng khớp, nhưng chưa có nghĩa Việt tự động.`,
+          hasVietnameseMeaning ? 'ok' : 'error'
+        );
+      } else if (usingFallback) {
+        setLookupStatus(
+          `Không tìm thấy từ trùng tuyệt đối — đã lọc ${fuzzyLocal.length} từ trong giáo trình chứa cùng chữ Kanji.`,
+          'ok'
+        );
       } else {
-        setLookupStatus('Không tìm thấy từ trùng khớp (không hiển thị từ gần giống). Hãy kiểm tra cách viết hoặc tra trên Jdict.','error');
+        setLookupStatus('Không tìm thấy từ trùng khớp hoặc từ chứa cùng Kanji. Hãy kiểm tra lại hoặc tra trên Jdict.', 'error');
       }
     }
+
+    lookupKanjiFallbackToggle?.addEventListener('change', () => {
+      if (lookupQuery.value.trim()) doLookupSearch();
+    });
+    lookupShowSourceToggle?.addEventListener('change', () => {
+      if (lookupQuery.value.trim()) renderLookupLocations(lookupQuery.value.trim(), Boolean(lookupKanjiFallbackToggle?.checked));
+      else lookupLocations.hidden = true;
+    });
 
     function showLookupTab(tab) {
       const saved=tab==='saved';
