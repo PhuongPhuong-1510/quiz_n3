@@ -1,18 +1,37 @@
-const CACHE_NAME = "n3-quiz-v2";
+importScripts("./offline-files.js");
 
-const CORE_ASSETS = [
-  "./",
-  "./index.html",
-  "./hoc-lieu.html",
-  "./form_luyen_ngu_phap_3_buoc_romaji.html",
-  "./manifest.json",
-  "./data/danh-sach-data.js",
-  "./data/hoc-lieu-data.js",
-];
+const CACHE_NAME = self.OFFLINE_VERSION || "n3-quiz-v1";
+const ALL_FILES = self.OFFLINE_FILES || [];
+
+async function notifyPages(data) {
+  const clients = await self.clients.matchAll({ includeUncontrolled: true });
+  for (const client of clients) client.postMessage(data);
+}
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(CORE_ASSETS))
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+      let done = 0;
+      const total = ALL_FILES.length;
+      const BATCH_SIZE = 5;
+
+      for (let i = 0; i < total; i += BATCH_SIZE) {
+        const batch = ALL_FILES.slice(i, i + BATCH_SIZE);
+        await Promise.allSettled(
+          batch.map(async (url) => {
+            try {
+              const res = await fetch(url, { cache: "no-cache" });
+              if (res.ok) await cache.put(url, res);
+            } catch (_) {}
+            done++;
+          })
+        );
+        await notifyPages({ type: "OFFLINE_PROGRESS", done, total });
+      }
+
+      await notifyPages({ type: "OFFLINE_DONE", done, total });
+    })()
   );
   self.skipWaiting();
 });
@@ -40,11 +59,9 @@ self.addEventListener("fetch", (event) => {
   const cacheKey =
     request.mode === "navigate" ? new Request(url.pathname) : request;
 
-  // Đọc ngay từ Cache (không chờ mạng), nếu có mạng sẽ tự cập nhật ngầm cho lần sau
   event.respondWith(
     caches.open(CACHE_NAME).then(async (cache) => {
       const cached = await cache.match(cacheKey, { ignoreSearch: true });
-
       const networkFetch = fetch(request)
         .then((response) => {
           if (response && response.status === 200) {
