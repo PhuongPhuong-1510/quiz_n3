@@ -5,7 +5,7 @@
 */
 window.SENTENCE_SETS = window.SENTENCE_SETS || [];
 window.SENTENCE_SETS.push({
-  name: "bài 3 chương 3 trang 197",
+  name: "chương 3 bài 3 trang 197",
   sentences: [
     {
       kanji: "単純なミスを繰り返す。",

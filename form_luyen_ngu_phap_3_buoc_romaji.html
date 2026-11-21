@@ -3243,6 +3243,12 @@
         <button type="button" class="mode-btn" data-quiz-mode="kana-kanji">
           Hiragana → Kanji
         </button>
+        <button type="button" class="mode-btn" data-quiz-mode="vocab-vi">
+          Từ vựng → Nghĩa (cả Kana/Katakana)
+        </button>
+        <button type="button" class="mode-btn" data-quiz-mode="vi-vocab">
+          Nghĩa → Từ vựng (cả Kana/Katakana)
+        </button>
         <button type="button" class="mode-btn" data-quiz-mode="vocab-cloze">
           Đục lỗ Từ vựng
         </button>
@@ -3583,9 +3589,15 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       : contentParam === "tracnghiem" ? "quiz"
       : "vocab";
 
-    let quizMode = "kanji-kana";
+    const QUIZ_MODE_KEY = "japaneseQuizActiveQuizMode_v1";
+    const VALID_QUIZ_MODES = new Set([
+      "kanji-kana", "kana-kanji", "vocab-vi", "vi-vocab",
+      "vocab-cloze", "adv-cloze", "gram-pattern-vi", "gram-vi-pattern", "gram-star"
+    ]);
+    const savedQuizMode = localStorage.getItem(QUIZ_MODE_KEY);
+    let quizMode = VALID_QUIZ_MODES.has(savedQuizMode) ? savedQuizMode : "kanji-kana";
     function getQuizDatasetGroup(qMode = quizMode) {
-      if (qMode === "kanji-kana" || qMode === "kana-kanji") return "vocab";
+      if (["kanji-kana", "kana-kanji", "vocab-vi", "vi-vocab"].includes(qMode)) return "vocab";
       if (qMode === "vocab-cloze") return "sentence";
       if (qMode === "adv-cloze") return "adv";
       return "grammar";
@@ -4085,8 +4097,14 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     let importantSet = loadImportantSet();
     saveImportantSet();
     let mode = contentType === "vocab" && new URLSearchParams(location.search).get("ds") === "tucan" ? "saved" : "all";
-    let studyMode = "recognize";
-    let grammarMode = "ja-vi";
+    const STUDY_MODE_KEY = "japaneseQuizActiveStudyMode_v1";
+    const GRAMMAR_MODE_KEY = "japaneseQuizActiveGrammarMode_v1";
+    let studyMode = ["recognize", "meaningToRomaji", "kanaToMeaning"].includes(localStorage.getItem(STUDY_MODE_KEY))
+      ? localStorage.getItem(STUDY_MODE_KEY)
+      : "recognize";
+    let grammarMode = ["ja-vi", "vi-romaji", "recall"].includes(localStorage.getItem(GRAMMAR_MODE_KEY))
+      ? localStorage.getItem(GRAMMAR_MODE_KEY)
+      : "ja-vi";
     function currentDayStoreKey() {
       return contentType === "quiz"
         ? `${DAY_STORE_KEY}_${getQuizDatasetGroup(quizMode)}`
@@ -4225,7 +4243,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       const normName = (s) => String(s || "").normalize("NFKC").toLowerCase().replace(/\s+/g, " ").trim();
       const targetSetName = normName(item.setName);
 
-      const pickBest = (words, minLen = 1) => {
+      const pickBest = (words, minLen = 1, preferHan = false) => {
         const hits = [];
         for (const w of words) {
           const k = String(w.kanji || "").trim();
@@ -4235,16 +4253,20 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         }
         if (!hits.length) return null;
         hits.sort((a, b) => {
-          const aHan = /\p{Script=Han}/u.test(a.word.kanji) ? 1 : 0;
-          const bHan = /\p{Script=Han}/u.test(b.word.kanji) ? 1 : 0;
-          return bHan - aHan || b.priority - a.priority || b.matchedText.length - a.matchedText.length;
+          if (preferHan) {
+            const aHan = /\p{Script=Han}/u.test(a.word.kanji) ? 1 : 0;
+            const bHan = /\p{Script=Han}/u.test(b.word.kanji) ? 1 : 0;
+            if (bHan !== aHan) return bHan - aHan;
+          }
+          return b.priority - a.priority || b.matchedText.length - a.matchedText.length;
         });
         return hits[0];
       };
 
       const samePage = VOCAB_SETS.find((s) => normName(s.name) === targetSetName);
-      let best = samePage ? pickBest(samePage.words || [], 1) : null;
-      if (!best) best = pickBest(VOCAB_SETS.flatMap((s) => s.words || []), 2);
+      let best = samePage ? pickBest(samePage.words || [], 1, false) : null;
+      if (!best) best = pickBest(VOCAB_SETS.flatMap((s) => s.words || []), 2, true);
+
 
       const res = best
         ? { targetWord: best.word, blankedSentence: sentenceText.replace(best.matchedText, "（   ）") }
@@ -4545,6 +4567,53 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         }
         return { prompt: item.kanji, isSentence: false, choices: shuffle(choices) };
       }
+      if (quizMode === "vocab-vi") {
+        const targetMeaning = stripAccents(item.meaning);
+        const pool = getAllWords().filter((w) => w.meaning && stripAccents(w.meaning) !== targetMeaning);
+        const sameType = shuffle(pool.filter((w) => w.type && w.type === item.type));
+        const others = shuffle(pool.filter((w) => !w.type || w.type !== item.type));
+        const seen = new Set([targetMeaning]);
+        const choices = [{ label: item.meaning, isCorrect: true }];
+        for (const w of [...sameType, ...others]) {
+          const m = stripAccents(w.meaning);
+          if (seen.has(m)) continue;
+          seen.add(m);
+          choices.push({ label: w.meaning, isCorrect: false });
+          if (choices.length === 4) break;
+        }
+        return { prompt: item.kanji || item.kana, isSentence: false, choices: shuffle(choices) };
+      }
+
+      if (quizMode === "vi-vocab") {
+        const correctLabel = item.kanji || item.kana;
+        const targetNorm = normJapanese(correctLabel);
+        const targetMeaning = stripAccents(item.meaning);
+        const scriptOf = (text) => {
+          if (/\p{Script=Han}/u.test(text)) return "kanji";
+          if (/^[\u30A0-\u30FFー・\s]+$/.test(text)) return "katakana";
+          return "hiragana";
+        };
+        const targetScript = scriptOf(correctLabel);
+        const pool = getAllWords().filter((w) => {
+          const lbl = w.kanji || w.kana;
+          return lbl && normJapanese(lbl) !== targetNorm && stripAccents(w.meaning || "") !== targetMeaning;
+        });
+        // Ưu tiên chọn đáp án nhiễu cùng hệ chữ (Katakana/Hiragana/Kanji) để không bị lộ đáp án
+        const sameScriptAndType = shuffle(pool.filter((w) => scriptOf(w.kanji || w.kana) === targetScript && w.type === item.type));
+        const sameScript = shuffle(pool.filter((w) => scriptOf(w.kanji || w.kana) === targetScript && w.type !== item.type));
+        const others = shuffle(pool.filter((w) => scriptOf(w.kanji || w.kana) !== targetScript));
+        const seen = new Set([targetNorm]);
+        const choices = [{ label: correctLabel, isCorrect: true }];
+        for (const w of [...sameScriptAndType, ...sameScript, ...others]) {
+          const lbl = w.kanji || w.kana;
+          const k = normJapanese(lbl);
+          if (seen.has(k)) continue;
+          seen.add(k);
+          choices.push({ label: lbl, isCorrect: false });
+          if (choices.length === 4) break;
+        }
+        return { prompt: item.meaning, isSentence: true, choices: shuffle(choices) };
+      }
 
       if (quizMode === "kana-kanji") {
         const targetKana = normJapanese(item.kana);
@@ -4731,6 +4800,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         saveCurrentSession();
         const oldGroup = getQuizDatasetGroup(quizMode);
         quizMode = button.dataset.quizMode;
+        localStorage.setItem(QUIZ_MODE_KEY, quizMode);
         const newGroup = getQuizDatasetGroup(quizMode);
         document.querySelectorAll("[data-quiz-mode]").forEach((b) => {
           b.classList.toggle("active", b.dataset.quizMode === quizMode);
@@ -5020,16 +5090,101 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     function quizSessionKey() {
       return `${contentType}::${studyMode}::${grammarMode}::${quizMode}::${mode}`;
     }
+    const SESSION_STORE_KEY = `japaneseQuizSessions_${contentType}_v1`;
+    const BATCH_QUEUE_STORE_KEY = `japaneseQuizBatchQueues_${contentType}_v1`;
+
+    function loadPersistedStore(key) {
+      try {
+        const data = JSON.parse(localStorage.getItem(key) || "{}");
+        return data && typeof data === "object" && !Array.isArray(data) ? data : {};
+      } catch (_) { return {}; }
+    }
+
+    function savePersistedStore(key, obj) {
+      try { localStorage.setItem(key, JSON.stringify(obj)); } catch (_) {}
+    }
+
+    function quickHash(str) {
+      let h = 2166136261;
+      for (let i = 0; i < str.length; i++) {
+        h ^= str.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return (h >>> 0).toString(36);
+    }
+
+    function deleteSavedSession(sessionKey) {
+      quizSessions.delete(sessionKey);
+      const store = loadPersistedStore(SESSION_STORE_KEY);
+      if (sessionKey in store) {
+        delete store[sessionKey];
+        savePersistedStore(SESSION_STORE_KEY, store);
+      }
+    }
 
     function saveCurrentSession() {
       if (mode === "skipped" || order.length === 0) return;
-      quizSessions.set(quizSessionKey(), {
+      const key = quizSessionKey();
+      quizSessions.set(key, {
         order: order.slice(), idx, initialWordCount, correctCount, wrongCount,
         missed: missed.slice(), checked, lastAnswer,
         answeredWordKeys: new Set(answeredWordKeys),
         sessionMistakeKeys: new Set(sessionMistakeKeys), sessionComplete,
         recallProgress: { ...recallProgress },
       });
+
+      const store = loadPersistedStore(SESSION_STORE_KEY);
+      store[key] = {
+        orderKeys: order.map(wordKey),
+        idx,
+        initialWordCount,
+        correctCount,
+        wrongCount,
+        missedKeys: missed.map(wordKey),
+        answeredWordKeys: [...answeredWordKeys],
+        sessionMistakeKeys: [...sessionMistakeKeys],
+        sessionComplete,
+        recallProgress: {
+          step: recallProgress.step,
+          mistakes: recallProgress.mistakes,
+          mistakeCount: recallProgress.mistakeCount,
+          attempts: recallProgress.attempts,
+        },
+      };
+      savePersistedStore(SESSION_STORE_KEY, store);
+    }
+
+    function loadSavedSession(sessionKey) {
+      if (quizSessions.has(sessionKey)) return quizSessions.get(sessionKey);
+      const raw = loadPersistedStore(SESSION_STORE_KEY)[sessionKey];
+      if (!raw || !Array.isArray(raw.orderKeys) || !raw.orderKeys.length) return null;
+
+      const byKey = new Map(
+        CONTENT_SETS.flatMap((s) => s.words || []).map((item) => [wordKey(item), item])
+      );
+      const restoredOrder = raw.orderKeys.map((k) => byKey.get(k)).filter(Boolean);
+      if (!restoredOrder.length) return null;
+
+      const session = {
+        order: restoredOrder,
+        idx: Math.min(Math.max(0, Number(raw.idx) || 0), restoredOrder.length),
+        initialWordCount: Math.max(1, Number(raw.initialWordCount) || restoredOrder.length),
+        correctCount: Math.max(0, Number(raw.correctCount) || 0),
+        wrongCount: Math.max(0, Number(raw.wrongCount) || 0),
+        missed: (raw.missedKeys || []).map((k) => byKey.get(k)).filter(Boolean),
+        checked: false,
+        lastAnswer: null,
+        answeredWordKeys: new Set(raw.answeredWordKeys || []),
+        sessionMistakeKeys: new Set(raw.sessionMistakeKeys || []),
+        sessionComplete: Boolean(raw.sessionComplete),
+        recallProgress: {
+          step: 0, mistakes: false, mistakeCount: 0, attempts: 0,
+          stageChecked: false, pendingMeaning: null, showingCorrectionAnswer: false,
+          ...(raw.recallProgress || {}),
+        },
+      };
+      quizSessions.set(sessionKey, session);
+      return session;
     }
 
     function restoreSession(session) {
@@ -5046,24 +5201,53 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       lastAnswer = session.lastAnswer;
       sessionMistakeKeys = new Set(session.sessionMistakeKeys);
       sessionComplete = session.sessionComplete;
-      recallProgress = { step: 0, mistakes: false, mistakeCount: 0, attempts: 0, stageChecked: false, pendingMeaning: null, showingCorrectionAnswer: false, ...(session.recallProgress || {}) };
-      // Tương thích với phiên đã lưu từ luồng xem tuần tự cũ (bắt đầu ở -1).
+      recallProgress = {
+        step: 0, mistakes: false, mistakeCount: 0, attempts: 0,
+        stageChecked: false, pendingMeaning: null, showingCorrectionAnswer: false,
+        ...(session.recallProgress || {}),
+      };
       recallProgress.step = Math.max(0, Number(recallProgress.step) || 0);
-      recallProgress.stageChecked = Boolean(recallProgress.stageChecked);
+      recallProgress.stageChecked = false;
       recallProgress.mistakeCount = Math.max(0, Number(recallProgress.mistakeCount) || (recallProgress.mistakes ? 1 : 0));
       recallProgress.mistakes = recallProgress.mistakeCount > 0;
       recallProgress.pendingMeaning = null;
       recallProgress.showingCorrectionAnswer = false;
+      batchHint.textContent = `Đang tiếp tục lượt học (${Math.min(answeredWordKeys.size, initialWordCount)}/${initialWordCount} ${currentUnitLabel()}).`;
+      updateWrongBadge();
+      updateSkippedBadge();
+      updateImportantBadge();
       if (sessionComplete) showDone();
       else loadCard({ resumeRecall: true });
     }
 
     function clearQuizProgress() {
-      quizSessions.clear();
-      batchQueues.clear();
+      const shouldClearKey = (k) => {
+        if (contentType !== "quiz") return true;
+        const parts = k.split("::");
+        return getQuizDatasetGroup(parts[3]) === getQuizDatasetGroup(quizMode);
+      };
+      for (const k of [...quizSessions.keys()]) {
+        if (shouldClearKey(k)) quizSessions.delete(k);
+      }
+      for (const k of [...batchQueues.keys()]) {
+        if (shouldClearKey(k)) batchQueues.delete(k);
+      }
+      const sessStore = loadPersistedStore(SESSION_STORE_KEY);
+      for (const k of Object.keys(sessStore)) {
+        if (shouldClearKey(k)) delete sessStore[k];
+      }
+      savePersistedStore(SESSION_STORE_KEY, sessStore);
+
+      const queueStore = loadPersistedStore(BATCH_QUEUE_STORE_KEY);
+      for (const k of Object.keys(queueStore)) {
+        if (shouldClearKey(k)) delete queueStore[k];
+      }
+      savePersistedStore(BATCH_QUEUE_STORE_KEY, queueStore);
+
       order = [];
       sessionComplete = false;
     }
+    
 
     function filterForGrammarMode(items) {
       if (contentType === "grammar") {
@@ -5089,7 +5273,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       if (contentType === "vocab") return "từ";
       if (contentType === "grammar" && grammarMode === "recall") return "mẫu";
       if (contentType === "quiz") {
-        if (quizMode === "kanji-kana" || quizMode === "kana-kanji") return "từ";
+        if (["kanji-kana", "kana-kanji", "vocab-vi", "vi-vocab"].includes(quizMode)) return "từ";
         if (quizMode === "gram-pattern-vi" || quizMode === "gram-vi-pattern") return "mẫu";
         return "câu";
       }
@@ -5104,6 +5288,10 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         return list.filter(
           (w) => /\p{Script=Han}/u.test(String(w.kanji || "")) && w.kana && w.kanji !== w.kana
         );
+      }
+      if (quizMode === "vocab-vi" || quizMode === "vi-vocab") {
+        // Lấy toàn bộ từ vựng: cả từ có Kanji lẫn từ thuần Hiragana / Katakana
+        return list.filter((w) => (w.kanji || w.kana) && w.meaning);
       }
       if (quizMode === "vocab-cloze") {
         return list.filter((item) => Boolean(findClozeTarget(item)));
@@ -5146,16 +5334,33 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
 
     function takeNextBatch(source) {
       const key = quizSessionKey();
-      const signature = source.map(wordKey).sort().join("\u0001");
+      const signature = quickHash(source.map(wordKey).sort().join("\u0001"));
       let queueState = batchQueues.get(key);
+
+      if (!queueState) {
+        const stored = loadPersistedStore(BATCH_QUEUE_STORE_KEY)[key];
+        if (stored && stored.signature === signature && Array.isArray(stored.keys) && stored.keys.length) {
+          const byKey = new Map(source.map((item) => [wordKey(item), item]));
+          const restored = stored.keys.map((k) => byKey.get(k)).filter(Boolean);
+          if (restored.length) queueState = { signature, words: restored };
+        }
+      }
+
       if (!queueState || queueState.signature !== signature || queueState.words.length === 0) {
         queueState = { signature, words: shuffle(source) };
-        batchQueues.set(key, queueState);
       }
+      batchQueues.set(key, queueState);
+
       const amount = batchSize === 0
         ? queueState.words.length
         : Math.min(batchSize, queueState.words.length);
-      return queueState.words.splice(0, amount);
+      const batch = queueState.words.splice(0, amount);
+
+      const store = loadPersistedStore(BATCH_QUEUE_STORE_KEY);
+      store[key] = { signature, keys: queueState.words.map(wordKey) };
+      savePersistedStore(BATCH_QUEUE_STORE_KEY, store);
+
+      return batch;
     }
 
     function getDailyWords() {
@@ -5361,6 +5566,7 @@ localStorage.setItem(currentDayStoreKey(), JSON.stringify([...selectedDays]));
         if (studyMode === button.dataset.studyMode) return;
         saveCurrentSession();
         studyMode = button.dataset.studyMode;
+        localStorage.setItem(STUDY_MODE_KEY, studyMode);
         document.querySelectorAll("[data-study-mode]").forEach((item) => {
           item.classList.toggle(
             "active",
@@ -5376,6 +5582,7 @@ localStorage.setItem(currentDayStoreKey(), JSON.stringify([...selectedDays]));
         if (grammarMode === button.dataset.grammarMode) return;
         saveCurrentSession();
         grammarMode = button.dataset.grammarMode;
+        localStorage.setItem(GRAMMAR_MODE_KEY, grammarMode);
         document.querySelectorAll("[data-grammar-mode]").forEach((item) => {
           item.classList.toggle("active", item.dataset.grammarMode === grammarMode);
         });
@@ -5626,8 +5833,9 @@ localStorage.setItem(currentDayStoreKey(), JSON.stringify([...selectedDays]));
       doneArea.innerHTML = "";
 
       const sessionKey = quizSessionKey();
-      if (!forceNew && quizSessions.has(sessionKey)) {
-        restoreSession(quizSessions.get(sessionKey));
+      const existingSession = !forceNew ? loadSavedSession(sessionKey) : null;
+      if (existingSession) {
+        restoreSession(existingSession);
         return;
       }
 
@@ -5641,8 +5849,8 @@ localStorage.setItem(currentDayStoreKey(), JSON.stringify([...selectedDays]));
       answeredWordKeys = new Set();
       sessionMistakeKeys = new Set();
       sessionComplete = false;
-      quizSessions.delete(sessionKey);
-      const currentUnit = currentUnitLabel();      
+      deleteSavedSession(sessionKey);
+      const currentUnit = currentUnitLabel();
       batchHint.textContent = batchSize > 0 && source.length > batchSize
         ? `Mỗi lượt ${batchSize} ${currentUnit}; lượt sau lấy phần chưa xuất hiện.`
         : `Lượt này có tất cả ${source.length} ${currentUnit}.`;
@@ -5660,6 +5868,7 @@ localStorage.setItem(currentDayStoreKey(), JSON.stringify([...selectedDays]));
       statAnswered.textContent = answeredCount;
       statTotal.textContent = initialWordCount;
       progressFill.style.width = (initialWordCount ? (answeredCount / initialWordCount) * 100 : 0) + "%";
+      saveCurrentSession();
     }
 
     function showVocabHint(kind) {
@@ -7127,10 +7336,20 @@ const isRecall = contentType === "grammar" && grammarMode === "recall" && item.d
     inputReading.addEventListener("input", () => inputReading.setCustomValidity(""));
     inputMeaning.addEventListener("input", () => inputMeaning.setCustomValidity(""));
 
+    document.querySelectorAll("[data-quiz-mode]").forEach((b) => b.classList.toggle("active", b.dataset.quizMode === quizMode));
+    document.querySelectorAll("[data-study-mode]").forEach((b) => b.classList.toggle("active", b.dataset.studyMode === studyMode));
+    document.querySelectorAll("[data-grammar-mode]").forEach((b) => b.classList.toggle("active", b.dataset.grammarMode === grammarMode));
+    if (contentType === "grammar" && grammarMode === "recall") {
+      document.querySelector(".batch-settings label").textContent = "Số mẫu mỗi lượt";
+    }
     setModeButtons();
     renderDayOptions();
     updateWrongBadge();
     updateSkippedBadge();
+    window.addEventListener("pagehide", saveCurrentSession);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") saveCurrentSession();
+    });
     init();
 
 
@@ -7695,6 +7914,7 @@ const isRecall = contentType === "grammar" && grammarMode === "recall" && item.d
       if(mode==='saved')return;
       saveCurrentSession();mode='saved';setModeButtons();init();
     });}
+   
     document.getElementById('lookupExport').addEventListener('click',()=>{
       const blob=new Blob([JSON.stringify(REMEMBER_WORDS,null,2)],{type:'application/json;charset=utf-8'});
       const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;

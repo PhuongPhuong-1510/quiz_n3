@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Học liệu tiếng Nhật</title>
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#a43b2d" />
   <style>
     :root {
       --paper: #f7f3ed;
@@ -16,7 +18,9 @@
       --green: #39775d;
       --green-soft: #edf8f1;
       --blue: #3d5773;
+      --blue-soft: #edf3f9;
       --shadow: 0 14px 38px rgba(48, 39, 31, .09);
+      --reading-size: 16.5px;
     }
     * { box-sizing: border-box; }
     body {
@@ -28,7 +32,7 @@
       color: var(--ink);
       font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
     }
-    button, select { font: inherit; }
+    button, select, input, textarea { font: inherit; }
     .wrap { width: min(1080px, 100%); margin: 0 auto; }
     .content-tabs {
       display: flex;
@@ -100,61 +104,141 @@
       box-shadow: var(--shadow);
     }
     .empty { padding: 55px 20px; color: var(--soft); text-align: center; line-height: 1.7; }
-    .item-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .item-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
     .item-head h2 { margin: 0 0 4px; font-family: Georgia, "Yu Mincho", serif; font-size: 21px; }
     .meta { color: var(--soft); font-size: 12px; }
+    .head-tools { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
     .button, button.button {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 38px;
-      padding: 8px 13px;
+      min-height: 36px;
+      padding: 7px 12px;
       border: 1px solid var(--line);
       border-radius: 8px;
       background: white;
       color: var(--ink);
       text-decoration: none;
+      font-size: 13px;
       font-weight: 700;
       cursor: pointer;
     }
+    .button:hover:not(:disabled) { border-color: var(--blue); color: var(--blue); }
+    .button:disabled { opacity: .45; cursor: default; }
     .button.primary { border-color: var(--blue); background: var(--blue); color: white; }
+    .button.primary:hover:not(:disabled) { opacity: .92; color: white; }
+    .button.mini { min-height: 32px; padding: 4px 9px; font-size: 12px; }
     .viewer { width: 100%; height: min(70vh, 720px); border: 1px solid var(--line); border-radius: 9px; background: white; }
     .viewer-image { display: block; max-width: 100%; max-height: 72vh; margin: auto; object-fit: contain; }
     .file-fallback { padding: 45px 20px; border: 1px dashed var(--line); border-radius: 9px; color: var(--soft); text-align: center; }
     .reading-layout { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr); gap: 14px; align-items: start; }
-    .reading-pane, .question-pane { padding: 14px; border: 1px solid var(--line); border-radius: 10px; background: white; }
+    .reading-pane, .question-pane { padding: 15px; border: 1px solid var(--line); border-radius: 10px; background: white; }
     .reading-text {
-      max-height: 62vh;
+      max-height: 64vh;
       overflow: auto;
       margin: 0;
       padding-right: 7px;
       font-family: "Yu Mincho", "Noto Serif JP", serif;
-      font-size: 14px;
-      line-height: 1.9;
+      font-size: var(--reading-size);
+      line-height: 1.95;
       letter-spacing: .02em;
       white-space: pre-wrap;
       overflow-wrap: anywhere;
     }
-    .translation { margin-top: 12px; padding: 12px; border-left: 3px solid var(--green); background: var(--green-soft); font-size: 13px; line-height: 1.7; white-space: pre-wrap; }
+    .cloze-slot {
+      display: inline-flex;
+      align-items: center;
+      padding: 0 7px;
+      margin: 0 2px;
+      border-bottom: 2px solid var(--blue);
+      border-radius: 4px 4px 0 0;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: 0.92em;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .cloze-slot.correct { border-color: var(--green); background: var(--green-soft); color: var(--green); }
+    .cloze-slot.wrong { border-color: var(--red); background: var(--red-soft); color: var(--red); }
+    .translation { margin-top: 12px; padding: 12px; border-left: 3px solid var(--green); background: var(--green-soft); font-size: 13.5px; line-height: 1.75; white-space: pre-wrap; }
     [hidden] { display: none !important; }
     .question-pane h3 { margin: 0 0 10px; font-size: 15px; }
-    .question { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed var(--line); }
+    .question { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed var(--line); scroll-margin-top: 16px; }
     .question:last-child { border-bottom: 0; }
-    .question-title { margin: 0 0 8px; font-size: 13px; line-height: 1.55; font-weight: 750; }
-    .choice { display: flex; gap: 8px; padding: 5px 6px; border-radius: 6px; font-size: 12.5px; line-height: 1.45; cursor: pointer; }
+    .question-title { margin: 0 0 8px; font-size: 13.5px; line-height: 1.55; font-weight: 750; }
+    .choice { display: flex; gap: 8px; padding: 6px 7px; border-radius: 6px; font-size: 13px; line-height: 1.5; cursor: pointer; }
     .choice:hover { background: #f7f4ef; }
-    .choice.correct { background: var(--green-soft); color: var(--green); }
+    .choice.correct { background: var(--green-soft); color: var(--green); font-weight: 650; }
     .choice.wrong { background: var(--red-soft); color: var(--red); }
-    .question-result { margin-top: 7px; font-size: 12px; line-height: 1.5; }
-    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-    .score { align-self: center; color: var(--soft); font-size: 12px; font-weight: 750; }
+    .question-result { margin-top: 7px; font-size: 12.5px; line-height: 1.55; }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; align-items: center; }
+    .score { align-self: center; color: var(--soft); font-size: 12.5px; font-weight: 750; }
+    .lesson-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+    }
+    .lesson-nav-pos { color: var(--soft); font-size: 12px; font-weight: 600; text-align: center; }
     .player-box { padding: 16px; border: 1px solid var(--line); border-radius: 11px; background: white; }
     audio { width: 100%; margin-bottom: 12px; }
     .player-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
     .player-controls .speed { display: flex; align-items: center; gap: 7px; margin-left: auto; color: var(--soft); font-size: 12px; }
     .player-controls select { width: auto; min-height: 38px; }
     .player-status { min-height: 20px; margin-top: 9px; color: var(--soft); font-size: 12px; }
-    .transcript { width: 100%; margin-top: 12px; padding: 13px; border: 1px solid var(--line); border-radius: 9px; background: #faf8f4; font-size: 13px; line-height: 1.75; white-space: pre-wrap; }
+    .transcript { width: 100%; margin-top: 12px; padding: 13px; border: 1px solid var(--line); border-radius: 9px; background: #faf8f4; font-size: 13.5px; line-height: 1.75; white-space: pre-wrap; }
+
+    /* Popup tra từ mới (đồng bộ logic giáo trình + Kanji + Jotoba/MyMemory) */
+    .lookup-overlay {
+      position: fixed; inset: 0; z-index: 10000; padding: 16px;
+      background: rgba(19, 24, 27, .62);
+      display: flex; justify-content: center; align-items: center; overflow-y: auto;
+    }
+    .lookup-dialog {
+      width: min(650px, 100%); max-height: 92dvh; overflow: auto;
+      background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, .25); padding: 20px; color: var(--ink);
+    }
+    .lookup-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+    .lookup-head h2 { margin: 0 0 3px; font-family: Georgia, "Yu Mincho", serif; font-size: 20px; }
+    .lookup-small { margin: 0; color: var(--soft); font-size: 12px; line-height: 1.5; }
+    .lookup-search { display: flex; gap: 8px; margin: 10px 0 6px; }
+    .lookup-search input, .lookup-edit input, .lookup-edit textarea {
+      width: 100%; min-width: 0; padding: 9px 11px;
+      border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); font-size: 14px;
+    }
+    .lookup-options { display: flex; flex-wrap: wrap; gap: 12px; margin: 6px 0 8px; font-size: 12px; color: var(--soft); }
+    .lookup-options label { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; user-select: none; }
+    .lookup-options input { accent-color: var(--red); width: auto; }
+    .lookup-status { margin: 6px 0; font-size: 12px; min-height: 18px; color: var(--soft); }
+    .lookup-status[data-kind="ok"] { color: var(--green); }
+    .lookup-status[data-kind="error"] { color: var(--red); }
+    .lookup-results { display: grid; gap: 6px; max-height: 175px; overflow-y: auto; margin-bottom: 10px; }
+    .lookup-result {
+      width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 10px;
+      padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px; background: #fff;
+      color: var(--ink); text-align: left; cursor: pointer;
+    }
+    .lookup-result.selected { border-color: var(--red); background: var(--red-soft); }
+    .lookup-result strong { font-size: 17px; }
+    .lookup-result small { display: block; color: var(--soft); font-size: 12px; }
+    .lookup-result em { font-style: normal; font-size: 10px; color: var(--soft); white-space: nowrap; }
+    .lookup-locations { margin: 0 0 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fffaf4; }
+    .lookup-locations-title { font-size: 12px; font-weight: 750; color: var(--red); margin: 0 0 7px; }
+    .lookup-locations-list { display: grid; gap: 6px; max-height: 160px; overflow-y: auto; }
+    .lookup-loc-row { padding: 6px 8px; border-left: 3px solid var(--blue); background: #fff; border-radius: 4px; font-size: 12px; line-height: 1.5; }
+    .lookup-loc-meta { font-weight: 750; color: var(--blue); font-size: 11px; }
+    .lookup-loc-text { color: var(--ink); margin-top: 2px; overflow-wrap: anywhere; }
+    .lookup-edit { border-top: 1px solid var(--line); padding-top: 12px; display: grid; gap: 9px; }
+    .lookup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .lookup-edit label { display: grid; gap: 4px; font-size: 12px; font-weight: 650; color: var(--soft); }
+    .lookup-edit textarea { resize: vertical; min-height: 58px; }
+    .lookup-link { font-size: 12px; color: var(--blue); text-decoration: underline; }
+
     @media (max-width: 760px) {
       .content-tabs { width: 100%; }
       .content-tab { flex: 1 1 calc(33.333% - 4px); min-width: 0; padding-inline: 5px; }
@@ -162,8 +246,9 @@
       .subtitle { display: none; }
       .picker, .reading-layout { grid-template-columns: 1fr; }
       .card { padding: 12px; }
-      .reading-text { max-height: none; font-size: 13px; line-height: 1.8; }
+      .reading-text { max-height: none; line-height: 1.9; }
       .player-controls .speed { width: 100%; margin-left: 0; }
+      .lookup-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -173,6 +258,7 @@
       <a class="content-tab" href="./form_luyen_ngu_phap_3_buoc_romaji.html?phan=tuvung">Từ vựng</a>
       <a class="content-tab" href="./form_luyen_ngu_phap_3_buoc_romaji.html?phan=cau">Dịch câu</a>
       <a class="content-tab" href="./form_luyen_ngu_phap_3_buoc_romaji.html?phan=nguphap">Ngữ pháp</a>
+      <a class="content-tab" href="./form_luyen_ngu_phap_3_buoc_romaji.html?phan=tracnghiem">Trắc nghiệm JLPT</a>
       <a class="content-tab" data-section="tailieu" href="?phan=tailieu">Xem tài liệu</a>
       <a class="content-tab" data-section="doctruyen" href="?phan=doctruyen">Đọc hiểu</a>
       <a class="content-tab" data-section="nghe" href="?phan=nghe">Nghe</a>
@@ -195,6 +281,50 @@
     <main id="content" class="card"></main>
   </div>
 
+  <!-- Popup Tra từ mới đồng bộ giáo trình + từ điển -->
+  <div class="lookup-overlay" id="lookupOverlay" hidden>
+    <section class="lookup-dialog" role="dialog" aria-modal="true" aria-labelledby="lookupTitle">
+      <div class="lookup-head">
+        <div>
+          <h2 id="lookupTitle">Tra từ mới · 辞書</h2>
+          <p class="lookup-small">Bôi đen từ lạ trong bài đọc rồi bấm Tra từ, hoặc gõ trực tiếp. Tìm trong giáo trình trước rồi tra từ điển trực tuyến.</p>
+        </div>
+        <button type="button" class="button mini" id="btnLookupClose" aria-label="Đóng">✕</button>
+      </div>
+      <form id="lookupForm" class="lookup-search" autocomplete="off">
+        <input type="search" id="lookupQuery" placeholder="Ví dụ: 約束, 勉強, べんきょう" />
+        <button type="submit" class="button primary">Tìm</button>
+      </form>
+      <div class="lookup-options">
+        <label><input type="checkbox" id="lookupKanjiFallback" checked> Tìm từ chứa cùng Kanji nếu không khớp tuyệt đối</label>
+        <label><input type="checkbox" id="lookupShowSource" checked> Hiện chương / bài / trang chứa từ này</label>
+      </div>
+      <p class="lookup-status" id="lookupStatus" aria-live="polite"></p>
+      <div id="lookupResults" class="lookup-results"></div>
+      <div id="lookupLocations" class="lookup-locations" hidden>
+        <div class="lookup-locations-title" id="lookupLocationsTitle">Xuất hiện trong dữ liệu</div>
+        <div class="lookup-locations-list" id="lookupLocationsList"></div>
+      </div>
+      <div class="lookup-edit">
+        <div class="lookup-grid">
+          <label>Từ (Kanji / Kana)<input id="lookupWord" maxlength="90" lang="ja" placeholder="約束"></label>
+          <label>Hiragana / Katakana<input id="lookupKana" maxlength="90" lang="ja" placeholder="やくそく"></label>
+          <label>Romaji<input id="lookupRomaji" maxlength="160" placeholder="yakusoku"></label>
+          <label>Từ loại<input id="lookupType" maxlength="90" value="Từ mới"></label>
+        </div>
+        <label>Nghĩa tiếng Việt<textarea id="lookupMeaning" rows="2" placeholder="Nhập hoặc chỉnh nghĩa tiếng Việt..."></textarea></label>
+        <p class="lookup-small" id="lookupEnglishNote" hidden></p>
+        <div class="actions">
+          <button type="button" class="button" id="lookupSpeak">🔊 Nghe</button>
+          <button type="button" class="button primary" id="lookupSave">＋ Lưu vào Từ cần nhớ (<span id="lookupSavedCount">0</span>)</button>
+          <a class="lookup-link" id="lookupExternal" href="https://jdict.net/" target="_blank" rel="noopener noreferrer">Tra trên Jdict ↗</a>
+          <a class="lookup-link" href="./form_luyen_ngu_phap_3_buoc_romaji.html?phan=tuvung&ds=tucan">Ôn Từ cần nhớ →</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="./data/danh-sach-data.js"></script>
   <script src="./data/hoc-lieu-data.js"></script>
   <script>
     const params = new URLSearchParams(location.search);
@@ -202,6 +332,31 @@
     const section = ["tailieu", "doctruyen", "nghe"].includes(requestedSection)
       ? requestedSection
       : "tailieu";
+
+    const SELECTION_STORE_KEY = "hocLieuSelection_v1";
+    const READING_PROGRESS_KEY = "hocLieuReadingProgress_v1";
+    const FONT_SIZE_KEY = "hocLieuReadingFontSize_v1";
+    const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
+
+    function loadJsonStore(key, fallback) {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(key) || "");
+        return parsed ?? fallback;
+      } catch (_) {
+        return fallback;
+      }
+    }
+    function saveJsonStore(key, value) {
+      try { localStorage.setItem(key, JSON.stringify(value)); return true; }
+      catch (_) { return false; }
+    }
+
+    let readingFontSize = Math.min(24, Math.max(13, Number(localStorage.getItem(FONT_SIZE_KEY)) || 16.5));
+    function applyReadingFontSize() {
+      document.documentElement.style.setProperty("--reading-size", `${readingFontSize}px`);
+      try { localStorage.setItem(FONT_SIZE_KEY, String(readingFontSize)); } catch (_) {}
+    }
+    applyReadingFontSize();
 
     const sectionInfo = {
       tailieu: {
@@ -213,7 +368,7 @@
       },
       doctruyen: {
         seal: "読", title: "Đọc hiểu",
-        subtitle: "Đọc bài, xem bản dịch và tự chấm câu hỏi",
+        subtitle: "Đọc bài, tra từ, xem bản dịch và tự lưu kết quả",
         sets: (window.READING_SETS || []).slice().sort((a, b) =>
           String(a.name).localeCompare(String(b.name), "vi", { numeric: true })
         ), itemKey: "readings"
@@ -256,6 +411,51 @@
       activeAudio = null;
     }
 
+    function readingItemKey(chapterIdx, itemIdx, item) {
+      if (item?.id) return String(item.id);
+      const setName = config.sets[chapterIdx]?.name || `ch-${chapterIdx}`;
+      return `${setName}::${item?.lesson || ""}::${item?.title || itemIdx}`;
+    }
+
+    function getReadingProgressMap() {
+      const data = loadJsonStore(READING_PROGRESS_KEY, {});
+      return data && typeof data === "object" && !Array.isArray(data) ? data : {};
+    }
+
+    function saveReadingProgress(key, record) {
+      const map = getReadingProgressMap();
+      if (record === null) delete map[key];
+      else map[key] = record;
+      saveJsonStore(READING_PROGRESS_KEY, map);
+    }
+
+    function saveCurrentSelection() {
+      const store = loadJsonStore(SELECTION_STORE_KEY, {});
+      store[section] = {
+        chapter: Number(chapterSelect.value) || 0,
+        item: Number(itemSelect.value) || 0,
+      };
+      saveJsonStore(SELECTION_STORE_KEY, store);
+    }
+
+    function formatItemOptionLabel(chapterIdx, itemIdx, item) {
+      const base = [item.lesson, item.title].filter(Boolean).join(" — ") || `Bài ${itemIdx + 1}`;
+      if (section !== "doctruyen") return base;
+      const progress = getReadingProgressMap()[readingItemKey(chapterIdx, itemIdx, item)];
+      if (progress?.checked && typeof progress.total === "number" && progress.total > 0) {
+        return `${base}  [✓ ${progress.correctCount}/${progress.total}]`;
+      }
+      return base;
+    }
+
+    function refreshCurrentItemOptionLabel() {
+      const chIdx = Number(chapterSelect.value) || 0;
+      const itIdx = Number(itemSelect.value) || 0;
+      const item = currentItem();
+      const opt = itemSelect.options[itIdx];
+      if (item && opt) opt.textContent = formatItemOptionLabel(chIdx, itIdx, item);
+    }
+
     function renderSelectors() {
       clearElement(chapterSelect);
       if (!config.sets.length) {
@@ -269,13 +469,20 @@
       }
       config.sets.forEach((set, index) => chapterSelect.append(option(index, set.name || `Chương ${index + 1}`)));
       chapterSelect.disabled = false;
-      renderItemOptions();
+
+      const saved = loadJsonStore(SELECTION_STORE_KEY, {})[section];
+      const savedCh = Number(saved?.chapter);
+      if (Number.isInteger(savedCh) && savedCh >= 0 && savedCh < config.sets.length) {
+        chapterSelect.value = String(savedCh);
+      }
+      renderItemOptions(saved?.item);
     }
 
-    function renderItemOptions() {
+    function renderItemOptions(preferredItemIdx = 0) {
       stopCurrentAudio();
       clearElement(itemSelect);
-      const set = config.sets[Number(chapterSelect.value) || 0];
+      const chIdx = Number(chapterSelect.value) || 0;
+      const set = config.sets[chIdx];
       const items = set?.[config.itemKey] || [];
       if (!items.length) {
         itemSelect.append(option("", "Chưa có bài"));
@@ -284,16 +491,77 @@
         return;
       }
       items.forEach((item, index) => {
-        const label = [item.lesson, item.title].filter(Boolean).join(" — ") || `Bài ${index + 1}`;
-        itemSelect.append(option(index, label));
+        itemSelect.append(option(index, formatItemOptionLabel(chIdx, index, item)));
       });
       itemSelect.disabled = false;
+
+      const targetIdx = Number(preferredItemIdx);
+      if (Number.isInteger(targetIdx) && targetIdx >= 0 && targetIdx < items.length) {
+        itemSelect.value = String(targetIdx);
+      } else {
+        itemSelect.value = "0";
+      }
+      saveCurrentSelection();
       renderCurrentItem();
     }
 
     function currentItem() {
       const set = config.sets[Number(chapterSelect.value) || 0];
       return set?.[config.itemKey]?.[Number(itemSelect.value) || 0] || null;
+    }
+
+    function getFlatPositions() {
+      const list = [];
+      config.sets.forEach((set, chIdx) => {
+        (set?.[config.itemKey] || []).forEach((_, itIdx) => {
+          list.push({ chIdx, itIdx });
+        });
+      });
+      return list;
+    }
+
+    function createLessonNav() {
+      const positions = getFlatPositions();
+      const curCh = Number(chapterSelect.value) || 0;
+      const curIt = Number(itemSelect.value) || 0;
+      const curPos = positions.findIndex((p) => p.chIdx === curCh && p.itIdx === curIt);
+      if (positions.length <= 1 || curPos < 0) return null;
+
+      const nav = document.createElement("div");
+      nav.className = "lesson-nav";
+
+      const prevBtn = document.createElement("button");
+      prevBtn.type = "button";
+      prevBtn.className = "button";
+      prevBtn.textContent = "← Bài trước";
+      prevBtn.disabled = curPos === 0;
+      prevBtn.addEventListener("click", () => {
+        const target = positions[curPos - 1];
+        if (!target) return;
+        chapterSelect.value = String(target.chIdx);
+        renderItemOptions(target.itIdx);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      const posText = document.createElement("span");
+      posText.className = "lesson-nav-pos";
+      posText.textContent = `Bài ${curPos + 1} / ${positions.length}`;
+
+      const nextBtn = document.createElement("button");
+      nextBtn.type = "button";
+      nextBtn.className = "button";
+      nextBtn.textContent = "Bài sau →";
+      nextBtn.disabled = curPos >= positions.length - 1;
+      nextBtn.addEventListener("click", () => {
+        const target = positions[curPos + 1];
+        if (!target) return;
+        chapterSelect.value = String(target.chIdx);
+        renderItemOptions(target.itIdx);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      nav.append(prevBtn, posText, nextBtn);
+      return nav;
     }
 
     function makeHeader(item) {
@@ -327,6 +595,8 @@
       if (section === "tailieu") renderDocument(item);
       else if (section === "doctruyen") renderReading(item);
       else renderListening(item);
+      const nav = createLessonNav();
+      if (nav) content.appendChild(nav);
     }
 
     function inferDocumentType(item) {
@@ -371,17 +641,107 @@
       }
     }
 
+    function renderPassageWithOptionalCloze(passageEl, text, questionCount, isExplicitCloze, onSlotClick) {
+      passageEl.replaceChildren();
+      const slotsByQuestion = new Map();
+      const raw = String(text || "Chưa có nội dung bài đọc.");
+      const clozeRegex = isExplicitCloze
+        ? /([\[［【（(]\s*(\d+)\s*[\]］】）)])/g
+        : /([\[［【]\s*(\d+)\s*[\]］】]|（[\s　]+(\d+)[\s　]+）)/g;
+
+      let lastIdx = 0;
+      let match;
+      let foundAny = false;
+
+      while ((match = clozeRegex.exec(raw)) !== null) {
+        const num = Number(match[2] || match[3]);
+        if (!Number.isInteger(num) || num < 1 || num > questionCount) continue;
+        foundAny = true;
+        if (match.index > lastIdx) {
+          passageEl.append(document.createTextNode(raw.slice(lastIdx, match.index)));
+        }
+        const slot = document.createElement("span");
+        slot.className = "cloze-slot";
+        slot.dataset.qIndex = String(num - 1);
+        slot.textContent = `[ ${num} ]`;
+        slot.title = `Bấm để nhảy tới câu ${num}`;
+        slot.addEventListener("click", () => onSlotClick(num - 1));
+        passageEl.append(slot);
+        if (!slotsByQuestion.has(num - 1)) slotsByQuestion.set(num - 1, []);
+        slotsByQuestion.get(num - 1).push(slot);
+        lastIdx = match.index + match[0].length;
+      }
+
+      if (!foundAny) {
+        passageEl.textContent = raw;
+      } else if (lastIdx < raw.length) {
+        passageEl.append(document.createTextNode(raw.slice(lastIdx)));
+      }
+      return slotsByQuestion;
+    }
+
     function renderReading(item) {
       clearElement(content);
-      content.appendChild(makeHeader(item));
+      const chIdx = Number(chapterSelect.value) || 0;
+      const itIdx = Number(itemSelect.value) || 0;
+      const itemKey = readingItemKey(chIdx, itIdx, item);
+      const savedProgress = getReadingProgressMap()[itemKey] || null;
+
+      const head = makeHeader(item);
+      const tools = document.createElement("div");
+      tools.className = "head-tools";
+
+      const btnSmaller = document.createElement("button");
+      btnSmaller.type = "button";
+      btnSmaller.className = "button mini";
+      btnSmaller.textContent = "A-";
+      btnSmaller.title = "Giảm cỡ chữ bài đọc";
+      btnSmaller.addEventListener("click", () => {
+        readingFontSize = Math.max(13, readingFontSize - 1);
+        applyReadingFontSize();
+      });
+
+      const btnLarger = document.createElement("button");
+      btnLarger.type = "button";
+      btnLarger.className = "button mini";
+      btnLarger.textContent = "A+";
+      btnLarger.title = "Tăng cỡ chữ bài đọc";
+      btnLarger.addEventListener("click", () => {
+        readingFontSize = Math.min(24, readingFontSize + 1);
+        applyReadingFontSize();
+      });
+
+      const btnLookup = document.createElement("button");
+      btnLookup.type = "button";
+      btnLookup.className = "button mini";
+      btnLookup.textContent = "⌕ Tra từ mới";
+      btnLookup.title = "Bôi đen từ lạ trong bài đọc rồi bấm để tra và lưu";
+      btnLookup.addEventListener("click", () => openLookupDialog());
+
+      tools.append(btnSmaller, btnLarger, btnLookup);
+      head.appendChild(tools);
+      content.appendChild(head);
+
       const layout = document.createElement("div");
       layout.className = "reading-layout";
       const readingPane = document.createElement("section");
       readingPane.className = "reading-pane";
       const passage = document.createElement("p");
       passage.className = "reading-text";
+      passage.id = "activeReadingText";
       passage.lang = "ja";
-      passage.textContent = item.passage || "Chưa có nội dung bài đọc.";
+
+      const questions = Array.isArray(item.questions) ? item.questions : [];
+      const questionElements = [];
+      const clozeSlots = renderPassageWithOptionalCloze(
+        passage,
+        item.passage,
+        questions.length,
+        item.kind === "cloze",
+        (qIdx) => {
+          questionElements[qIdx]?.box?.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      );
       readingPane.appendChild(passage);
 
       if (item.translation) {
@@ -405,7 +765,17 @@
 
       const questionPane = document.createElement("section");
       questionPane.className = "question-pane";
-      const questions = Array.isArray(item.questions) ? item.questions : [];
+
+      const updateClozeSlot = (qIdx, choiceText, status = "") => {
+        const slots = clozeSlots.get(qIdx);
+        if (!slots) return;
+        slots.forEach((slot) => {
+          slot.textContent = choiceText ? `[ ${qIdx + 1}: ${choiceText} ]` : `[ ${qIdx + 1} ]`;
+          slot.classList.remove("correct", "wrong");
+          if (status) slot.classList.add(status);
+        });
+      };
+
       if (!questions.length) {
         const empty = document.createElement("div");
         empty.className = "empty";
@@ -415,7 +785,11 @@
         const heading = document.createElement("h3");
         heading.textContent = `Câu hỏi (${questions.length})`;
         questionPane.appendChild(heading);
-        const questionElements = [];
+
+        const currentAnswers = Array.isArray(savedProgress?.answers)
+          ? savedProgress.answers.slice(0, questions.length)
+          : new Array(questions.length).fill(null);
+
         questions.forEach((question, questionIndex) => {
           const box = document.createElement("div");
           box.className = "question";
@@ -423,6 +797,7 @@
           title.className = "question-title";
           title.textContent = `${questionIndex + 1}. ${question.prompt}`;
           box.appendChild(title);
+
           const choices = [];
           (question.choices || []).forEach((choiceText, choiceIndex) => {
             const label = document.createElement("label");
@@ -431,6 +806,20 @@
             radio.type = "radio";
             radio.name = `question-${questionIndex}`;
             radio.value = choiceIndex;
+            if (currentAnswers[questionIndex] === choiceIndex) {
+              radio.checked = true;
+              updateClozeSlot(questionIndex, choiceText);
+            }
+            radio.addEventListener("change", () => {
+              currentAnswers[questionIndex] = choiceIndex;
+              updateClozeSlot(questionIndex, choiceText);
+              saveReadingProgress(itemKey, {
+                answers: currentAnswers,
+                checked: false,
+                correctCount: 0,
+                total: questions.length,
+              });
+            });
             const caption = document.createElement("span");
             caption.textContent = choiceText;
             label.append(radio, caption);
@@ -457,40 +846,67 @@
         const score = document.createElement("span");
         score.className = "score";
 
-        check.addEventListener("click", () => {
+        const evaluateAnswers = (persist = true) => {
           let correctCount = 0;
           questions.forEach((question, questionIndex) => {
             const state = questionElements[questionIndex];
             state.choices.forEach((label) => label.classList.remove("correct", "wrong"));
             const selected = state.box.querySelector('input[type="radio"]:checked');
-            const answerIndex = Number(question.answer);
+            const answerIndex = Number(question.answer ?? question.answerIndex);
             if (!selected) {
+              currentAnswers[questionIndex] = null;
               state.result.textContent = "Bạn chưa chọn đáp án.";
               state.result.style.color = "var(--red)";
+              updateClozeSlot(questionIndex, "", "wrong");
               return;
             }
             const selectedIndex = Number(selected.value);
+            currentAnswers[questionIndex] = selectedIndex;
             const isCorrect = selectedIndex === answerIndex;
             if (isCorrect) correctCount++;
             state.choices[selectedIndex]?.classList.add(isCorrect ? "correct" : "wrong");
             state.choices[answerIndex]?.classList.add("correct");
+            updateClozeSlot(
+              questionIndex,
+              question.choices?.[selectedIndex] || "",
+              isCorrect ? "correct" : "wrong"
+            );
             state.result.textContent = `${isCorrect ? "Đúng." : "Sai."}${question.explanation ? ` ${question.explanation}` : ""}`;
             state.result.style.color = isCorrect ? "var(--green)" : "var(--red)";
           });
           score.textContent = `Kết quả: ${correctCount}/${questions.length}`;
-        });
+          if (persist) {
+            saveReadingProgress(itemKey, {
+              answers: currentAnswers,
+              checked: true,
+              correctCount,
+              total: questions.length,
+            });
+            refreshCurrentItemOptionLabel();
+          }
+        };
+
+        check.addEventListener("click", () => evaluateAnswers(true));
 
         reset.addEventListener("click", () => {
-          questionElements.forEach((state) => {
+          for (let i = 0; i < currentAnswers.length; i++) currentAnswers[i] = null;
+          questionElements.forEach((state, idx) => {
             state.box.querySelectorAll('input[type="radio"]').forEach((radio) => { radio.checked = false; });
             state.choices.forEach((label) => label.classList.remove("correct", "wrong"));
             state.result.textContent = "";
+            updateClozeSlot(idx, "", "");
           });
           score.textContent = "";
+          saveReadingProgress(itemKey, null);
+          refreshCurrentItemOptionLabel();
         });
+
         actions.append(check, reset, score);
         questionPane.appendChild(actions);
+
+        if (savedProgress?.checked) evaluateAnswers(false);
       }
+
       layout.append(readingPane, questionPane);
       content.appendChild(layout);
     }
@@ -600,9 +1016,568 @@
       if (extraActions.childElementCount) content.appendChild(extraActions);
     }
 
-    chapterSelect.addEventListener("change", renderItemOptions);
-    itemSelect.addEventListener("change", renderCurrentItem);
+    chapterSelect.addEventListener("change", () => renderItemOptions(0));
+    itemSelect.addEventListener("change", () => {
+      saveCurrentSelection();
+      renderCurrentItem();
+    });
     renderSelectors();
+
+    /* =========== TRA TỪ MỚI (ĐỒNG BỘ GIÁO TRÌNH + KANJI + JOTOBA/MYMEMORY) =========== */
+    const VOCAB_SETS = window.VOCAB_SETS || [];
+    const SENTENCE_SETS = (window.SENTENCE_SETS || []).map((set) => ({
+      name: set.name,
+      words: (set.sentences || []).map((s) => ({ ...s, kana: s.hiragana })),
+    }));
+    const GRAMMAR_SETS = (window.GRAMMAR_SETS || []).map((set) => ({
+      name: set.name,
+      words: (set.grammar || []).flatMap((g) =>
+        (g.examples || []).map((ex) => ({ ...ex, kana: ex.hiragana }))
+      ),
+    }));
+
+    const lookupOverlay = document.getElementById("lookupOverlay");
+    const lookupQuery = document.getElementById("lookupQuery");
+    const lookupStatus = document.getElementById("lookupStatus");
+    const lookupResults = document.getElementById("lookupResults");
+    const lookupWord = document.getElementById("lookupWord");
+    const lookupKana = document.getElementById("lookupKana");
+    const lookupRomaji = document.getElementById("lookupRomaji");
+    const lookupType = document.getElementById("lookupType");
+    const lookupMeaning = document.getElementById("lookupMeaning");
+    const lookupEnglishNote = document.getElementById("lookupEnglishNote");
+    const lookupSavedCount = document.getElementById("lookupSavedCount");
+    const lookupKanjiFallbackToggle = document.getElementById("lookupKanjiFallback");
+    const lookupShowSourceToggle = document.getElementById("lookupShowSource");
+    const lookupLocations = document.getElementById("lookupLocations");
+    const lookupLocationsTitle = document.getElementById("lookupLocationsTitle");
+    const lookupLocationsList = document.getElementById("lookupLocationsList");
+
+    let lookupCandidates = [];
+    let lookupSelection = -1;
+    let lookupReqId = 0;
+
+    function getRememberWords() {
+      const data = loadJsonStore(REMEMBER_WORDS_KEY, []);
+      return Array.isArray(data) ? data.filter((x) => x && x.kanji && x.kana && x.romaji && x.meaning) : [];
+    }
+    function updateRememberCount() {
+      lookupSavedCount.textContent = getRememberWords().length;
+    }
+    updateRememberCount();
+
+    function kanaToRomaji(value) {
+      if (!value) return "";
+      const kana = String(value).normalize("NFKC").replace(/[\u30a1-\u30f6]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) - 96));
+      const map = {
+        あ:'a',い:'i',う:'u',え:'e',お:'o',か:'ka',き:'ki',く:'ku',け:'ke',こ:'ko',
+        さ:'sa',し:'shi',す:'su',せ:'se',そ:'so',た:'ta',ち:'chi',つ:'tsu',て:'te',と:'to',
+        な:'na',に:'ni',ぬ:'nu',ね:'ne',の:'no',は:'ha',ひ:'hi',ふ:'fu',へ:'he',ほ:'ho',
+        ま:'ma',み:'mi',む:'mu',め:'me',も:'mo',や:'ya',ゆ:'yu',よ:'yo',
+        ら:'ra',り:'ri',る:'ru',れ:'re',ろ:'ro',わ:'wa',を:'o',ん:'n',
+        が:'ga',ぎ:'gi',ぐ:'gu',げ:'ge',ご:'go',ざ:'za',じ:'ji',ず:'zu',ぜ:'ze',ぞ:'zo',
+        だ:'da',ぢ:'ji',づ:'zu',で:'de',ど:'do',ば:'ba',び:'bi',ぶ:'bu',べ:'be',ぼ:'bo',
+        ぱ:'pa',ぴ:'pi',ぷ:'pu',ぺ:'pe',ぽ:'po',
+        きゃ:'kya',きゅ:'kyu',きょ:'kyo',しゃ:'sha',しゅ:'shu',しょ:'sho',
+        ちゃ:'cha',ちゅ:'chu',ちょ:'cho',にゃ:'nya',にゅ:'nyu',にょ:'nyo',
+        ひゃ:'hya',ひゅ:'hyu',ひょ:'hyo',みゃ:'mya',みゅ:'myu',みょ:'myo',
+        りゃ:'rya',りゅ:'ryu',りょ:'ryo',ぎゃ:'gya',ぎゅ:'gyu',ぎょ:'gyo',
+        じゃ:'ja',じゅ:'ju',じょ:'jo',びゃ:'bya',びゅ:'byu',びょ:'byo',
+        ぴゃ:'pya',ぴゅ:'pyu',ぴょ:'pyo',てぃ:'ti',でぃ:'di',ふぁ:'fa',ふぃ:'fi',ふぇ:'fe',ふぉ:'fo',
+        しぇ:'she',ちぇ:'che',じぇ:'je',うぃ:'wi',うぇ:'we',うぉ:'wo',
+        ゔ:'vu',ぁ:'a',ぃ:'i',ぅ:'u',ぇ:'e',ぉ:'o',ゃ:'ya',ゅ:'yu',ょ:'yo'
+      };
+      let res = "";
+      for (let i = 0; i < kana.length; i++) {
+        const ch = kana[i];
+        if (ch === "っ") {
+          const next = map[kana.slice(i + 1, i + 3)] || map[kana[i + 1]] || "";
+          res += next.startsWith("ch") ? "t" : next[0] || "";
+          continue;
+        }
+        if (ch === "ー") {
+          const m = res.match(/[aeiou]$/);
+          if (m) res += m[0];
+          continue;
+        }
+        if (ch === "ん" && /[あいうえおやゆよ]/.test(kana[i + 1] || "")) { res += "n'"; continue; }
+        const digraph = map[kana.slice(i, i + 2)];
+        if (digraph) { res += digraph; i++; }
+        else res += map[ch] || (/[\u3040-\u30ff]/.test(ch) ? "" : ch);
+      }
+      return res;
+    }
+
+    function normalizeLookupItem(item, source = "Giáo trình") {
+      const kanji = String(item.kanji || item.word || "").trim();
+      const kana = String(item.kana || item.hiragana || item.reading || "").trim();
+      const meaning = String(item.meaning || "").trim();
+      return {
+        kanji,
+        kana,
+        romaji: String(item.romaji || kanaToRomaji(kana)).trim(),
+        meaning,
+        type: String(item.type || "Từ mới"),
+        source,
+        englishMeaning: String(item.englishMeaning || "").trim(),
+        translatedBy: String(item.translatedBy || "").trim(),
+      };
+    }
+
+    function normLookup(text) {
+      return String(text || "").normalize("NFKC").trim();
+    }
+
+    function lookupToHiragana(text) {
+      return normLookup(text).replace(/[\u30A1-\u30F6]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) - 96));
+    }
+
+    function lookupExactScore(item, query) {
+      const q = normLookup(query), word = normLookup(item.kanji), kana = normLookup(item.kana);
+      if (word === q) return 3;
+      if (kana === q) return 2;
+      if (kana && lookupToHiragana(kana) === lookupToHiragana(q)) return 1;
+      return 0;
+    }
+
+    function extractKanjiChars(text) {
+      const matches = normLookup(text).match(/\p{Script=Han}/gu) || [];
+      return [...new Set(matches)];
+    }
+
+    function allLocalVocabWithSource() {
+      const fromSaved = getRememberWords().map((w) => normalizeLookupItem(w, "★ Từ cần nhớ"));
+      const fromSets = VOCAB_SETS.flatMap((set) =>
+        (set.words || []).map((w) => normalizeLookupItem(w, set.name || "Giáo trình"))
+      );
+      return [...fromSaved, ...fromSets];
+    }
+
+    function lookupLocal(query) {
+      const q = normLookup(query);
+      return allLocalVocabWithSource()
+        .filter((w) => w.kanji && lookupExactScore(w, q) > 0)
+        .sort((a, b) => lookupExactScore(b, q) - lookupExactScore(a, q))
+        .slice(0, 12);
+    }
+
+    function lookupLocalByKanji(query) {
+      const kanjiChars = extractKanjiChars(query);
+      if (!kanjiChars.length) return [];
+      const kanjiText = kanjiChars.join("");
+
+      return allLocalVocabWithSource()
+        .map((w) => {
+          const wordKanji = extractKanjiChars(w.kanji);
+          if (!wordKanji.length) return null;
+          const matched = kanjiChars.filter((ch) => wordKanji.includes(ch)).length;
+          if (!matched) return null;
+          const containsAll = matched === kanjiChars.length ? 1 : 0;
+          const containsSeq = normLookup(w.kanji).includes(kanjiText) ? 1 : 0;
+          return {
+            item: { ...w, source: `Chứa Kanji (${matched}/${kanjiChars.length}) · ${w.source}` },
+            containsSeq,
+            containsAll,
+            matched,
+            len: normLookup(w.kanji).length,
+          };
+        })
+        .filter(Boolean)
+        .sort((a, b) =>
+          b.containsSeq - a.containsSeq ||
+          b.containsAll - a.containsAll ||
+          b.matched - a.matched ||
+          a.len - b.len
+        )
+        .map((x) => x.item)
+        .slice(0, 18);
+    }
+
+    function renderLookupLocations(query, allowKanjiFallback) {
+      lookupLocationsList.replaceChildren();
+      if (!lookupShowSourceToggle?.checked) {
+        lookupLocations.hidden = true;
+        return;
+      }
+
+      const q = normLookup(query);
+      const qHira = lookupToHiragana(q);
+      const kanjiChars = extractKanjiChars(q);
+
+      const sources = [
+        { kind: "Từ vựng", sets: VOCAB_SETS },
+        { kind: "Câu ví dụ", sets: SENTENCE_SETS },
+        { kind: "Ngữ pháp", sets: GRAMMAR_SETS },
+      ];
+
+      const exactMatches = [];
+      const kanjiMatches = [];
+
+      for (const group of sources) {
+        for (const set of group.sets) {
+          const setName = set.name || "Không rõ tên bộ";
+          for (const item of set.words || []) {
+            const textKanji = normLookup(item.kanji);
+            const textKana = lookupToHiragana(item.kana || item.hiragana || "");
+            const isExactHit = (q && textKanji.includes(q)) || (qHira && textKana.includes(qHira));
+
+            if (isExactHit) {
+              exactMatches.push({ kind: group.kind, setName, kanji: item.kanji, meaning: item.meaning });
+            } else if (allowKanjiFallback && kanjiChars.length) {
+              const matched = kanjiChars.filter((ch) => textKanji.includes(ch)).length;
+              if (matched > 0) {
+                kanjiMatches.push({ kind: group.kind, setName, kanji: item.kanji, meaning: item.meaning, matched });
+              }
+            }
+          }
+        }
+      }
+
+      const finalList = exactMatches.length
+        ? exactMatches.slice(0, 20)
+        : kanjiMatches.sort((a, b) => b.matched - a.matched).slice(0, 15);
+
+      if (!finalList.length) {
+        lookupLocations.hidden = true;
+        return;
+      }
+
+      lookupLocationsTitle.textContent = exactMatches.length
+        ? `Tìm thấy trong ${finalList.length} mục dữ liệu (trùng trực tiếp):`
+        : `Không có mục trùng tuyệt đối — gợi ý ${finalList.length} mục chứa cùng Kanji:`;
+
+      finalList.forEach((entry) => {
+        const row = document.createElement("div");
+        row.className = "lookup-loc-row";
+        const meta = document.createElement("div");
+        meta.className = "lookup-loc-meta";
+        meta.textContent = `${entry.kind} · ${entry.setName}`;
+        const text = document.createElement("div");
+        text.className = "lookup-loc-text";
+        text.textContent = `${entry.kanji} — ${entry.meaning || ""}`;
+        row.append(meta, text);
+        lookupLocationsList.appendChild(row);
+      });
+
+      lookupLocations.hidden = false;
+    }
+
+    function uniqueLookupResults(items, query = "", allowFuzzy = false) {
+      const seen = new Map();
+      for (const item of items) {
+        if (!item.kanji || (!allowFuzzy && query && !lookupExactScore(item, query))) continue;
+        const key = normLookup(item.kanji) + "\u0000" + lookupToHiragana(item.kana);
+        const old = seen.get(key);
+        if (!old) seen.set(key, item);
+        else if (!old.meaning && item.meaning) {
+          seen.set(key, {
+            ...old,
+            meaning: item.meaning,
+            englishMeaning: old.englishMeaning || item.englishMeaning,
+            translatedBy: item.translatedBy || "",
+          });
+        }
+      }
+      return [...seen.values()]
+        .sort((a, b) => (!allowFuzzy && query ? lookupExactScore(b, query) - lookupExactScore(a, query) : 0))
+        .slice(0, 18);
+    }
+
+    function setLookupStatus(msg, kind = "") {
+      lookupStatus.textContent = msg;
+      lookupStatus.dataset.kind = kind;
+    }
+
+    function drawLookupResults() {
+      lookupResults.replaceChildren();
+      lookupCandidates.forEach((item, index) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "lookup-result" + (index === lookupSelection ? " selected" : "");
+        const left = document.createElement("span");
+        const strong = document.createElement("strong");
+        strong.textContent = item.kanji;
+        const small = document.createElement("small");
+        small.textContent = [item.kana, item.romaji, item.meaning || item.englishMeaning].filter(Boolean).join(" · ");
+        left.append(strong, small);
+        const em = document.createElement("em");
+        em.textContent = item.source || "Từ điển";
+        btn.append(left, em);
+        btn.addEventListener("click", () => selectLookupCandidate(index));
+        lookupResults.appendChild(btn);
+      });
+    }
+
+    function selectLookupCandidate(index) {
+      const item = lookupCandidates[index];
+      if (!item) return;
+      lookupSelection = index;
+      drawLookupResults();
+      lookupWord.value = item.kanji || "";
+      lookupKana.value = item.kana || "";
+      lookupRomaji.value = item.romaji || kanaToRomaji(item.kana);
+      lookupMeaning.value = item.meaning || "";
+      lookupType.value = item.type || "Từ mới";
+      lookupEnglishNote.hidden = !item.englishMeaning;
+      lookupEnglishNote.textContent = item.englishMeaning
+        ? `Nghĩa Anh tham khảo: ${item.englishMeaning}${item.translatedBy ? ` (dịch tự động bởi ${item.translatedBy})` : ""}`
+        : "";
+    }
+
+    async function fetchJson(url, opts = {}) {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 9500);
+      try {
+        const res = await fetch(url, { ...opts, signal: ctrl.signal });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+      } finally { clearTimeout(t); }
+    }
+
+    function jotobaEntries(data, term) {
+      const words = Array.isArray(data?.words) ? data.words : [];
+      return words.map((w) => {
+        const senses = Array.isArray(w.senses) ? w.senses : [];
+        const en = senses.filter((s) => !s.language || /^English$/i.test(s.language))
+          .flatMap((s) => Array.isArray(s.glosses) ? s.glosses : []).slice(0, 3).join("; ");
+        const vi = senses.filter((s) => /^Vietnamese$/i.test(s.language || ""))
+          .flatMap((s) => Array.isArray(s.glosses) ? s.glosses : []).slice(0, 3).join("; ");
+        return normalizeLookupItem({
+          kanji: w.reading?.kanji || w.reading?.kana,
+          kana: w.reading?.kana || "",
+          meaning: vi,
+          englishMeaning: en,
+          type: "Từ mới",
+        }, "Jotoba");
+      }).filter((w) => w.kanji && lookupExactScore(w, term) > 0);
+    }
+
+    async function translateLookupFallback(englishText, japaneseText) {
+      const source = englishText ? "en" : "ja";
+      const text = (englishText || japaneseText || "").slice(0, 460);
+      if (!text) return "";
+      try {
+        const data = await fetchJson(
+          "https://api.mymemory.translated.net/get?" + new URLSearchParams({ q: text, langpair: `${source}|vi` })
+        );
+        if (Number(data.responseStatus) !== 200) return "";
+        const result = String(data.responseData?.translatedText || "").trim();
+        if (!result || result.toLowerCase() === text.toLowerCase()
+          || /^(MYMEMORY WARNING|QUERY LENGTH LIMIT|PLEASE SELECT|INVALID LANGUAGE|ERROR:)/i.test(result)) return "";
+        return result;
+      } catch (_) { return ""; }
+    }
+
+    async function searchExternalDictionary(term) {
+      try {
+        const proxy = await fetchJson(`/api/tu-dien?q=${encodeURIComponent(term)}`);
+        return (proxy.results || [])
+          .map((w) => normalizeLookupItem(w, w.source || "Từ điển trực tuyến"))
+          .filter((w) => lookupExactScore(w, term) > 0);
+      } catch (_) {
+        let items = [];
+        try {
+          const raw = await fetchJson("https://jotoba.de/api/search/words", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ query: term, language: "English" }),
+          });
+          items = jotobaEntries(raw, term);
+        } catch (_) {}
+        if (items.length && !items[0].meaning) {
+          items[0].meaning = await translateLookupFallback(items[0].englishMeaning, items[0].kanji);
+          if (items[0].meaning) items[0].translatedBy = "MyMemory";
+        }
+        return items;
+      }
+    }
+
+    async function doLookupSearch() {
+      const q = lookupQuery.value.normalize("NFKC").trim();
+      if (!q) { setLookupStatus("Bạn hãy nhập một từ cần tra.", "error"); lookupQuery.focus(); return; }
+      if (q.length > 90) { setLookupStatus("Chỉ tra một từ hoặc cụm ngắn (tối đa 90 ký tự).", "error"); return; }
+
+      const reqId = ++lookupReqId;
+      document.getElementById("lookupExternal").href = `https://jdict.net/search?keyword=${encodeURIComponent(q)}`;
+      const allowKanjiFallback = Boolean(lookupKanjiFallbackToggle?.checked);
+
+      lookupSelection = -1;
+      const exactLocal = uniqueLookupResults(lookupLocal(q), q, false);
+      const fuzzyLocal = !exactLocal.length && allowKanjiFallback
+        ? uniqueLookupResults(lookupLocalByKanji(q), q, true)
+        : [];
+      const usingFallback = !exactLocal.length && fuzzyLocal.length > 0;
+
+      lookupCandidates = exactLocal.length ? exactLocal : fuzzyLocal;
+      drawLookupResults();
+      renderLookupLocations(q, allowKanjiFallback);
+
+      lookupWord.value = q;
+      lookupKana.value = /^[\u3040-\u30ffー]+$/.test(q) ? q : "";
+      lookupRomaji.value = kanaToRomaji(lookupKana.value);
+      lookupMeaning.value = "";
+      lookupType.value = "Từ mới";
+      lookupEnglishNote.hidden = true;
+      if (lookupCandidates.length) selectLookupCandidate(0);
+
+      setLookupStatus(
+        exactLocal.length
+          ? "Đã tìm trong giáo trình. Đang kiểm tra thêm từ điển trực tuyến…"
+          : usingFallback
+            ? "Không có từ trùng tuyệt đối — đang hiện các từ chứa cùng Kanji và kiểm tra từ điển…"
+            : "Đang tìm trong từ điển trực tuyến…"
+      );
+
+      const external = await searchExternalDictionary(q);
+      if (reqId !== lookupReqId || lookupOverlay.hidden) return;
+
+      const mergedExact = uniqueLookupResults([...exactLocal, ...external], q, false);
+      const alreadySelected = lookupSelection >= 0;
+
+      if (mergedExact.length) lookupCandidates = mergedExact;
+      else if (usingFallback) lookupCandidates = fuzzyLocal;
+      else lookupCandidates = [];
+
+      drawLookupResults();
+      if (lookupCandidates.length && (!alreadySelected || !lookupMeaning.value.trim())) {
+        const idx = alreadySelected
+          ? Math.max(0, lookupCandidates.findIndex((w) => w.kanji === lookupWord.value && w.kana === lookupKana.value))
+          : Math.max(0, lookupCandidates.findIndex((w) => w.meaning));
+        selectLookupCandidate(idx);
+      }
+
+      if (mergedExact.length) {
+        const hasVi = mergedExact.some((item) => item.meaning);
+        setLookupStatus(
+          hasVi
+            ? `Đã tìm thấy ${mergedExact.length} từ trùng khớp và điền nghĩa Việt (nếu có).`
+            : `Đã tìm thấy ${mergedExact.length} từ trùng khớp, nhưng chưa có nghĩa Việt tự động.`,
+          hasVi ? "ok" : "error"
+        );
+      } else if (usingFallback) {
+        setLookupStatus(`Không tìm thấy từ trùng tuyệt đối — đã lọc ${fuzzyLocal.length} từ trong giáo trình chứa cùng Kanji.`, "ok");
+      } else {
+        setLookupStatus("Không tìm thấy từ trùng khớp hoặc từ chứa cùng Kanji. Hãy thử tra trên Jdict hoặc tự nhập nghĩa.", "error");
+      }
+    }
+
+    lookupKanjiFallbackToggle?.addEventListener("change", () => {
+      if (lookupQuery.value.trim()) doLookupSearch();
+    });
+    lookupShowSourceToggle?.addEventListener("change", () => {
+      if (lookupQuery.value.trim()) renderLookupLocations(lookupQuery.value.trim(), Boolean(lookupKanjiFallbackToggle?.checked));
+      else lookupLocations.hidden = true;
+    });
+
+    function openLookupDialog() {
+      let selection = "";
+      try {
+        const textEl = document.getElementById("activeReadingText");
+        const sel = window.getSelection();
+        if (sel && textEl && textEl.contains(sel.anchorNode) && textEl.contains(sel.focusNode)) {
+          selection = sel.toString().trim();
+        }
+      } catch (_) {}
+      updateRememberCount();
+      lookupOverlay.hidden = false;
+      lookupQuery.value = selection.length <= 60 ? selection : "";
+      if (lookupQuery.value) doLookupSearch();
+      else {
+        lookupCandidates = [];
+        drawLookupResults();
+        lookupLocations.hidden = true;
+        setLookupStatus("Bôi đen từ trong bài đọc hoặc gõ từ vào ô tìm kiếm.");
+      }
+      setTimeout(() => lookupQuery.focus(), 0);
+    }
+
+    function closeLookupDialog() {
+      lookupReqId++;
+      lookupOverlay.hidden = true;
+    }
+
+    document.getElementById("btnLookupClose").addEventListener("click", closeLookupDialog);
+    lookupOverlay.addEventListener("mousedown", (e) => { if (e.target === lookupOverlay) closeLookupDialog(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !lookupOverlay.hidden) closeLookupDialog(); });
+    document.getElementById("lookupForm").addEventListener("submit", (e) => { e.preventDefault(); doLookupSearch(); });
+    lookupKana.addEventListener("input", () => { lookupRomaji.value = kanaToRomaji(lookupKana.value); });
+    document.getElementById("lookupSpeak").addEventListener("click", () => {
+      if (!("speechSynthesis" in window)) return;
+      const text = (lookupKana.value || lookupWord.value).trim();
+      if (!text) return;
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = "ja-JP";
+      u.rate = 0.85;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+    });
+    document.getElementById("lookupSave").addEventListener("click", () => {
+      const kanji = lookupWord.value.trim().normalize("NFKC");
+      let kana = lookupKana.value.trim().normalize("NFKC");
+      if (!kana && /^[\u3040-\u30ffー]+$/.test(kanji)) kana = kanji;
+      const romaji = lookupRomaji.value.trim() || kanaToRomaji(kana);
+      const meaning = lookupMeaning.value.trim();
+      if (!kanji || !kana || !romaji || !meaning) {
+        setLookupStatus("Cần điền đủ Từ, Kana, Romaji và Nghĩa tiếng Việt trước khi lưu.", "error");
+        return;
+      }
+      const list = getRememberWords();
+      if (list.some((w) => w.kanji.normalize("NFKC") === kanji && w.kana.normalize("NFKC") === kana)) {
+        setLookupStatus("Từ này đã có trong Từ cần nhớ.", "ok");
+        return;
+      }
+      list.push({ kanji, kana, romaji, meaning, type: lookupType.value.trim() || "Từ mới", source: "Đọc hiểu", createdAt: new Date().toISOString() });
+      if (!saveJsonStore(REMEMBER_WORDS_KEY, list)) {
+        setLookupStatus("Không thể lưu vào trình duyệt.", "error");
+        return;
+      }
+      updateRememberCount();
+      setLookupStatus(`Đã lưu “${kanji}” vào Từ cần nhớ (${list.length} từ).`, "ok");
+    });
+  </script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      const showOfflineToast = (text, autoHide = false) => {
+        let el = document.getElementById("offlineToast");
+        if (!el) {
+          el = document.createElement("div");
+          el.id = "offlineToast";
+          el.style.cssText =
+            "position:fixed;bottom:14px;right:14px;z-index:9999;padding:8px 14px;" +
+            "border-radius:8px;background:#20221f;color:#fff;font-size:12px;" +
+            "box-shadow:0 4px 14px rgba(0,0,0,.2);";
+          document.body.appendChild(el);
+        }
+        el.textContent = text;
+        el.hidden = false;
+        if (autoHide) setTimeout(() => (el.hidden = true), 4500);
+      };
+
+      navigator.serviceWorker.addEventListener("message", (event) => {
+        const { type, done, total, failed } = event.data || {};
+        if (type === "PDF_PROGRESS") {
+          showOfflineToast(`Đang tải PDF offline: ${done}/${total}` + (failed ? ` (lỗi: ${failed})` : ""));
+        } else if (type === "PDF_DONE") {
+          showOfflineToast(
+            `Offline sẵn sàng! PDF: ${done - failed}/${total}` +
+              (failed ? ` (lỗi ${failed} file)` : ""),
+            true
+          );
+        }
+      });
+
+      window.addEventListener("load", async () => {
+        try {
+          await navigator.serviceWorker.register("./sw.js");
+          const reg = await navigator.serviceWorker.ready;
+          if (navigator.onLine) {
+            (reg.active || navigator.serviceWorker.controller)?.postMessage({
+              type: "START_PDF_CACHE",
+            });
+          }
+        } catch (_) {}
+      });
+    }
   </script>
 </body>
 </html>

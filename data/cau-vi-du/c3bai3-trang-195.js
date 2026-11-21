@@ -5,7 +5,7 @@
 */
 window.SENTENCE_SETS = window.SENTENCE_SETS || [];
 window.SENTENCE_SETS.push({
-  name: "bài 3 chương 3 trang 195",
+  name: "chương 3 bài 3 trang 195",
   sentences: [
     {
       kanji: "人を外見で判断してはいけない。",

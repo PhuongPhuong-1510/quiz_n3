@@ -1,7 +1,7 @@
-/* Từ vựng và ngữ pháp bài 3 chương 3 trang 198. */
+/* Từ vựng và ngữ pháp chương 3 bài 3 trang 198. */
 window.VOCAB_SETS = window.VOCAB_SETS || [];
 window.VOCAB_SETS.push({
-  "name": "bài 3 chương 3 trang 198",
+  "name": "chương 3 bài 3 trang 198",
   "words": [
     {
       "kanji": "区切る",

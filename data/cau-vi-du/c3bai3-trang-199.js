@@ -5,7 +5,7 @@
 */
 window.SENTENCE_SETS = window.SENTENCE_SETS || [];
 window.SENTENCE_SETS.push({
-  name: "bài 3 chương 3 trang 199",
+  name: "chương 3 bài 3 trang 199",
   sentences: [
     {
       kanji: "メールに誤解を生む表現があった。",

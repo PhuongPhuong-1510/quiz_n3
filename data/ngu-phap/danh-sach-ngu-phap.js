@@ -18,6 +18,14 @@ const GRAMMAR_DATA_FILES = [
   "chuong-6-bai-1.js",
   "chuong-6-bai-2.js",
   "chuong-6-bai-3.js",
+  "chuong-7-bai-1.js",
+  "chuong-7-bai-2.js",
+  "chuong-7-bai-3.js",
+  "chuong-8-bai-1.js",
+  "chuong-8-bai-2.js",
+  "chuong-8-bai-3.js",
+  "chuong-9-bai-1.js",
+  "chuong-9-bai-2.js",
 
   "mondai-4-nghe-hieu.js",
 ];

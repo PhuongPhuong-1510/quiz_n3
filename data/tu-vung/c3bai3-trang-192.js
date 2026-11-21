@@ -1,7 +1,7 @@
 /* Sao chép file này, đổi tên file, rồi sửa nội dung bên dưới. */
 window.VOCAB_SETS = window.VOCAB_SETS || [];
 window.VOCAB_SETS.push({
-  "name": "bài 3 chương 3 trang 192",
+  "name": "chương 3 bài 3 trang 192",
   "words": [
     {
       "kanji": "支払う",

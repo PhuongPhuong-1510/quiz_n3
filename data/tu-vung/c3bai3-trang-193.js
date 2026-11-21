@@ -1,7 +1,7 @@
 /* Từ vựng trong bảng và toàn bộ câu ví dụ trang 193. */
 window.VOCAB_SETS = window.VOCAB_SETS || [];
 window.VOCAB_SETS.push({
-  "name": "bài 3 chương 3 trang 193",
+  "name": "chương 3 bài 3 trang 193",
   "words": [
     {
       "kanji": "本社",
@@ -455,7 +455,7 @@ window.VOCAB_SETS.push({
 });
 /* Thêm ngữ pháp vào bộ từ vựng trang 193. */
 window.VOCAB_SETS
-  .find(set => set.name === "bài 3 chương 3 trang 193")
+  .find(set => set.name === "chương 3 bài 3 trang 193")
   .words.push(
     {
       "kanji": "～ことになる",

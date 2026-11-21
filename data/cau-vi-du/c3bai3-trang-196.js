@@ -5,7 +5,7 @@
 */
 window.SENTENCE_SETS = window.SENTENCE_SETS || [];
 window.SENTENCE_SETS.push({
-  name: "bài 3 chương 3 trang 196",
+  name: "chương 3 bài 3 trang 196",
   sentences: [
     {
       kanji: "隣の人と間隔を1メートルあける。",

@@ -5,7 +5,7 @@
 */
 window.SENTENCE_SETS = window.SENTENCE_SETS || [];
 window.SENTENCE_SETS.push({
-  name: "bài 3 chương 3 trang 194",
+  name: "chương 3 bài 3 trang 194",
   sentences: [
     {
       kanji: "面接にはしっかりした服装で行くべきだ。",

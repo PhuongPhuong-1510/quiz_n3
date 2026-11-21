@@ -1,7 +1,7 @@
-/* Từ vựng và ngữ pháp bài 3 chương 3 trang 197. */
+/* Từ vựng và ngữ pháp chương 3 bài 3 trang 197. */
 window.VOCAB_SETS = window.VOCAB_SETS || [];
 window.VOCAB_SETS.push({
-  "name": "bài 3 chương 3 trang 197",
+  "name": "chương 3 bài 3 trang 197",
   "words": [
     {
       "kanji": "単純",
