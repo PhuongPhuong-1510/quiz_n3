@@ -3175,6 +3175,25 @@
       font-size: 12px !important;
     }
     .star-hint-text { font-size: 13px; color: var(--ink-soft); }
+    .jlpt-underline {
+      text-decoration: underline 2.5px var(--seal-red);
+      text-underline-offset: 4px;
+      font-weight: 700;
+      padding: 0 2px;
+    }
+    .star-mini-btn.active {
+      border-color: var(--seal-red) !important;
+      background: var(--seal-red-soft) !important;
+      color: var(--seal-red) !important;
+      font-weight: 700;
+    }
+    .star-exam-choices {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    @media (max-width: 600px) { .star-exam-choices { grid-template-columns: 1fr; } }
     @media (max-width: 600px) { .star-pool { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -3260,6 +3279,12 @@
         </button>
         <button type="button" class="mode-btn" data-quiz-mode="gram-vi-pattern">
           Ngữ pháp: Nghĩa → Mẫu
+        </button>
+        <button type="button" class="mode-btn" data-quiz-mode="vocab-synonym">
+          Đồng nghĩa JLPT (Mondai 4)
+        </button>
+        <button type="button" class="mode-btn" data-quiz-mode="gram-cloze">
+          Đục lỗ Ngữ pháp
         </button>
         <button type="button" class="mode-btn" data-quiz-mode="gram-star">
           Sắp xếp câu ★
@@ -3379,6 +3404,7 @@
           <div class="star-pool" id="starPool"></div>
           <div class="star-tools">
             <button type="button" class="star-mini-btn" id="btnStarReset">Xếp lại</button>
+            <button type="button" class="star-mini-btn" id="btnStarExamMode" title="Bật để chọn thẳng 1 đáp án cho ô ★ như đề thi JLPT thật">Thi thật (chọn ★): OFF</button>
             <button type="button" class="star-mini-btn" id="btnStarHint">Gợi ý nghĩa</button>
             <span class="star-hint-text" id="starHintText" hidden></span>
           </div>
@@ -3525,7 +3551,12 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     const REMEMBER_WORDS = loadRememberWords();
     const REMEMBER_SET = { name: "★ Từ cần nhớ · tự lưu", words: REMEMBER_WORDS };
     function persistRememberWords() {
-      try { localStorage.setItem(REMEMBER_WORDS_KEY, JSON.stringify(REMEMBER_WORDS)); return true; }
+      try {
+        localStorage.setItem(REMEMBER_WORDS_KEY, JSON.stringify(REMEMBER_WORDS));
+        if (typeof cachedAdverbVocab !== "undefined") cachedAdverbVocab = null;
+        if (typeof cachedSynonymIndex !== "undefined") cachedSynonymIndex = null;
+        return true;
+      }
       catch (_) { return false; }
     }
     const VOCAB_SETS = window.VOCAB_SETS || [];
@@ -3591,13 +3622,13 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
 
     const QUIZ_MODE_KEY = "japaneseQuizActiveQuizMode_v1";
     const VALID_QUIZ_MODES = new Set([
-      "kanji-kana", "kana-kanji", "vocab-vi", "vi-vocab",
-      "vocab-cloze", "adv-cloze", "gram-pattern-vi", "gram-vi-pattern", "gram-star"
+      "kanji-kana", "kana-kanji", "vocab-vi", "vi-vocab", "vocab-synonym",
+      "vocab-cloze", "adv-cloze", "gram-cloze", "gram-pattern-vi", "gram-vi-pattern", "gram-star"
     ]);
     const savedQuizMode = localStorage.getItem(QUIZ_MODE_KEY);
     let quizMode = VALID_QUIZ_MODES.has(savedQuizMode) ? savedQuizMode : "kanji-kana";
     function getQuizDatasetGroup(qMode = quizMode) {
-      if (["kanji-kana", "kana-kanji", "vocab-vi", "vi-vocab"].includes(qMode)) return "vocab";
+      if (["kanji-kana", "kana-kanji", "vocab-vi", "vi-vocab", "vocab-synonym"].includes(qMode)) return "vocab";
       if (qMode === "vocab-cloze") return "sentence";
       if (qMode === "adv-cloze") return "adv";
       return "grammar";
@@ -4214,27 +4245,288 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       return contentType === "quiz" && quizMode === "gram-star";
     }
 
-    // --- 1. Đục lỗ Từ vựng (có xử lý chia thể động từ / tính từ) ---
+    // --- 0. Tiện ích chung cho thuật toán gài bẫy chuẩn JLPT (v5) ---
+    const STAR_EXAM_MODE_KEY = "japaneseQuizStarExamMode_v1";
+    let starExamMode = localStorage.getItem(STAR_EXAM_MODE_KEY) === "true";
+    const btnStarExamMode = document.getElementById("btnStarExamMode");
+
+    const CLOZE_STOPWORDS = new Set([
+      "人","日","今","私","時","年","月","中","上","下","前","後","方","手","目","口","心","家","国",
+      "こと","もの","とき","ところ","ため","よう","ほう","ひと","いま","わたし","ぼく",
+      "する","ある","いる","なる","言う","見る","行く","来る","思う","知る","出る","入る","持つ","取る",
+      "大きい","小さい","多い","少ない","良い","いい","よい","ない","新しい","古い","高い","安い","長い","短い"
+    ]);
+
+    const NEGATIVE_ADVERBS = new Set([
+      "あまり","あんまり","ぜんぜん","全然","めったに","けっして","決して","ちっとも",
+      "さっぱり","すこしも","少しも","なかなか","ほとんど","たいして","大して","ろくに","とても"
+    ]);
+
+    // Giữ nguyên dấu tiếng Việt để so khớp đồng nghĩa chính xác (tránh nhầm cháy/chạy, ngày/ngay)
+    function meaningPartsAccented(meaning) {
+      return String(meaning || "")
+        .normalize("NFKC")
+        .toLowerCase()
+        .replace(/[（(][^）)]*[）)]/g, "")
+        .split(/[,;\/]/)
+        .map((s) => s.replace(/[.。!！?？…~～]/g, "").replace(/\s+/g, " ").trim())
+        .filter(Boolean);
+    }
+
+    function hasSharedMeaning(wordA, wordB) {
+      const aParts = meaningPartsAccented(wordA?.meaning);
+      const bParts = meaningPartsAccented(wordB?.meaning);
+      if (!aParts.length || !bParts.length) return false;
+      const bSet = new Set(bParts);
+      if (aParts.some((p) => bSet.has(p))) return true;
+      const aFull = stripAccents(wordA?.meaning || "");
+      const bFull = stripAccents(wordB?.meaning || "");
+      return Boolean(aFull && aFull === bFull);
+    }
+
+    function normalizeWordTypeGroup(typeRaw) {
+      const t = String(typeRaw || "").normalize("NFKC").toLowerCase().trim();
+      if (!t) return "other";
+      if (/(?:\badv\b|phó\s*từ|pho\s*tu|副)/i.test(t)) return "Adv";
+      if (/(?:tự\s*động|tu\s*dong|\bvi\b|自動)/i.test(t)) return "V-vi";
+      if (/(?:tha\s*động|tha\s*dong|\bvt\b|他動)/i.test(t)) return "V-vt";
+      if (/(?:\bv\d|\bv-|\(v\b|động\s*từ|dong\s*tu|動)/i.test(t)) return "V";
+      if (/(?:a-?i|\bい\b|tính\s*từ\s*i|adj-?i)/i.test(t)) return "Ai";
+      if (/(?:a-?na|\bな\b|tính\s*từ\s*na|adj-?na)/i.test(t)) return "Ana";
+      if (/(?:\badj\b|tính\s*từ|tinh\s*tu|形)/i.test(t)) return "Adj";
+      if (/(?:\bn\b|\(n\)|danh\s*từ|danh\s*tu|名)/i.test(t)) return "N";
+      return "other";
+    }
+
+    function isCompatibleTypeGroup(g1, g2, strictTransitivity = false) {
+      if (g1 === "other" || g2 === "other") return false;
+      if (g1 === g2) return true;
+      if (!strictTransitivity && g1.startsWith("V") && g2.startsWith("V")) return true;
+      if ((g1 === "Adj" && (g2 === "Ai" || g2 === "Ana")) || (g2 === "Adj" && (g1 === "Ai" || g1 === "Ana"))) return true;
+      return false;
+    }
+
+    function isWholeTokenInSentence(sentenceText, term) {
+      if (!term || !sentenceText.includes(term)) return false;
+      if (jaWordSegmenter) {
+        const segs = [...jaWordSegmenter.segment(sentenceText)];
+        // Khớp đúng 1 token đơn
+        if (segs.some((s) => s.segment === term)) return true;
+        // Hoặc khớp chuỗi gồm nhiều token liên tiếp (vd từ ghép dài) nhưng đúng ranh giới đầu/cuối
+        let acc = "";
+        for (let i = 0; i < segs.length; i++) {
+          acc = "";
+          for (let j = i; j < segs.length && acc.length < term.length; j++) {
+            acc += segs[j].segment;
+            if (acc === term) return true;
+          }
+        }
+        return false;
+      }
+      return true;
+    }
+
+    // --- 0B. Thuật toán sinh nhiễu phát âm Kanji -> Hiragana chuẩn JLPT (Mondai 1) ---
+    const DAKUTEN_MAP = {
+      か:"が",き:"ぎ",く:"ぐ",け:"げ",こ:"ご", が:"か",ぎ:"き",ぐ:"く",げ:"け",ご:"こ",
+      さ:"ざ",し:"じ",す:"ず",せ:"ぜ",そ:"ぞ", ざ:"さ",じ:"し",ず:"す",ぜ:"せ",ぞ:"そ",
+      た:"だ",ち:"ぢ",つ:"づ",て:"で",と:"ど", だ:"た",ぢ:"ち",づ:"つ",で:"て",ど:"と",
+      は:"ば",ひ:"び",ふ:"ぶ",へ:"べ",ほ:"ぼ", ば:"ぱ",び:"ぴ",ぶ:"ぷ",べ:"ぺ",ぼ:"ぽ",
+      ぱ:"は",ぴ:"ひ",ぷ:"ふ",ぺ:"へ",ぽ:"ほ"
+    };
+    const YOON_EXPAND = {
+      きゃ:"か",きゅ:"く",きょ:"こ", しゃ:"さ",しゅ:"す",しょ:"そ",
+      ちゃ:"た",ちゅ:"つ",ちょ:"と", にゃ:"な",にゅ:"ぬ",にょ:"の",
+      ひゃ:"は",ひゅ:"ふ",ひょ:"ほ", みゃ:"ま",みゅ:"む",みょ:"も",
+      りゃ:"ら",りゅ:"る",りょ:"ろ", ぎゃ:"が",ぎゅ:"ぐ",ぎょ:"ご",
+      じゃ:"ざ",じゅ:"ず",じょ:"ぞ", びゃ:"ば",びゅ:"ぶ",びょ:"ぼ",
+      ぴゃ:"ぱ",ぴゅ:"ぷ",ぴょ:"ぽ"
+    };
+    const YOON_SHRINK = Object.fromEntries(Object.entries(YOON_EXPAND).map(([k, v]) => [v, k]));
+
+    function extractOkurigana(text) {
+      const m = String(text || "").match(/[\u3041-\u3096]+$/);
+      return m ? m[0] : "";
+    }
+
+    function generateKanaDistractors(kanaRaw, kanjiRaw = "") {
+      const kana = String(kanaRaw || "").normalize("NFKC").trim();
+      const kanji = String(kanjiRaw || "").normalize("NFKC").trim();
+      if (kana.length < 2) return [];
+
+      // Tách phần okurigana cố định ở cuối để KHÔNG làm biến dạng đuôi động từ/tính từ
+      let okuri = extractOkurigana(kanji);
+      if (okuri && (!kana.endsWith(okuri) || kana.length <= okuri.length)) {
+        okuri = "";
+      }
+      const stem = okuri ? kana.slice(0, kana.length - okuri.length) : kana;
+      if (!stem) return [];
+
+      const buckets = { longVowel: [], sokuon: [], dakuten: [], yoon: [] };
+
+      // 1. Bẫy trường âm: thêm/bớt う, い, ー chỉ trên phần âm đọc của Kanji
+      for (let i = 0; i < stem.length; i++) {
+        const ch = stem[i];
+        if ((ch === "う" || ch === "い" || ch === "ー") && i > 0) {
+          buckets.longVowel.push(stem.slice(0, i) + stem.slice(i + 1) + okuri);
+        } else if (/[おうくすつぬふむゆるぐずづぶぷこそとのほもよろごぞどぼぽょゅ]/.test(ch) && stem[i + 1] !== "う") {
+          buckets.longVowel.push(stem.slice(0, i + 1) + "う" + stem.slice(i + 1) + okuri);
+        } else if (/[えけせてねへめれげぜでべぺ]/.test(ch) && stem[i + 1] !== "い") {
+          buckets.longVowel.push(stem.slice(0, i + 1) + "い" + stem.slice(i + 1) + okuri);
+        }
+      }
+
+      // 2. Bẫy âm ngắt っ (cấm chèn sau ん, ー, っ để tránh chuỗi phi ngữ âm)
+      if (stem.includes("っ")) {
+        buckets.sokuon.push(stem.replace("っ", "") + okuri);
+      } else {
+        for (let i = 1; i < stem.length; i++) {
+          if (/[んーっ]/.test(stem[i - 1])) continue;
+          if (/[かきくけこさしすせそたちつてとぱぴぷぺぽ]/.test(stem[i])) {
+            buckets.sokuon.push(stem.slice(0, i) + "っ" + stem.slice(i) + okuri);
+          }
+        }
+      }
+
+      // 3. Bẫy âm đục / bán đục (Rendaku) chỉ trên stem
+      for (let i = 0; i < stem.length; i++) {
+        const alt = DAKUTEN_MAP[stem[i]];
+        if (alt) buckets.dakuten.push(stem.slice(0, i) + alt + stem.slice(i + 1) + okuri);
+      }
+
+      // 4. Bẫy âm ghép (Yoon) chỉ trên stem
+      for (let i = 0; i < stem.length - 1; i++) {
+        const pair = stem.slice(i, i + 2);
+        if (YOON_EXPAND[pair]) {
+          buckets.yoon.push(stem.slice(0, i) + YOON_EXPAND[pair] + stem.slice(i + 2) + okuri);
+        }
+      }
+      for (let i = 0; i < stem.length; i++) {
+        if (YOON_SHRINK[stem[i]] && !/[ゃゅょ]/.test(stem[i + 1] || "")) {
+          buckets.yoon.push(stem.slice(0, i) + YOON_SHRINK[stem[i]] + stem.slice(i + 1) + okuri);
+        }
+      }
+
+      const normTarget = normJapanese(kana);
+      const picked = [];
+      const seen = new Set([normTarget]);
+      const tryPick = (arr) => {
+        for (const cand of shuffle(arr)) {
+          const n = normJapanese(cand);
+          if (!n || seen.has(n) || n.length < 2) continue;
+          seen.add(n);
+          picked.push(cand);
+          return true;
+        }
+        return false;
+      };
+
+      const orderKeys = shuffle(["longVowel", "dakuten", "sokuon", "yoon"]);
+      for (const k of orderKeys) {
+        if (picked.length < 3) tryPick(buckets[k]);
+      }
+      const allLeft = shuffle([...buckets.longVowel, ...buckets.dakuten, ...buckets.sokuon, ...buckets.yoon]);
+      for (const cand of allLeft) {
+        if (picked.length >= 3) break;
+        const n = normJapanese(cand);
+        if (!n || seen.has(n) || n.length < 2) continue;
+        seen.add(n);
+        picked.push(cand);
+      }
+      return picked.slice(0, 3);
+    }
+
+    // --- 0C. Chấm điểm nhiễu Hiragana -> Kanji chuẩn JLPT (Mondai 2) ---
+    function countKanjiChars(text) {
+      return (String(text || "").match(/\p{Script=Han}/gu) || []).length;
+    }
+    function scoreKanjiDistractor(target, cand) {
+      let score = 0;
+      const tKanji = target.kanji || "";
+      const cKanji = cand.kanji || "";
+      const tOkuri = extractOkurigana(tKanji);
+      const cOkuri = extractOkurigana(cKanji);
+      if (tOkuri && tOkuri === cOkuri) score += 5;
+      else if (!tOkuri && !cOkuri) score += 2;
+
+      const tChars = new Set(tKanji.match(/\p{Script=Han}/gu) || []);
+      const cChars = cKanji.match(/\p{Script=Han}/gu) || [];
+      const sharedKanji = cChars.filter((ch) => tChars.has(ch)).length;
+      if (sharedKanji > 0) score += 4 * sharedKanji;
+
+      if (countKanjiChars(tKanji) === countKanjiChars(cKanji)) score += 3;
+      if (isCompatibleTypeGroup(normalizeWordTypeGroup(target.type), normalizeWordTypeGroup(cand.type))) score += 2;
+
+      const tKana = normJapanese(target.kana);
+      const cKana = normJapanese(cand.kana);
+      if (tKana && cKana) {
+        if (tKana[0] === cKana[0] || tKana.slice(-1) === cKana.slice(-1)) score += 2;
+        if (Math.abs(tKana.length - cKana.length) <= 1) score += 1;
+      }
+      return score;
+    }
+
+    // --- 0D. Cặp từ đồng nghĩa JLPT (Mondai 4) — tối ưu O(N), giữ dấu Việt & bắt buộc cùng từ loại ---
+    const synonymCache = new WeakMap();
+    let cachedSynonymIndex = null;
+    let cachedSynonymSig = "";
+
+    function getSynonymIndex(pool) {
+      const sig = `${pool.length}:${REMEMBER_WORDS.length}`;
+      if (cachedSynonymIndex && cachedSynonymSig === sig) return cachedSynonymIndex;
+      const byPhrase = new Map();
+      for (const w of pool) {
+        const parts = meaningPartsAccented(w.meaning || "");
+        for (const p of parts) {
+          if (p.length < 4) continue;
+          let list = byPhrase.get(p);
+          if (!list) { list = []; byPhrase.set(p, list); }
+          list.push(w);
+        }
+      }
+      cachedSynonymIndex = byPhrase;
+      cachedSynonymSig = sig;
+      return byPhrase;
+    }
+
+    function findSynonymPair(item, pool) {
+      if (synonymCache.has(item)) return synonymCache.get(item);
+      const tNormK = normJapanese(item.kanji || item.kana);
+      const tNormKana = normJapanese(item.kana || "");
+      const tType = normalizeWordTypeGroup(item.type);
+      const tParts = meaningPartsAccented(item.meaning || "").filter((p) => p.length >= 4);
+      if (!tParts.length) { synonymCache.set(item, null); return null; }
+
+      const index = getSynonymIndex(pool);
+      let best = null;
+      let bestScore = 0;
+      for (const p of tParts) {
+        const cands = index.get(p);
+        if (!cands || cands.length < 2) continue;
+        for (const cand of cands) {
+          const cNormK = normJapanese(cand.kanji || cand.kana);
+          const cNormKana = normJapanese(cand.kana || "");
+          if (!cNormK || cNormK === tNormK || (tNormKana && cNormKana === tNormKana)) continue;
+          const cType = normalizeWordTypeGroup(cand.type);
+          // Bắt buộc cùng nhóm từ loại (không ghép N với V, không ghép Tự động từ với Tha động từ)
+          if (tType !== "other" && cType !== "other" && !isCompatibleTypeGroup(tType, cType, true)) continue;
+          const score = 10 + (tType === cType && tType !== "other" ? 3 : 0) + Math.min(4, p.length - 3);
+          if (score > bestScore) { bestScore = score; best = cand; }
+        }
+      }
+      synonymCache.set(item, best);
+      return best;
+    }
+
+    // --- 1. Đục lỗ Từ vựng (chặn từ N5, ưu tiên khớp trọn ranh giới token để không lệch thể chia) ---
     function matchWordInSentence(sentenceText, word) {
       const k = String(word.kanji || "").trim();
-      if (!k) return null;
-      if (sentenceText.includes(k)) return { matchedText: k, priority: 2 };
-
-      const hasKanji = /\p{Script=Han}/u.test(k);
-      if (!hasKanji || k.length < 2) return null;
-      const type = String(word.type || "");
-      const isVerb = /^\(V/i.test(type) || /[うくぐすつぬぶむる]$/.test(k);
-      const isIAdj = /^\(A-?i/i.test(type) || /い$/.test(k);
-      if (!isVerb && !isIAdj) return null;
-
-      const stem = k.slice(0, -1);
-      if (!sentenceText.includes(stem)) return null;
-      const escapedStem = stem.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      const suffixPattern = isIAdj
-        ? "(?:い|く(?:て|ない|なかった)?|かった|ければ|さ)"
-        : "(?:[いきぎしちにびみ]?(?:ます|ました|ません(?:でした)?|たい|たかった)|[あかがさたなばまわ]?(?:ない|なかった|れる|れた|れない|せる|せた)|[えけげせてねべめ](?:ない|る|た|ば)|(?:られる|られた|られない|させる|させた|れば|よう)|[おこごそとのぼも]う|[っいん]?て|[っいん]?た|[んい]で|[んい]だ)";
-      const match = sentenceText.match(new RegExp(escapedStem + suffixPattern));
-      return match ? { matchedText: match[0], priority: 1 } : null;
+      if (!k || CLOZE_STOPWORDS.has(k) || CLOZE_STOPWORDS.has(String(word.kana || "").trim())) return null;
+      // Chỉ khớp đúng nguyên dạng và đúng ranh giới token (tránh cắt giữa từ ghép và tránh lệch thể chia)
+      if (isWholeTokenInSentence(sentenceText, k)) {
+        return { matchedText: k, priority: 3 };
+      }
+      return null;
     }
 
     function findClozeTarget(item) {
@@ -4243,39 +4535,36 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       const normName = (s) => String(s || "").normalize("NFKC").toLowerCase().replace(/\s+/g, " ").trim();
       const targetSetName = normName(item.setName);
 
-      const pickBest = (words, minLen = 1, preferHan = false) => {
+      const pickBest = (words, minLen = 2, preferHan = true) => {
         const hits = [];
         for (const w of words) {
           const k = String(w.kanji || "").trim();
-          if (k.length < minLen) continue;
+          if (k.length < minLen || CLOZE_STOPWORDS.has(k)) continue;
           const hit = matchWordInSentence(sentenceText, w);
           if (hit) hits.push({ word: w, ...hit });
         }
         if (!hits.length) return null;
         hits.sort((a, b) => {
-          if (preferHan) {
-            const aHan = /\p{Script=Han}/u.test(a.word.kanji) ? 1 : 0;
-            const bHan = /\p{Script=Han}/u.test(b.word.kanji) ? 1 : 0;
-            if (bHan !== aHan) return bHan - aHan;
-          }
+          const aKanjiCnt = countKanjiChars(a.word.kanji);
+          const bKanjiCnt = countKanjiChars(b.word.kanji);
+          if (preferHan && (bKanjiCnt >= 2) !== (aKanjiCnt >= 2)) return (bKanjiCnt >= 2 ? 1 : 0) - (aKanjiCnt >= 2 ? 1 : 0);
           return b.priority - a.priority || b.matchedText.length - a.matchedText.length;
         });
         return hits[0];
       };
 
       const samePage = VOCAB_SETS.find((s) => normName(s.name) === targetSetName);
-      let best = samePage ? pickBest(samePage.words || [], 1, false) : null;
+      let best = samePage ? pickBest(samePage.words || [], 2, true) : null;
       if (!best) best = pickBest(VOCAB_SETS.flatMap((s) => s.words || []), 2, true);
 
-
       const res = best
-        ? { targetWord: best.word, blankedSentence: sentenceText.replace(best.matchedText, "（   ）") }
+        ? { targetWord: best.word, matchedText: best.matchedText, sameSetWords: samePage?.words || [], blankedSentence: sentenceText.replace(best.matchedText, "（   ）") }
         : null;
       clozeCache.set(item, res);
       return res;
     }
 
-    // --- 2. Đục lỗ Phó từ (Adv) & Tượng thanh / Tượng hình ---
+    // --- 2. Đục lỗ Phó từ (Adv) & Tượng thanh / Tượng hình (loại danh từ Katakana, mở rộng phủ định) ---
     function cleanAdvTerm(text) {
       return String(text || "").normalize("NFKC").replace(/[（(].*?[）)]/g, "").replace(/[～〜~・]/g, "").trim();
     }
@@ -4283,6 +4572,12 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     function isAdverbWord(word) {
       const type = String(word?.type || "");
       if (/(?:\badv\b|phó\s*từ|pho\s*tu|副)/i.test(type)) return true;
+      // Nếu đã ghi rõ là Danh từ / Động từ / Tính từ thì không đoán bằng regex
+      const group = normalizeWordTypeGroup(type);
+      if (group !== "other") return false;
+      const raw = cleanAdvTerm(word?.kanji || word?.kana || "");
+      // Chặn danh từ Katakana đuôi ット (ポケット, チケット, ペット, セット, ネット...)
+      if (/^[\u30A0-\u30FFー]+$/.test(raw) && /ット$/.test(raw)) return false;
       const hira = cleanAdvTerm(word?.kana || word?.kanji || "").replace(
         /[\u30A1-\u30F6]/g,
         (ch) => String.fromCharCode(ch.charCodeAt(0) - 96)
@@ -4305,6 +4600,10 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       if (/(?:っと|りと)$/.test(hira)) return "tto";
       if (/に$/.test(hira)) return "ni";
       return "other";
+    }
+
+    function isNegativeSentence(text) {
+      return /(?:ない|ません|なかった|ませんでした|ぬ|ずに|られない|できない|ならない)(?:と思う|と思います|んです|のです|ので|から|かもしれない|かもしれません|でしょう|だろう|はず|か|ね|よ)?[。！？!?]?$/.test(String(text || "").trim());
     }
 
     function getAllAdverbVocab() {
@@ -4337,15 +4636,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     }
 
     function sentenceHasWholeToken(sentenceText, term) {
-      if (!sentenceText.includes(term)) return false;
-      if (term.length >= 3 || /\p{Script=Han}/u.test(term)) return true;
-      if (jaWordSegmenter) {
-        for (const seg of jaWordSegmenter.segment(sentenceText)) {
-          if (seg.segment === term) return true;
-        }
-        return false;
-      }
-      return false;
+      return isWholeTokenInSentence(sentenceText, term);
     }
 
     function findAdvClozeTarget(item) {
@@ -4369,7 +4660,42 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       return res;
     }
 
-    // --- 3. Sắp xếp câu dấu sao ★ (dùng Intl.Segmenter gom Bunsetsu xoay quanh mẫu ngữ pháp) ---
+    // --- 2B. Đục lỗ Ngữ pháp trong câu (Mondai 1 Ngữ pháp JLPT) ---
+    const gramClozeCache = new WeakMap();
+    function inferGrammarConnectionType(structure) {
+      const s = String(structure || "").normalize("NFKC");
+      if (/V-?て|Vて/i.test(s)) return "Vte";
+      if (/V-?た|Vた/i.test(s)) return "Vta";
+      if (/V-?ない|Vない/i.test(s)) return "Vnai";
+      if (/V-?る|Vる|V辞/i.test(s)) return "Vru";
+      if (/N\s*[＋+]\s*の|Nの/i.test(s)) return "Nno";
+      if (/\bN\b|名詞/i.test(s)) return "N";
+      return "any";
+    }
+
+    function findGrammarClozeTarget(item) {
+      if (gramClozeCache.has(item)) return gramClozeCache.get(item);
+      const sentenceText = String(item.kanji || "");
+      const core = extractGrammarCore(item.structure);
+      if (!core || core.length < 2) {
+        gramClozeCache.set(item, null);
+        return null;
+      }
+      // Chặn đục nhầm lõi quá ngắn (2 ký tự) vào giữa từ khác (vd: こと trong ことば)
+      if (!isWholeTokenInSentence(sentenceText, core)) {
+        gramClozeCache.set(item, null);
+        return null;
+      }
+      const res = {
+        core,
+        connType: inferGrammarConnectionType(item.structure),
+        blankedSentence: sentenceText.replace(core, "（   ）"),
+      };
+      gramClozeCache.set(item, res);
+      return res;
+    }
+
+    // --- 3. Sắp xếp câu dấu sao ★ (tách ranh giới hình vị sạch + random vị trí ★ + xáo lại mỗi lượt) ---
     const ATTACH_PREV = new Set([
       "は","が","を","に","で","と","へ","の","も","や","か","ね","よ","わ","さ","ぞ","ぜ","な",
       "から","まで","より","ほど","だけ","しか","ばかり","ながら","ので","のに","けど","けれど",
@@ -4412,7 +4738,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         const shouldAttachPrev =
           chunks.length > 0 &&
           !pendingPrefix &&
-          (ATTACH_PREV.has(tok) || /^[っんーぁぃぅぇぉゃゅょ]+$/.test(tok) || (/^[ぁ-ゖ]{1}$/.test(tok) && !/^[木の葉目手口火水]/.test(tok)));
+          (ATTACH_PREV.has(tok) || /^[っんーぁぃぅぇぉゃゅょ]+$/.test(tok));
 
         if (shouldAttachPrev) {
           chunks[chunks.length - 1] += tok;
@@ -4425,64 +4751,133 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       return { chunks, trailingPunct };
     }
 
-    function buildStarQuestion(item) {
-      if (starQuestionCache.has(item)) return starQuestionCache.get(item);
-      const { chunks, trailingPunct } = segmentBunsetsu(item.kanji);
-      if (chunks.length < 4) {
-        starQuestionCache.set(item, null);
-        return null;
+    // Chỉ cắt tại ranh giới ngữ pháp sạch, CẤM tạo mảnh bắt đầu bằng っ, ん, ー, ゃゅょ, て, た, い...
+    const BAD_SPLIT_START = /^[っんーぁぃぅぇぉゃゅょてたいでだのをにがはもへや、,」』）)]/;
+    const SAFE_SPLIT_MARKERS = ["ことに", "ものに", "わけで", "ために", "ように", "ついて", "よって", "とって", "対して", "関して", "ては", "では", "には", "とは", "から", "まで", "ほど", "だけ", "しか", "ので", "のに", "に", "て", "で", "の", "を", "が", "は"];
+
+    function splitGrammarBoundaryInChunks(chunks, core) {
+      if (!core || core.length < 3) return chunks;
+      const result = [];
+      let didSplit = false;
+      for (const ch of chunks) {
+        if (!didSplit && ch.includes(core) && ch.length >= 5) {
+          const corePos = ch.indexOf(core);
+          // Nếu có phần đứng trước lõi ngữ pháp (vd: 行く + ことになる) và vế sau không bắt đầu bằng ký tự cấm
+          if (corePos >= 2 && !BAD_SPLIT_START.test(ch.slice(corePos))) {
+            result.push(ch.slice(0, corePos), ch.slice(corePos));
+            didSplit = true;
+            continue;
+          }
+          // Tìm điểm cắt sạch nằm sau 1 marker trong lõi ngữ pháp
+          let cutPos = -1;
+          for (const mk of SAFE_SPLIT_MARKERS) {
+            const pos = ch.indexOf(mk, Math.max(1, corePos));
+            if (pos >= 0) {
+              const candCut = pos + mk.length;
+              if (candCut >= 2 && ch.length - candCut >= 2 && !BAD_SPLIT_START.test(ch.slice(candCut))) {
+                cutPos = candCut;
+                break;
+              }
+            }
+          }
+          if (cutPos > 0) {
+            result.push(ch.slice(0, cutPos), ch.slice(cutPos));
+            didSplit = true;
+            continue;
+          }
+        }
+        result.push(ch);
       }
+      return result;
+    }
 
-      const core = extractGrammarCore(item.structure);
-      let gIdx = core ? chunks.findIndex((c) => c.includes(core)) : -1;
-      if (gIdx < 0) gIdx = Math.floor(chunks.length / 2);
+    function buildStarQuestion(item) {
+      let base = starQuestionCache.get(item);
+      if (base === undefined) {
+        const { chunks: rawChunks, trailingPunct } = segmentBunsetsu(item.kanji);
+        const core = extractGrammarCore(item.structure);
+        const chunks = splitGrammarBoundaryInChunks(rawChunks, core);
+        if (chunks.length < 4) {
+          starQuestionCache.set(item, null);
+          return null;
+        }
 
-      // Cắt cửa sổ đúng 4 cụm liên tiếp bao quanh mẫu ngữ pháp
-      let start = Math.max(0, Math.min(chunks.length - 4, gIdx - 2));
-      if (chunks.length >= 6 && start === 0) start = 1;
-      if (chunks.length >= 6 && start + 4 === chunks.length) start = chunks.length - 5;
+        let gIdx = core ? chunks.findIndex((c) => c.includes(core.slice(0, Math.min(3, core.length)))) : -1;
+        if (gIdx < 0) gIdx = Math.floor(chunks.length / 2);
 
-      const prefix = chunks.slice(0, start).join("");
-      const correctChunks = chunks.slice(start, start + 4);
-      const suffix = chunks.slice(start + 4).join("") + trailingPunct;
+        let bestStart = Math.max(0, Math.min(chunks.length - 4, gIdx - 2));
+        let bestScore = -999;
+        for (let s = 0; s <= chunks.length - 4; s++) {
+          const win = chunks.slice(s, s + 4);
+          let sc = 0;
+          if (gIdx >= s && gIdx < s + 4) sc += 10;
+          if (s > 0 && s + 4 < chunks.length) sc += 3;
+          const commaCount = win.filter((c) => /[、,]/.test(c)).length;
+          sc -= commaCount * 5;
+          if (sc > bestScore) { bestScore = sc; bestStart = s; }
+        }
 
-      let shuffled = shuffle(correctChunks.map((text, idx) => ({ text, origIdx: idx })));
+        base = {
+          prefix: chunks.slice(0, bestStart).join(""),
+          correctChunks: chunks.slice(bestStart, bestStart + 4),
+          suffix: chunks.slice(bestStart + 4).join("") + trailingPunct,
+        };
+        starQuestionCache.set(item, base);
+      }
+      if (!base) return null;
+
+      // Xáo trộn mới mỗi lần hiển thị (tránh nhớ vị trí cũ khi hỏi lại câu sai) + random ô ★ ở vị trí 2 hoặc 3
+      let shuffled = shuffle(base.correctChunks.map((text, idx) => ({ text, origIdx: idx })));
       for (let tries = 0; tries < 6 && shuffled.every((x, i) => x.origIdx === i); tries++) {
         shuffled = shuffle(shuffled);
       }
       if (shuffled.every((x, i) => x.origIdx === i)) [shuffled[0], shuffled[1]] = [shuffled[1], shuffled[0]];
-
-      const res = { prefix, suffix, correctChunks, shuffled };
-      starQuestionCache.set(item, res);
-      return res;
+      const starSlotIdx = Math.random() < 0.5 ? 1 : 2;
+      return { ...base, shuffled, starSlotIdx };
     }
+
+    function updateStarExamModeBtn() {
+      if (!btnStarExamMode) return;
+      btnStarExamMode.classList.toggle("active", starExamMode);
+      btnStarExamMode.textContent = starExamMode ? "Thi thật (chọn ★): ON" : "Thi thật (chọn ★): OFF";
+      btnStarExamMode.disabled = checked;
+      btnStarReset.hidden = starExamMode;
+    }
+    updateStarExamModeBtn();
 
     function renderStarQuestion(item) {
       const q = buildStarQuestion(item);
-      if (!q) return;
+      if (!q) {
+        idx++;
+        loadCard();
+        return;
+      }
       starState = { item, ...q, slots: [null, null, null, null] };
       starHintText.hidden = true;
       starHintText.textContent = item.meaning || "";
       kanjiDisplay.classList.add("quiz-sentence-prompt");
-      kanjiDisplay.textContent = "Sắp xếp 4 mảnh ghép vào đúng thứ tự (ô ★ là vị trí câu hỏi JLPT)";
+      kanjiDisplay.textContent = starExamMode
+        ? "Chọn đáp án (1–4) đứng vào đúng vị trí ★ (Chế độ thi thật JLPT)"
+        : "Sắp xếp 4 mảnh ghép vào đúng thứ tự (ô ★ là vị trí câu hỏi JLPT)";
       typeDisplay.textContent = `Sắp xếp câu ★ · ${item.setName || ""}`;
+      updateStarExamModeBtn();
       redrawStarUI();
     }
 
     function redrawStarUI() {
       if (!starState) return;
-      const { prefix, suffix, shuffled, slots } = starState;
+      const { prefix, suffix, shuffled, slots, starSlotIdx } = starState;
       starSentence.replaceChildren();
       if (prefix) starSentence.append(document.createTextNode(prefix));
 
       slots.forEach((poolIdx, slotIdx) => {
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.className = "star-slot" + (slotIdx === 2 ? " is-star" : "") + (poolIdx !== null ? " filled" : "");
-        btn.textContent = poolIdx !== null ? shuffled[poolIdx].text : slotIdx === 2 ? "★" : "＿＿";
-        btn.disabled = checked;
+        btn.className = "star-slot" + (slotIdx === starSlotIdx ? " is-star" : "") + (poolIdx !== null ? " filled" : "");
+        btn.textContent = poolIdx !== null ? shuffled[poolIdx].text : slotIdx === starSlotIdx ? "★" : "＿＿";
+        btn.disabled = checked || starExamMode;
         btn.addEventListener("click", () => {
-          if (checked || starState.slots[slotIdx] === null) return;
+          if (checked || starExamMode || starState.slots[slotIdx] === null) return;
           starState.slots[slotIdx] = null;
           redrawStarUI();
         });
@@ -4491,17 +4886,22 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       if (suffix) starSentence.append(document.createTextNode(suffix));
 
       const used = new Set(slots.filter((x) => x !== null));
-      const letters = ["A", "B", "C", "D"];
+      const nums = ["1", "2", "3", "4"];
       starPool.replaceChildren();
       shuffled.forEach((piece, poolIdx) => {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "star-chip";
-        btn.disabled = checked || used.has(poolIdx);
-        btn.innerHTML = `<span class="opt-key">${letters[poolIdx]}</span><span></span>`;
+        btn.disabled = checked || (!starExamMode && used.has(poolIdx));
+        btn.innerHTML = `<span class="opt-key">${nums[poolIdx]}</span><span></span>`;
         btn.lastElementChild.textContent = piece.text;
         btn.addEventListener("click", () => {
-          if (checked || used.has(poolIdx)) return;
+          if (checked) return;
+          if (starExamMode) {
+            checkStarExamSingleChoice(poolIdx, btn);
+            return;
+          }
+          if (used.has(poolIdx)) return;
           const emptyIdx = starState.slots.indexOf(null);
           if (emptyIdx < 0) return;
           starState.slots[emptyIdx] = poolIdx;
@@ -4510,12 +4910,43 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         starPool.append(btn);
       });
 
-      btnCheck.disabled = checked || slots.some((x) => x === null);
+      btnCheck.style.display = starExamMode ? "none" : "";
+      btnCheck.disabled = checked || starExamMode || slots.some((x) => x === null);
+      updateStarExamModeBtn();
+    }
+
+    function checkStarExamSingleChoice(chosenPoolIdx, clickedBtn) {
+      if (checked || !starState) return;
+      const { item, correctChunks, shuffled, starSlotIdx } = starState;
+      const chosenText = shuffled[chosenPoolIdx].text;
+      const isCorrect = chosenText === correctChunks[starSlotIdx];
+
+      const slotEls = starSentence.querySelectorAll(".star-slot");
+      slotEls.forEach((el, i) => {
+        el.disabled = true;
+        el.textContent = correctChunks[i];
+        el.classList.add("filled", i === starSlotIdx ? (isCorrect ? "correct" : "wrong") : "correct");
+      });
+      starPool.querySelectorAll(".star-chip").forEach((b, idx) => {
+        b.disabled = true;
+        if (shuffled[idx].text === correctChunks[starSlotIdx]) b.classList.add("correct");
+      });
+      if (!isCorrect) clickedBtn.classList.add("wrong");
+
+      const labels = resultBox.querySelectorAll(".answer-grid dt");
+      ["Câu đúng", "Ngữ pháp", "Vị trí ★", "Nghĩa"].forEach((t, i) => { if (labels[i]) labels[i].textContent = t; });
+      ansWord.textContent = item.kanji || "";
+      ansKana.textContent = item.structure || "—";
+      ansRomaji.textContent = correctChunks[starSlotIdx] || "";
+      ansMeaning.textContent = item.meaning || "";
+      btnAcceptMeaning.hidden = true;
+      finalizeQuizResult(item, isCorrect);
+      updateStarExamModeBtn();
     }
 
     function checkStarAnswer() {
       if (checked || !starState || starState.slots.some((x) => x === null)) return;
-      const { item, prefix, suffix, correctChunks, shuffled, slots } = starState;
+      const { item, prefix, suffix, correctChunks, shuffled, slots, starSlotIdx } = starState;
       const userChunks = slots.map((i) => shuffled[i].text);
       const isCorrect =
         userChunks.join("") === correctChunks.join("") ||
@@ -4532,11 +4963,12 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       ["Câu đúng", "Ngữ pháp", "Vị trí ★", "Nghĩa"].forEach((t, i) => { if (labels[i]) labels[i].textContent = t; });
       ansWord.textContent = item.kanji || "";
       ansKana.textContent = item.structure || "—";
-      ansRomaji.textContent = correctChunks[2] || "";
+      ansRomaji.textContent = correctChunks[starSlotIdx] || "";
       ansMeaning.textContent = item.meaning || "";
       btnAcceptMeaning.hidden = true;
 
       finalizeQuizResult(item, isCorrect);
+      updateStarExamModeBtn();
     }
 
     btnStarReset.addEventListener("click", () => {
@@ -4544,35 +4976,77 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       starState.slots = [null, null, null, null];
       redrawStarUI();
     });
+    btnStarExamMode?.addEventListener("click", () => {
+      if (checked) return;
+      starExamMode = !starExamMode;
+      localStorage.setItem(STAR_EXAM_MODE_KEY, String(starExamMode));
+      updateStarExamModeBtn();
+      if (starState) renderStarQuestion(starState.item);
+    });
     btnStarHint.addEventListener("click", () => {
       if (!starState) return;
       starHintText.hidden = !starHintText.hidden;
     });
 
-    // --- 4. Tạo đề & chấm chung cho 6 chế độ 4 đáp án ---
+    // --- 4. Tạo đề & chấm chung cho các chế độ 4 đáp án (thuật toán gài bẫy JLPT v5) ---
     function buildQuizData(item) {
       if (quizMode === "kanji-kana") {
         const targetKana = normJapanese(item.kana);
-        const pool = getAllWords().filter((w) => w.kana && normJapanese(w.kana) !== targetKana);
-        const sameLen = shuffle(pool.filter((w) => w.kana.length === item.kana.length));
-        const others = shuffle(pool.filter((w) => w.kana.length !== item.kana.length));
+        const generated = generateKanaDistractors(item.kana, item.kanji);
         const seen = new Set([targetKana]);
         const choices = [{ label: item.kana, isCorrect: true }];
-        for (const w of [...sameLen, ...others]) {
-          const k = normJapanese(w.kana);
+        for (const d of generated) {
+          const k = normJapanese(d);
           if (seen.has(k)) continue;
           seen.add(k);
-          choices.push({ label: w.kana, isCorrect: false });
+          choices.push({ label: d, isCorrect: false });
           if (choices.length === 4) break;
+        }
+        if (choices.length < 4) {
+          const tOkuri = extractOkurigana(item.kanji);
+          const pool = getAllWords().filter((w) => w.kana && normJapanese(w.kana) !== targetKana);
+          const sameOkuri = tOkuri ? shuffle(pool.filter((w) => w.kana.endsWith(tOkuri))) : [];
+          const sameLen = shuffle(pool.filter((w) => w.kana.length === item.kana.length));
+          const others = shuffle(pool.filter((w) => w.kana.length !== item.kana.length));
+          for (const w of [...sameOkuri, ...sameLen, ...others]) {
+            const k = normJapanese(w.kana);
+            if (seen.has(k)) continue;
+            seen.add(k);
+            choices.push({ label: w.kana, isCorrect: false });
+            if (choices.length === 4) break;
+          }
         }
         return { prompt: item.kanji, isSentence: false, choices: shuffle(choices) };
       }
+
+      if (quizMode === "kana-kanji") {
+        const targetKana = normJapanese(item.kana);
+        const targetKanji = normJapanese(item.kanji);
+        const pool = getAllWords().filter(
+          (w) => /\p{Script=Han}/u.test(w.kanji || "") && normJapanese(w.kana) !== targetKana && normJapanese(w.kanji) !== targetKanji
+        );
+        const scored = pool
+          .map((w) => ({ w, sc: scoreKanjiDistractor(item, w) }))
+          .sort((a, b) => b.sc - a.sc);
+        const topPool = [...shuffle(scored.slice(0, 10)), ...shuffle(scored.slice(10, 40))];
+        const seen = new Set([targetKanji]);
+        const choices = [{ label: item.kanji, isCorrect: true }];
+        for (const { w } of topPool) {
+          const k = normJapanese(w.kanji);
+          if (seen.has(k)) continue;
+          seen.add(k);
+          choices.push({ label: w.kanji, isCorrect: false });
+          if (choices.length === 4) break;
+        }
+        return { prompt: item.kana, isSentence: false, choices: shuffle(choices) };
+      }
+
       if (quizMode === "vocab-vi") {
-        const targetMeaning = stripAccents(item.meaning);
-        const pool = getAllWords().filter((w) => w.meaning && stripAccents(w.meaning) !== targetMeaning);
-        const sameType = shuffle(pool.filter((w) => w.type && w.type === item.type));
-        const others = shuffle(pool.filter((w) => !w.type || w.type !== item.type));
-        const seen = new Set([targetMeaning]);
+        const pool = getAllWords().filter((w) => w.meaning && !hasSharedMeaning(item, w));
+        const tGroup = normalizeWordTypeGroup(item.type);
+        const sameType = shuffle(pool.filter((w) => isCompatibleTypeGroup(tGroup, normalizeWordTypeGroup(w.type))));
+        const others = shuffle(pool.filter((w) => !isCompatibleTypeGroup(tGroup, normalizeWordTypeGroup(w.type))));
+        const seen = new Set([stripAccents(item.meaning)]);
         const choices = [{ label: item.meaning, isCorrect: true }];
         for (const w of [...sameType, ...others]) {
           const m = stripAccents(w.meaning);
@@ -4587,20 +5061,19 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       if (quizMode === "vi-vocab") {
         const correctLabel = item.kanji || item.kana;
         const targetNorm = normJapanese(correctLabel);
-        const targetMeaning = stripAccents(item.meaning);
         const scriptOf = (text) => {
           if (/\p{Script=Han}/u.test(text)) return "kanji";
           if (/^[\u30A0-\u30FFー・\s]+$/.test(text)) return "katakana";
           return "hiragana";
         };
         const targetScript = scriptOf(correctLabel);
+        const tGroup = normalizeWordTypeGroup(item.type);
         const pool = getAllWords().filter((w) => {
           const lbl = w.kanji || w.kana;
-          return lbl && normJapanese(lbl) !== targetNorm && stripAccents(w.meaning || "") !== targetMeaning;
+          return lbl && normJapanese(lbl) !== targetNorm && !hasSharedMeaning(item, w);
         });
-        // Ưu tiên chọn đáp án nhiễu cùng hệ chữ (Katakana/Hiragana/Kanji) để không bị lộ đáp án
-        const sameScriptAndType = shuffle(pool.filter((w) => scriptOf(w.kanji || w.kana) === targetScript && w.type === item.type));
-        const sameScript = shuffle(pool.filter((w) => scriptOf(w.kanji || w.kana) === targetScript && w.type !== item.type));
+        const sameScriptAndType = shuffle(pool.filter((w) => scriptOf(w.kanji || w.kana) === targetScript && isCompatibleTypeGroup(tGroup, normalizeWordTypeGroup(w.type))));
+        const sameScript = shuffle(pool.filter((w) => scriptOf(w.kanji || w.kana) === targetScript));
         const others = shuffle(pool.filter((w) => scriptOf(w.kanji || w.kana) !== targetScript));
         const seen = new Set([targetNorm]);
         const choices = [{ label: correctLabel, isCorrect: true }];
@@ -4615,27 +5088,66 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         return { prompt: item.meaning, isSentence: true, choices: shuffle(choices) };
       }
 
-      if (quizMode === "kana-kanji") {
-        const targetKana = normJapanese(item.kana);
-        const targetKanji = normJapanese(item.kanji);
-        const pool = getAllWords().filter(
-          (w) => /\p{Script=Han}/u.test(w.kanji || "") && normJapanese(w.kana) !== targetKana && normJapanese(w.kanji) !== targetKanji
-        );
-        const seen = new Set([targetKanji]);
-        const choices = [{ label: item.kanji, isCorrect: true }];
-        for (const w of shuffle(pool)) {
-          const k = normJapanese(w.kanji);
-          if (seen.has(k)) continue;
-          seen.add(k);
-          choices.push({ label: w.kanji, isCorrect: false });
+      if (quizMode === "vocab-synonym") {
+        const allPool = getAllWords();
+        const syn = findSynonymPair(item, allPool);
+        if (!syn) return null;
+        const correctLabel = syn.kanji || syn.kana;
+        const targetNorm = normJapanese(item.kanji || item.kana);
+        const synNorm = normJapanese(correctLabel);
+        const tGroup = normalizeWordTypeGroup(item.type);
+        const distractPool = allPool.filter((w) => {
+          const lbl = w.kanji || w.kana;
+          const n = normJapanese(lbl);
+          return lbl && n !== targetNorm && n !== synNorm && !hasSharedMeaning(item, w) && !hasSharedMeaning(syn, w);
+        });
+        const sameType = shuffle(distractPool.filter((w) => isCompatibleTypeGroup(tGroup, normalizeWordTypeGroup(w.type))));
+        const others = shuffle(distractPool.filter((w) => !isCompatibleTypeGroup(tGroup, normalizeWordTypeGroup(w.type))));
+        const seen = new Set([targetNorm, synNorm]);
+        const choices = [{ label: correctLabel, isCorrect: true }];
+        for (const w of [...sameType, ...others]) {
+          const lbl = w.kanji || w.kana;
+          const n = normJapanese(lbl);
+          if (seen.has(n)) continue;
+          seen.add(n);
+          choices.push({ label: lbl, isCorrect: false });
           if (choices.length === 4) break;
         }
-        return { prompt: item.kana, isSentence: false, choices: shuffle(choices) };
+        return { prompt: item.kanji || item.kana, isSentence: false, targetWord: syn, choices: shuffle(choices) };
+      }
+
+      if (quizMode === "gram-cloze") {
+        const cloze = findGrammarClozeTarget(item);
+        if (!cloze) return null;
+        const targetCore = cloze.core;
+        const allPatterns = removeDuplicateWords(
+          GRAMMAR_SETS.flatMap((s) => (s.words || []).filter((w) => w.direction === "recall"))
+        )
+          .map((w) => ({
+            core: extractGrammarCore(w.structure),
+            connType: inferGrammarConnectionType(w.structure),
+            meaning: w.meaning,
+          }))
+          .filter((w) => w.core && w.core.length >= 2 && w.core !== targetCore && !hasSharedMeaning(item, w));
+
+        const sameConnAndEnd = shuffle(allPatterns.filter((p) => cloze.connType !== "any" && p.connType === cloze.connType && p.core.slice(-1) === targetCore.slice(-1)));
+        const sameConn = shuffle(allPatterns.filter((p) => cloze.connType !== "any" && p.connType === cloze.connType));
+        const sameEnd = shuffle(allPatterns.filter((p) => p.core.slice(-1) === targetCore.slice(-1)));
+        const others = shuffle(allPatterns);
+        const seen = new Set([targetCore]);
+        const choices = [{ label: targetCore, isCorrect: true }];
+        for (const p of [...sameConnAndEnd, ...sameConn, ...sameEnd, ...others]) {
+          if (seen.has(p.core)) continue;
+          seen.add(p.core);
+          choices.push({ label: p.core, isCorrect: false });
+          if (choices.length === 4) break;
+        }
+        return { prompt: cloze.blankedSentence, isSentence: true, choices: shuffle(choices) };
       }
 
       if (quizMode === "gram-pattern-vi" || quizMode === "gram-vi-pattern") {
         const isPatternToVi = quizMode === "gram-pattern-vi";
-        const allRecall = getAllWords().filter((w) => w.direction === "recall" && wordKey(w) !== wordKey(item));
+        const allRecall = getAllWords().filter((w) => w.direction === "recall" && wordKey(w) !== wordKey(item) && !hasSharedMeaning(item, w));
         const correctLabel = isPatternToVi ? item.meaning : item.structure;
         const seen = new Set([stripAccents(correctLabel)]);
         const choices = [{ label: correctLabel, isCorrect: true }];
@@ -4652,14 +5164,32 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
 
       if (quizMode === "vocab-cloze") {
         const cloze = findClozeTarget(item);
+        if (!cloze) return null;
         const target = cloze.targetWord;
+        const tGroup = normalizeWordTypeGroup(target.type);
         const allVocab = removeDuplicateWords(VOCAB_SETS.flatMap((s) => s.words || []));
-        const pool = allVocab.filter((w) => w.kanji && w.kanji !== target.kanji);
-        const sameType = shuffle(pool.filter((w) => w.type && w.type === target.type));
-        const others = shuffle(pool.filter((w) => !w.type || w.type !== target.type));
+        // Lọc chặn từ đồng nghĩa và ưu tiên CỨNG cùng từ loại
+        const basePool = allVocab.filter(
+          (w) => w.kanji && w.kanji !== target.kanji && !CLOZE_STOPWORDS.has(w.kanji) && !hasSharedMeaning(target, w)
+        );
+        const sameTypePool = tGroup !== "other"
+          ? basePool.filter((w) => isCompatibleTypeGroup(tGroup, normalizeWordTypeGroup(w.type)))
+          : basePool;
+        const fallbackPool = sameTypePool.length >= 6 ? sameTypePool : basePool;
+
+        const sameSetSet = new Set((cloze.sameSetWords || []).map((w) => w.kanji));
+        const tKanjiChars = new Set(String(target.kanji || "").match(/\p{Script=Han}/gu) || []);
+        const scored = fallbackPool.map((w) => {
+          let sc = 0;
+          if (sameSetSet.has(w.kanji)) sc += 5;
+          if ((String(w.kanji || "").match(/\p{Script=Han}/gu) || []).some((ch) => tKanjiChars.has(ch))) sc += 4;
+          if (countKanjiChars(w.kanji) === countKanjiChars(target.kanji)) sc += 2;
+          return { w, sc };
+        }).sort((a, b) => b.sc - a.sc);
+        const topPool = [...shuffle(scored.slice(0, 12)), ...shuffle(scored.slice(12, 40))];
         const seen = new Set([target.kanji]);
         const choices = [{ label: target.kanji, isCorrect: true }];
-        for (const w of [...sameType, ...others]) {
+        for (const { w } of topPool) {
           if (seen.has(w.kanji)) continue;
           seen.add(w.kanji);
           choices.push({ label: w.kanji, isCorrect: false });
@@ -4670,25 +5200,28 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
 
       if (quizMode === "adv-cloze") {
         const cloze = findAdvClozeTarget(item);
+        if (!cloze) return null;
         const target = cloze.targetWord;
         const targetShape = advShapeGroup(target);
+        const negSentence = isNegativeSentence(item.kanji);
         const pickLabel = (w) =>
           cloze.isKanaForm ? cleanAdvTerm(w.kana || w.kanji) : cleanAdvTerm(w.kanji || w.kana);
         const correctLabel = pickLabel(target);
         const advPool = getAllAdverbVocab().filter(
-          (w) => wordKey(w) !== wordKey(target) && pickLabel(w) && pickLabel(w) !== correctLabel
+          (w) => wordKey(w) !== wordKey(target) && pickLabel(w) && pickLabel(w) !== correctLabel && !hasSharedMeaning(target, w)
         );
+        // Nếu câu phủ định, tối đa lấy 1 phó từ phủ định làm nhiễu để tránh 2 đáp án cùng hợp nghĩa
+        const negMatches = negSentence
+          ? shuffle(advPool.filter((w) => NEGATIVE_ADVERBS.has(cleanAdvTerm(w.kana)) || NEGATIVE_ADVERBS.has(cleanAdvTerm(w.kanji)))).slice(0, 1)
+          : [];
         const sameShape = shuffle(advPool.filter((w) => advShapeGroup(w) === targetShape));
         const otherShape = shuffle(advPool.filter((w) => advShapeGroup(w) !== targetShape));
         const seenLabels = new Set([correctLabel]);
-        const seenMeanings = new Set([stripAccents(target.meaning || "")]);
         const choices = [{ label: correctLabel, isCorrect: true }];
-        for (const w of [...sameShape, ...otherShape]) {
+        for (const w of [...negMatches, ...sameShape, ...otherShape]) {
           const label = pickLabel(w);
-          const normM = stripAccents(w.meaning || "");
-          if (seenLabels.has(label) || (normM && seenMeanings.has(normM))) continue;
+          if (seenLabels.has(label)) continue;
           seenLabels.add(label);
-          if (normM) seenMeanings.add(normM);
           choices.push({ label, isCorrect: false });
           if (choices.length === 4) break;
         }
@@ -4699,17 +5232,21 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
 
     function renderQuizChoices(item) {
       const data = buildQuizData(item);
-      if (!data) return;
+      if (!data) {
+        idx++;
+        loadCard();
+        return;
+      }
       kanjiDisplay.classList.toggle("quiz-sentence-prompt", Boolean(data.isSentence));
       kanjiDisplay.textContent = data.prompt;
       quizChoices.replaceChildren();
-      const letters = ["A", "B", "C", "D"];
+      const nums = ["1", "2", "3", "4"];
       data.choices.forEach((opt, i) => {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "quiz-choice";
         btn.dataset.correct = String(opt.isCorrect);
-        btn.innerHTML = `<span class="opt-key">${letters[i]}</span><span></span>`;
+        btn.innerHTML = `<span class="opt-key">${nums[i]}</span><span></span>`;
         btn.lastElementChild.textContent = opt.label;
         btn.addEventListener("click", () => handleQuizChoice(item, btn, data.targetWord));
         quizChoices.appendChild(btn);
@@ -4770,7 +5307,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       });
       if (!isCorrect) clickedBtn.classList.add("wrong");
 
-      if (quizMode === "vocab-cloze" || quizMode === "adv-cloze") {
+      if (quizMode === "vocab-cloze" || quizMode === "adv-cloze" || quizMode === "gram-cloze") {
         kanjiDisplay.textContent = item.kanji;
       }
 
@@ -4781,6 +5318,18 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         ansKana.textContent = item.grammarNote || "—";
         ansRomaji.textContent = item.grammarExamples?.[0]?.kanji || "—";
         ansMeaning.textContent = item.meaning || "";
+      } else if (quizMode === "gram-cloze") {
+        ["Câu đầy đủ", "Mẫu ngữ pháp", "Cách dùng", "Nghĩa"].forEach((t, i) => { if (labels[i]) labels[i].textContent = t; });
+        ansWord.textContent = item.kanji || "";
+        ansKana.textContent = item.structure || "—";
+        ansRomaji.textContent = item.grammarNote || "—";
+        ansMeaning.textContent = item.meaning || "";
+      } else if (quizMode === "vocab-synonym" && targetWord) {
+        ["Từ gốc", "Đồng nghĩa", "Cách đọc", "Nghĩa chung"].forEach((t, i) => { if (labels[i]) labels[i].textContent = t; });
+        ansWord.textContent = `${item.kanji || item.kana} (${item.kana || ""})`;
+        ansKana.textContent = `${targetWord.kanji || targetWord.kana} (${targetWord.kana || ""})`;
+        ansRomaji.textContent = `${item.romaji || ""} ≈ ${targetWord.romaji || ""}`;
+        ansMeaning.textContent = `${item.meaning}  /  ${targetWord.meaning}`;
       } else {
         ["Từ / Câu", "Hiragana", "Romaji", "Nghĩa"].forEach((t, i) => { if (labels[i]) labels[i].textContent = t; });
         ansWord.textContent = targetWord
@@ -4812,6 +5361,8 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         }
         renderDayOptions();
         updateWrongBadge();
+        updateImportantBadge();
+        updateSkippedBadge();
         init();
       });
     });
@@ -5263,7 +5814,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         if (quizMode === "gram-pattern-vi" || quizMode === "gram-vi-pattern") {
           return items.filter((item) => item.direction === "recall");
         }
-        if (quizMode === "gram-star") {
+        if (quizMode === "gram-star" || quizMode === "gram-cloze") {
           return items.filter((item) => item.direction !== "recall");
         }
       }
@@ -5273,7 +5824,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       if (contentType === "vocab") return "từ";
       if (contentType === "grammar" && grammarMode === "recall") return "mẫu";
       if (contentType === "quiz") {
-        if (["kanji-kana", "kana-kanji", "vocab-vi", "vi-vocab"].includes(quizMode)) return "từ";
+        if (["kanji-kana", "kana-kanji", "vocab-vi", "vi-vocab", "vocab-synonym"].includes(quizMode)) return "từ";
         if (quizMode === "gram-pattern-vi" || quizMode === "gram-vi-pattern") return "mẫu";
         return "câu";
       }
@@ -5303,6 +5854,19 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
           if (!k || seen.has(k)) return false;
           seen.add(k);
           return Boolean(findAdvClozeTarget(item));
+        });
+      }
+      if (quizMode === "vocab-synonym") {
+        const allPool = getAllWords();
+        return list.filter((w) => Boolean(findSynonymPair(w, allPool)));
+      }
+      if (quizMode === "gram-cloze") {
+        const seen = new Set();
+        return list.filter((item) => {
+          const k = normJapanese(item.kanji);
+          if (!k || seen.has(k)) return false;
+          seen.add(k);
+          return Boolean(findGrammarClozeTarget(item));
         });
       }
       if (quizMode === "gram-star") {
@@ -5372,10 +5936,20 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         : selectedWords;
     }
 
+    let cachedAllWordsRef = null;
+    let cachedAllWordsRemLen = -1;
+    let cachedAllWordsList = null;
+
     function getAllWords() {
-      return removeDuplicateWords(
+      if (cachedAllWordsList && cachedAllWordsRef === CONTENT_SETS && cachedAllWordsRemLen === REMEMBER_WORDS.length) {
+        return cachedAllWordsList;
+      }
+      cachedAllWordsRef = CONTENT_SETS;
+      cachedAllWordsRemLen = REMEMBER_WORDS.length;
+      cachedAllWordsList = removeDuplicateWords(
         CONTENT_SETS.flatMap((vocabSet) => vocabSet.words),
       );
+      return cachedAllWordsList;
     }
 
     function renderDayOptions() {
@@ -5448,7 +6022,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
             createDayOption(
               String(setIndex),
               shortName,
-              filterForGrammarMode(vocabSet.words).length,
+              filterItemsForCurrentMode(vocabSet.words).length,
               draftSelectedDays.has(setIndex),
             ),
           );
@@ -5467,7 +6041,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       const appliedAll = selectedDays.size === CONTENT_SETS.length;
       const partText = appliedAll ? "Tất cả" : `${selectedDays.size} phần`;
       const unit = currentUnitLabel();      
-      dailyCount.textContent = `${partText} · ${filterForGrammarMode(getDailyWords()).length} ${unit}`;
+      dailyCount.textContent = `${partText} · ${filterItemsForCurrentMode(getDailyWords()).length} ${unit}`;
       draftSelectionCount.textContent = `${draftSelectedDays.size} phần được chọn`;
       btnSelectAllDays.disabled = allSelected;
       btnSelectAllDays.textContent = allSelected ? "Đã chọn tất cả" : "Chọn tất cả";
@@ -5623,13 +6197,21 @@ localStorage.setItem(currentDayStoreKey(), JSON.stringify([...selectedDays]));
   }
 
     function updateSkippedBadge() {
-      skippedCountBadge.textContent = skippedSet.size;
-      modeSkippedBtn.disabled = skippedSet.size === 0 && mode !== "skipped";
+      const count = contentType === "quiz"
+        ? getAllWords().filter((item) => skippedSet.has(wordKey(item))).length
+        : skippedSet.size;
+      skippedCountBadge.textContent = count;
+      modeSkippedBtn.disabled = count === 0 && mode !== "skipped";
     }
 
     function updateImportantBadge() {
-      importantCountBadge.textContent = importantSet.size;
-      modeImportantBtn.disabled = importantSet.size === 0 && mode !== "important";
+      const count = contentType === "quiz"
+        ? filterItemsForCurrentMode(
+            getAllWords().filter((item) => importantSet.has(wordKey(item)) && !skippedSet.has(wordKey(item)))
+          ).length
+        : importantSet.size;
+      importantCountBadge.textContent = count;
+      modeImportantBtn.disabled = count === 0 && mode !== "important";
     }
 
     function setModeButtons() {
@@ -6569,9 +7151,9 @@ const isRecall = contentType === "grammar" && grammarMode === "recall" && item.d
       const isSentenceWriting = contentType === "sentence" || contentType === "grammar";
       kanjiDisplay.textContent = isRecall ? (item.grammarRecall?.pattern || item.structure) : isVietnameseToRomaji
         ? item.meaning
-        : studyMode === "meaningToRomaji"
+        : contentType === "vocab" && studyMode === "meaningToRomaji"
           ? item.meaning
-          : studyMode === "kanaToMeaning"
+          : contentType === "vocab" && studyMode === "kanaToMeaning"
             ? item.kana
             : item.kanji;
       typeDisplay.textContent = item.type;
@@ -6676,7 +7258,7 @@ const isRecall = contentType === "grammar" && grammarMode === "recall" && item.d
       /* --- check romaji --- */
       const userReading = normRomaji(inputReading.value);
       const romajiVariants = romajiAnswerVariants(item.romaji);
-      const readingOK = studyMode === "kanaToMeaning" || activeVocabHint === "kana" ||
+      const readingOK = (contentType === "vocab" && studyMode === "kanaToMeaning") || activeVocabHint === "kana" ||
         (userReading.length > 0 &&
           romajiVariants.has(userReading));
 
@@ -6687,7 +7269,7 @@ const isRecall = contentType === "grammar" && grammarMode === "recall" && item.d
       ];
       const userMeaning = stripAccents(inputMeaning.value);
       const meaningOK = isVietnameseToRomaji || activeVocabHint === "meaning" ||
-        studyMode === "meaningToRomaji" ||
+        (contentType === "vocab" && studyMode === "meaningToRomaji") ||
         (userMeaning.length > 0 &&
           (meaningOptions.some(
             (opt) =>
@@ -7221,13 +7803,14 @@ const isRecall = contentType === "grammar" && grammarMode === "recall" && item.d
       doneArea.style.display = "block";
       const total = initialWordCount;
       let missedHtml = "";
+      const escapeHtml = (s) => String(s || "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
       if (missed.length) {
         missedHtml =
           `<div class="missed-panel"><h2>Những từ cần ôn lại (${missed.length})</h2>` +
           missed
             .map(
               (m) =>
-                `<div class="missed-item"><div><span class="k">${m.kanji}</span> ${m.romaji}</div><div>${m.meaning}</div></div>`,
+                `<div class="missed-item"><div><span class="k">${escapeHtml(m.kanji)}</span> ${escapeHtml(m.romaji)}</div><div>${escapeHtml(m.meaning)}</div></div>`,
             )
             .join("") +
           `</div>`;
@@ -7276,6 +7859,26 @@ const isRecall = contentType === "grammar" && grammarMode === "recall" && item.d
 
     /* Enter: ô Romaji -> ô nghĩa (nếu có). Ô cuối -> phát âm/chấm. Sau khi chấm -> câu tiếp. */
     document.addEventListener("keydown", (e) => {
+      if (
+        contentType === "quiz" &&
+        !checked &&
+        quizArea.style.display !== "none" &&
+        lookupOverlay.hidden &&
+        !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || "") &&
+        ["1", "2", "3", "4"].includes(e.key)
+      ) {
+        const idxKey = Number(e.key) - 1;
+        const targetBtn = isChoiceQuizMode()
+          ? quizChoices.querySelectorAll(".quiz-choice")[idxKey]
+          : isStarQuizMode()
+            ? starPool.querySelectorAll(".star-chip")[idxKey]
+            : null;
+        if (targetBtn && !targetBtn.disabled) {
+          e.preventDefault();
+          targetBtn.click();
+          return;
+        }
+      }
       if (e.key !== "Enter") return;
       if (quizArea.style.display === "none") return;
       if (sentenceCorrectionState) {
