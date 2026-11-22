@@ -3195,6 +3195,264 @@
     }
     @media (max-width: 600px) { .star-exam-choices { grid-template-columns: 1fr; } }
     @media (max-width: 600px) { .star-pool { grid-template-columns: 1fr; } }
+
+    /* ---------- Nâng cấp v6: Point & Practice + Giữ thứ tự + Thi thử + Sao lưu ---------- */
+    .quiz-extra-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin: -2px 0 12px;
+      padding: 8px 10px;
+      border: 1px solid #e5e1da;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.72);
+    }
+    .quiz-extra-bar[hidden] { display: none !important; }
+    .quiz-extra-bar select {
+      min-height: 32px;
+      padding: 4px 8px;
+      border: 1px solid #dedad3;
+      border-radius: 7px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .quiz-extra-sep {
+      width: 1px;
+      height: 20px;
+      background: #e2ddd4;
+      margin: 0 2px;
+    }
+    .exam-start-btn {
+      flex: none !important;
+      width: auto !important;
+      min-height: 32px !important;
+      padding: 5px 12px !important;
+      border: 1px solid var(--seal-red) !important;
+      border-radius: 7px !important;
+      background: var(--seal-red) !important;
+      color: #fff !important;
+      font-size: 12px !important;
+      font-weight: 700 !important;
+      cursor: pointer;
+    }
+    .exam-start-btn:hover:not(:disabled) { opacity: 0.92; }
+    .exam-start-btn:disabled { opacity: 0.4; cursor: default; }
+
+    .exam-area[hidden] { display: none !important; }
+    .exam-topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+    .exam-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--ink-soft);
+    }
+    .exam-timer-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--aizome-soft);
+      color: var(--ink);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .exam-timer-badge.warning {
+      background: var(--seal-red-soft);
+      color: var(--seal-red);
+    }
+    .exam-topbar-actions {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+    .exam-topbar-actions button {
+      flex: none !important;
+      width: auto !important;
+      min-height: 34px !important;
+      padding: 6px 12px !important;
+      border-radius: 7px !important;
+      font-size: 12px !important;
+    }
+    .exam-submit-btn {
+      background: var(--seal-red) !important;
+      border-color: var(--seal-red) !important;
+      color: #fff !important;
+    }
+    .exam-nav-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 16px;
+      max-height: 112px;
+      overflow-y: auto;
+      padding: 2px;
+    }
+    .exam-nav-pill {
+      flex: none !important;
+      width: 31px !important;
+      height: 31px !important;
+      min-height: 31px !important;
+      padding: 0 !important;
+      border: 1px solid var(--line) !important;
+      border-radius: 6px !important;
+      background: #fff !important;
+      color: var(--ink-soft) !important;
+      font-family: "JetBrains Mono", monospace !important;
+      font-size: 11.5px !important;
+      font-weight: 600 !important;
+    }
+    .exam-nav-pill.answered {
+      background: #ebe8e1 !important;
+      border-color: #9d988e !important;
+      color: var(--ink) !important;
+    }
+    .exam-nav-pill.current {
+      border-color: var(--ink) !important;
+      box-shadow: 0 0 0 2px rgba(32, 34, 31, 0.22);
+      font-weight: 800 !important;
+      color: var(--ink) !important;
+    }
+    .exam-q-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: var(--seal-red);
+      font-weight: 700;
+    }
+    .exam-q-prompt {
+      font-family: "Shippori Mincho", serif;
+      font-size: clamp(19px, 2.8vw, 26px);
+      line-height: 1.65;
+      color: var(--ink);
+      margin: 6px 0 14px;
+      overflow-wrap: anywhere;
+    }
+    .quiz-choice.exam-selected {
+      border-color: var(--ink);
+      background: #ebe8e1;
+      font-weight: 700;
+      box-shadow: inset 0 0 0 1px var(--ink);
+    }
+    .quiz-choice.exam-selected .opt-key {
+      background: var(--ink);
+      color: #fff;
+    }
+    .exam-summary-head {
+      text-align: center;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 14px;
+    }
+    .exam-summary-score {
+      font-family: "Shippori Mincho", serif;
+      font-size: clamp(34px, 7vw, 48px);
+      font-weight: 700;
+      color: var(--seal-red);
+      line-height: 1.1;
+    }
+    .exam-summary-sub {
+      margin: 6px 0 12px;
+      color: var(--ink-soft);
+      font-size: 13px;
+    }
+    .exam-review-filters {
+      display: flex;
+      gap: 6px;
+      margin: 12px 0;
+      flex-wrap: wrap;
+    }
+    .exam-review-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .exam-review-item {
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      font-size: 13.5px;
+      line-height: 1.55;
+    }
+    .exam-review-item.ok { border-left-color: var(--moss); }
+    .exam-review-item.bad { border-left-color: var(--seal-red); background: #fffaf8; }
+    .exam-review-prompt {
+      font-family: "Shippori Mincho", serif;
+      font-size: 16px;
+      font-weight: 600;
+      margin: 4px 0 6px;
+      color: var(--ink);
+    }
+    .exam-review-ans { font-size: 12.5px; color: var(--ink-soft); }
+    .exam-review-ans strong.ok { color: var(--moss); }
+    .exam-review-ans strong.bad { color: var(--seal-red); }
+    .exam-review-exp {
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px dashed var(--line);
+      font-size: 12.5px;
+      color: var(--ink);
+    }
+
+    .backup-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--line);
+    }
+    .backup-bar button {
+      flex: none !important;
+      width: auto !important;
+      min-height: 30px !important;
+      padding: 5px 10px !important;
+      border: 1px solid var(--line) !important;
+      border-radius: 7px !important;
+      background: #fff !important;
+      color: var(--ink-soft) !important;
+      font-size: 11.5px !important;
+      font-weight: 600 !important;
+    }
+    .backup-bar button:hover {
+      border-color: var(--ink) !important;
+      color: var(--ink) !important;
+    }
+    .backup-status {
+      flex-basis: 100%;
+      text-align: center;
+      font-size: 11.5px;
+      color: var(--moss);
+      min-height: 0;
+    }
+    .backup-status[data-kind="error"] { color: var(--seal-red); }
+    @media (max-width: 600px) {
+      .quiz-extra-sep { display: none; }
+      .exam-topbar { align-items: flex-start; }
+    }
   </style>
 </head>
 
@@ -3289,6 +3547,20 @@
         <button type="button" class="mode-btn" data-quiz-mode="gram-star">
           Sắp xếp câu ★
         </button>
+        <button type="button" class="mode-btn" data-quiz-mode="book-quiz">
+          Đề sách Point &amp; Practice
+        </button>
+      </div>
+      <div class="quiz-extra-bar" id="quizExtraBar">
+        <button type="button" class="star-mini-btn" id="btnQuizOrderToggle" aria-pressed="false" title="Bật để làm theo đúng thứ tự câu trong sách (không trộn)">Thứ tự: Trộn ngẫu nhiên</button>
+        <span class="quiz-extra-sep" aria-hidden="true"></span>
+        <select id="examDurationSelect" aria-label="Thời gian thi thử">
+          <option value="15">15 phút (まとめ)</option>
+          <option value="30" selected>30 phút (Từ vựng)</option>
+          <option value="35">35 phút (Ngữ pháp)</option>
+          <option value="0">Không giới hạn giờ</option>
+        </select>
+        <button type="button" class="exam-start-btn" id="btnStartExam">⏱ Thi thử (chấm cuối giờ)</button>
       </div>
     </div>
 
@@ -3470,7 +3742,15 @@
       </div>
     </div>
 
+    <div id="examArea" class="exam-area" hidden></div>
     <div id="doneArea" style="display: none"></div>
+
+    <div class="backup-bar" aria-label="Sao lưu và khôi phục tiến độ học">
+      <button type="button" id="btnBackupProgress">💾 Sao lưu toàn bộ tiến độ (JSON)</button>
+      <button type="button" id="btnRestoreProgress">📂 Khôi phục tiến độ</button>
+      <input type="file" id="progressImportFile" accept=".json,application/json" hidden />
+      <span class="backup-status" id="backupStatus" aria-live="polite"></span>
+    </div>
 
     <footer>Chương 1 · Bài 1 — Gungun Joutatsu N3</footer>
   </div>
@@ -3535,6 +3815,7 @@
   </div>
 
   <script src="./data/danh-sach-data.js"></script>
+  <script src="./data/de-jlpt/danh-sach-de-jlpt.js"></script>
   <script>
     /*
     Mỗi phần tử là một bộ từ riêng. Muốn thêm buổi học mới, chỉ cần sao chép
@@ -3613,6 +3894,20 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         return [...recallItem, ...sentenceItems];
       }),
     }));
+    const BOOK_QUIZ_SETS = (window.BOOK_QUIZ_SETS || []).map((set) => ({
+      name: set.name,
+      words: (set.questions || []).map((q, index) => ({
+        kanji: q.prompt || "",
+        kana: q.choices?.[q.answerIndex] || "",
+        romaji: "",
+        meaning: q.explanation || "",
+        type: q.section || "Đề sách JLPT",
+        contentKind: "book-quiz",
+        setName: set.name,
+        contentId: `book-${set.name}-${index}`,
+        bookQuiz: q,
+      })),
+    }));
     const contentParam = new URLSearchParams(location.search).get("phan");
     const contentType =
       contentParam === "cau" ? "sentence"
@@ -3623,11 +3918,20 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     const QUIZ_MODE_KEY = "japaneseQuizActiveQuizMode_v1";
     const VALID_QUIZ_MODES = new Set([
       "kanji-kana", "kana-kanji", "vocab-vi", "vi-vocab", "vocab-synonym",
-      "vocab-cloze", "adv-cloze", "gram-cloze", "gram-pattern-vi", "gram-vi-pattern", "gram-star"
+      "vocab-cloze", "adv-cloze", "gram-cloze", "gram-pattern-vi", "gram-vi-pattern", "gram-star", "book-quiz"
     ]);
+    const KEEP_ORDER_BOOK_KEY = "japaneseQuizKeepOrder_book_v1";
+    const KEEP_ORDER_OTHER_KEY = "japaneseQuizKeepOrder_other_v1";
+    let keepOrderBook = localStorage.getItem(KEEP_ORDER_BOOK_KEY) !== "false";
+    let keepOrderOther = localStorage.getItem(KEEP_ORDER_OTHER_KEY) === "true";
+    function shouldShuffleCurrentQuiz() {
+      if (contentType !== "quiz") return true;
+      return quizMode === "book-quiz" ? !keepOrderBook : !keepOrderOther;
+    }
     const savedQuizMode = localStorage.getItem(QUIZ_MODE_KEY);
     let quizMode = VALID_QUIZ_MODES.has(savedQuizMode) ? savedQuizMode : "kanji-kana";
     function getQuizDatasetGroup(qMode = quizMode) {
+      if (qMode === "book-quiz") return "book-quiz";
       if (["kanji-kana", "kana-kanji", "vocab-vi", "vi-vocab", "vocab-synonym"].includes(qMode)) return "vocab";
       if (qMode === "vocab-cloze") return "sentence";
       if (qMode === "adv-cloze") return "adv";
@@ -3636,6 +3940,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
 
     function getQuizContentSets(qMode = quizMode) {
       const group = getQuizDatasetGroup(qMode);
+      if (group === "book-quiz") return BOOK_QUIZ_SETS;
       if (group === "vocab") return [...VOCAB_SETS, REMEMBER_SET];
       if (group === "sentence") return SENTENCE_SETS;
       if (group === "adv") {
@@ -4290,9 +4595,9 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       if (/(?:\badv\b|phó\s*từ|pho\s*tu|副)/i.test(t)) return "Adv";
       if (/(?:tự\s*động|tu\s*dong|\bvi\b|自動)/i.test(t)) return "V-vi";
       if (/(?:tha\s*động|tha\s*dong|\bvt\b|他動)/i.test(t)) return "V-vt";
-      if (/(?:\bv\d|\bv-|\(v\b|động\s*từ|dong\s*tu|動)/i.test(t)) return "V";
-      if (/(?:a-?i|\bい\b|tính\s*từ\s*i|adj-?i)/i.test(t)) return "Ai";
-      if (/(?:a-?na|\bな\b|tính\s*từ\s*na|adj-?na)/i.test(t)) return "Ana";
+      if (/(?:\bv\d|\bv-|\bvs\b|\(v\b|động\s*từ|dong\s*tu|動)/i.test(t)) return "V";
+      if (/(?:a-?i|i-?adj|adj-?i|tính\s*từ\s*i|い形|\(い\))/i.test(t)) return "Ai";
+      if (/(?:a-?na|na-?adj|adj-?na|\(na\)|tính\s*từ\s*na|な形|\(な\))/i.test(t)) return "Ana";
       if (/(?:\badj\b|tính\s*từ|tinh\s*tu|形)/i.test(t)) return "Adj";
       if (/(?:\bn\b|\(n\)|danh\s*từ|danh\s*tu|名)/i.test(t)) return "N";
       return "other";
@@ -4306,24 +4611,34 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       return false;
     }
 
-    function isWholeTokenInSentence(sentenceText, term) {
-      if (!term || !sentenceText.includes(term)) return false;
+    function findWholeTokenRange(sentenceText, term) {
+      if (!term || !sentenceText.includes(term)) return null;
       if (jaWordSegmenter) {
         const segs = [...jaWordSegmenter.segment(sentenceText)];
-        // Khớp đúng 1 token đơn
-        if (segs.some((s) => s.segment === term)) return true;
-        // Hoặc khớp chuỗi gồm nhiều token liên tiếp (vd từ ghép dài) nhưng đúng ranh giới đầu/cuối
-        let acc = "";
         for (let i = 0; i < segs.length; i++) {
-          acc = "";
+          if (segs[i].segment === term) {
+            return { start: segs[i].index, end: segs[i].index + term.length };
+          }
+          let acc = "";
           for (let j = i; j < segs.length && acc.length < term.length; j++) {
             acc += segs[j].segment;
-            if (acc === term) return true;
+            if (acc === term) {
+              return { start: segs[i].index, end: segs[i].index + term.length };
+            }
           }
         }
-        return false;
+        return null;
       }
-      return true;
+      const pos = sentenceText.indexOf(term);
+      return pos >= 0 ? { start: pos, end: pos + term.length } : null;
+    }
+
+    function isWholeTokenInSentence(sentenceText, term) {
+      return Boolean(findWholeTokenRange(sentenceText, term));
+    }
+
+    function blankAtRange(sentenceText, range) {
+      return sentenceText.slice(0, range.start) + "（   ）" + sentenceText.slice(range.end);
     }
 
     // --- 0B. Thuật toán sinh nhiễu phát âm Kanji -> Hiragana chuẩn JLPT (Mondai 1) ---
@@ -4522,10 +4837,8 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     function matchWordInSentence(sentenceText, word) {
       const k = String(word.kanji || "").trim();
       if (!k || CLOZE_STOPWORDS.has(k) || CLOZE_STOPWORDS.has(String(word.kana || "").trim())) return null;
-      // Chỉ khớp đúng nguyên dạng và đúng ranh giới token (tránh cắt giữa từ ghép và tránh lệch thể chia)
-      if (isWholeTokenInSentence(sentenceText, k)) {
-        return { matchedText: k, priority: 3 };
-      }
+      const range = findWholeTokenRange(sentenceText, k);
+      if (range) return { matchedText: k, range, priority: 3 };
       return null;
     }
 
@@ -4558,7 +4871,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       if (!best) best = pickBest(VOCAB_SETS.flatMap((s) => s.words || []), 2, true);
 
       const res = best
-        ? { targetWord: best.word, matchedText: best.matchedText, sameSetWords: samePage?.words || [], blankedSentence: sentenceText.replace(best.matchedText, "（   ）") }
+        ? { targetWord: best.word, matchedText: best.matchedText, sameSetWords: samePage?.words || [], blankedSentence: blankAtRange(sentenceText, best.range) }
         : null;
       clozeCache.set(item, res);
       return res;
@@ -4647,15 +4960,22 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         const kForm = cleanAdvTerm(word.kanji);
         const hForm = cleanAdvTerm(word.kana);
         let matchedText = "";
-        if (kForm && kForm.length >= 2 && sentenceHasWholeToken(sentenceText, kForm)) matchedText = kForm;
-        else if (hForm && hForm.length >= 2 && sentenceHasWholeToken(sentenceText, hForm)) matchedText = hForm;
-        if (matchedText) {
-          hits.push({ targetWord: word, matchedText, isKanaForm: !/\p{Script=Han}/u.test(matchedText) });
+        let range = null;
+        if (kForm && kForm.length >= 2) {
+          range = findWholeTokenRange(sentenceText, kForm);
+          if (range) matchedText = kForm;
+        }
+        if (!range && hForm && hForm.length >= 2) {
+          range = findWholeTokenRange(sentenceText, hForm);
+          if (range) matchedText = hForm;
+        }
+        if (matchedText && range) {
+          hits.push({ targetWord: word, matchedText, range, isKanaForm: !/\p{Script=Han}/u.test(matchedText) });
         }
       }
       hits.sort((a, b) => b.matchedText.length - a.matchedText.length);
       const best = hits[0];
-      const res = best ? { ...best, blankedSentence: sentenceText.replace(best.matchedText, "（   ）") } : null;
+      const res = best ? { ...best, blankedSentence: blankAtRange(sentenceText, best.range) } : null;
       advClozeCache.set(item, res);
       return res;
     }
@@ -4681,15 +5001,15 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         gramClozeCache.set(item, null);
         return null;
       }
-      // Chặn đục nhầm lõi quá ngắn (2 ký tự) vào giữa từ khác (vd: こと trong ことば)
-      if (!isWholeTokenInSentence(sentenceText, core)) {
+      const range = findWholeTokenRange(sentenceText, core);
+      if (!range) {
         gramClozeCache.set(item, null);
         return null;
       }
       const res = {
         core,
         connType: inferGrammarConnectionType(item.structure),
-        blankedSentence: sentenceText.replace(core, "（   ）"),
+        blankedSentence: blankAtRange(sentenceText, range),
       };
       gramClozeCache.set(item, res);
       return res;
@@ -4847,11 +5167,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
 
     function renderStarQuestion(item) {
       const q = buildStarQuestion(item);
-      if (!q) {
-        idx++;
-        loadCard();
-        return;
-      }
+      if (!q) return false;
       starState = { item, ...q, slots: [null, null, null, null] };
       starHintText.hidden = true;
       starHintText.textContent = item.meaning || "";
@@ -4862,6 +5178,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       typeDisplay.textContent = `Sắp xếp câu ★ · ${item.setName || ""}`;
       updateStarExamModeBtn();
       redrawStarUI();
+      return true;
     }
 
     function redrawStarUI() {
@@ -4988,8 +5305,40 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       starHintText.hidden = !starHintText.hidden;
     });
 
+    function setPromptWithUnderline(promptText, underlineText) {
+      kanjiDisplay.replaceChildren();
+      const full = String(promptText || "");
+      const target = String(underlineText || "");
+      if (!target || !full.includes(target)) {
+        kanjiDisplay.textContent = full;
+        return;
+      }
+      const pos = full.indexOf(target);
+      if (pos > 0) kanjiDisplay.append(document.createTextNode(full.slice(0, pos)));
+      const span = document.createElement("span");
+      span.className = "jlpt-underline";
+      span.textContent = target;
+      kanjiDisplay.append(span);
+      if (pos + target.length < full.length) {
+        kanjiDisplay.append(document.createTextNode(full.slice(pos + target.length)));
+      }
+    }
+
     // --- 4. Tạo đề & chấm chung cho các chế độ 4 đáp án (thuật toán gài bẫy JLPT v5) ---
     function buildQuizData(item) {
+      if (quizMode === "book-quiz" && item.bookQuiz) {
+        const q = item.bookQuiz;
+        const choices = (q.choices || []).map((label, idx) => ({
+          label,
+          isCorrect: idx === q.answerIndex,
+        }));
+        return {
+          prompt: q.prompt || "",
+          underline: q.underline || "",
+          isSentence: true,
+          choices,
+        };
+      }
       if (quizMode === "kanji-kana") {
         const targetKana = normJapanese(item.kana);
         const generated = generateKanaDistractors(item.kana, item.kanji);
@@ -5128,7 +5477,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
             connType: inferGrammarConnectionType(w.structure),
             meaning: w.meaning,
           }))
-          .filter((w) => w.core && w.core.length >= 2 && w.core !== targetCore && !hasSharedMeaning(item, w));
+          .filter((w) => w.core && w.core.length >= 2 && w.core !== targetCore && !hasSharedMeaning({ meaning: item.grammarMeaning }, w));
 
         const sameConnAndEnd = shuffle(allPatterns.filter((p) => cloze.connType !== "any" && p.connType === cloze.connType && p.core.slice(-1) === targetCore.slice(-1)));
         const sameConn = shuffle(allPatterns.filter((p) => cloze.connType !== "any" && p.connType === cloze.connType));
@@ -5211,11 +5560,11 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
           (w) => wordKey(w) !== wordKey(target) && pickLabel(w) && pickLabel(w) !== correctLabel && !hasSharedMeaning(target, w)
         );
         // Nếu câu phủ định, tối đa lấy 1 phó từ phủ định làm nhiễu để tránh 2 đáp án cùng hợp nghĩa
-        const negMatches = negSentence
-          ? shuffle(advPool.filter((w) => NEGATIVE_ADVERBS.has(cleanAdvTerm(w.kana)) || NEGATIVE_ADVERBS.has(cleanAdvTerm(w.kanji)))).slice(0, 1)
-          : [];
-        const sameShape = shuffle(advPool.filter((w) => advShapeGroup(w) === targetShape));
-        const otherShape = shuffle(advPool.filter((w) => advShapeGroup(w) !== targetShape));
+        const isNegAdv = (w) => NEGATIVE_ADVERBS.has(cleanAdvTerm(w.kana)) || NEGATIVE_ADVERBS.has(cleanAdvTerm(w.kanji));
+        const negMatches = negSentence ? shuffle(advPool.filter(isNegAdv)).slice(0, 1) : [];
+        const nonNegPool = negSentence ? advPool.filter((w) => !isNegAdv(w)) : advPool;
+        const sameShape = shuffle(nonNegPool.filter((w) => advShapeGroup(w) === targetShape));
+        const otherShape = shuffle(nonNegPool.filter((w) => advShapeGroup(w) !== targetShape));
         const seenLabels = new Set([correctLabel]);
         const choices = [{ label: correctLabel, isCorrect: true }];
         for (const w of [...negMatches, ...sameShape, ...otherShape]) {
@@ -5232,15 +5581,12 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
 
     function renderQuizChoices(item) {
       const data = buildQuizData(item);
-      if (!data) {
-        idx++;
-        loadCard();
-        return;
-      }
+      if (!data) return false;
       kanjiDisplay.classList.toggle("quiz-sentence-prompt", Boolean(data.isSentence));
-      kanjiDisplay.textContent = data.prompt;
+      if (data.underline) setPromptWithUnderline(data.prompt, data.underline);
+      else kanjiDisplay.textContent = data.prompt;
       quizChoices.replaceChildren();
-      const nums = ["1", "2", "3", "4"];
+      const nums = ["1", "2", "3", "4", "5"];
       data.choices.forEach((opt, i) => {
         const btn = document.createElement("button");
         btn.type = "button";
@@ -5251,6 +5597,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         btn.addEventListener("click", () => handleQuizChoice(item, btn, data.targetWord));
         quizChoices.appendChild(btn);
       });
+      return true;
     }
 
     function finalizeQuizResult(item, isCorrect) {
@@ -5312,7 +5659,15 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       }
 
       const labels = resultBox.querySelectorAll(".answer-grid dt");
-      if (quizMode === "gram-pattern-vi" || quizMode === "gram-vi-pattern") {
+      if (quizMode === "book-quiz" && item.bookQuiz) {
+        const q = item.bookQuiz;
+        const correctChoice = q.choices?.[q.answerIndex] || "";
+        ["Bài / Phần", "Câu hỏi", "Đáp án đúng", "Giải thích"].forEach((t, i) => { if (labels[i]) labels[i].textContent = t; });
+        ansWord.textContent = `${item.setName || ""} · ${q.section || ""}`;
+        ansKana.textContent = q.prompt || "";
+        ansRomaji.textContent = `(${q.answerIndex + 1}) ${correctChoice}`;
+        ansMeaning.textContent = q.explanation || "";
+      } else if (quizMode === "gram-pattern-vi" || quizMode === "gram-vi-pattern") {
         ["Cấu trúc", "Cách dùng", "Ví dụ", "Nghĩa"].forEach((t, i) => { if (labels[i]) labels[i].textContent = t; });
         ansWord.textContent = item.structure || "";
         ansKana.textContent = item.grammarNote || "—";
@@ -5363,6 +5718,14 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         updateWrongBadge();
         updateImportantBadge();
         updateSkippedBadge();
+        if (
+          (mode === "wrong" && Number(wrongCountBadge.textContent) === 0) ||
+          (mode === "important" && Number(importantCountBadge.textContent) === 0) ||
+          (mode === "skipped" && Number(skippedCountBadge.textContent) === 0)
+        ) {
+          mode = "all";
+          setModeButtons();
+        }
         init();
       });
     });
@@ -5898,7 +6261,9 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
 
     function takeNextBatch(source) {
       const key = quizSessionKey();
-      const signature = quickHash(source.map(wordKey).sort().join("\u0001"));
+      const orderedMode = !shouldShuffleCurrentQuiz();
+      const sigKeys = orderedMode ? source.map(wordKey) : source.map(wordKey).sort();
+      const signature = quickHash((orderedMode ? "ord:" : "shuf:") + sigKeys.join("\u0001"));
       let queueState = batchQueues.get(key);
 
       if (!queueState) {
@@ -5911,7 +6276,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       }
 
       if (!queueState || queueState.signature !== signature || queueState.words.length === 0) {
-        queueState = { signature, words: shuffle(source) };
+        queueState = { signature, words: orderedMode ? source.slice() : shuffle(source) };
       }
       batchQueues.set(key, queueState);
 
@@ -5953,6 +6318,15 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
     }
 
     function renderDayOptions() {
+      const appliedAll = selectedDays.size === CONTENT_SETS.length;
+      const partText = appliedAll ? "Tất cả" : `${selectedDays.size} phần`;
+      const unit = currentUnitLabel();
+      // Khi bảng chọn đang đóng, chỉ cập nhật tóm tắt nhanh, KHÔNG dựng hàng trăm DOM nodes gây lag trên điện thoại
+      if (dayPickerPanel.hidden) {
+        const rawCount = filterForGrammarMode(getDailyWords()).length;
+        dailyCount.textContent = `${partText} · ${rawCount} ${unit}`;
+        return;
+      }
       const openGroups = new Set(
         [...dayChecklist.querySelectorAll("details[open]")].map(
           (group) => group.dataset.group,
@@ -5962,9 +6336,10 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       const allSelected = draftSelectedDays.size === CONTENT_SETS.length;
       const groups = new Map();
       CONTENT_SETS.forEach((vocabSet, setIndex) => {
-        const groupName = vocabSet.name
-          .replace(/\s+trang\s+\d+.*$/i, "")
-          .trim();
+        const isBookGrouped = contentType === "quiz" && quizMode === "book-quiz" && vocabSet.name.includes("·");
+        const groupName = isBookGrouped
+          ? vocabSet.name.split("·")[0].trim()
+          : vocabSet.name.replace(/\s+trang\s+\d+.*$/i, "").trim();
         const searchText = `${groupName} ${vocabSet.name}`.toLowerCase();
         if (daySearchQuery && !searchText.includes(daySearchQuery)) return;
         if (!groups.has(groupName)) groups.set(groupName, []);
@@ -6016,8 +6391,11 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         const itemList = document.createElement("div");
         itemList.className = "day-group-items";
         items.forEach(({ vocabSet, setIndex }) => {
+          const isBookGrouped = contentType === "quiz" && quizMode === "book-quiz" && vocabSet.name.includes("·");
           const pageMatch = vocabSet.name.match(/trang\s+(\d+)/i);
-          const shortName = pageMatch ? `Trang ${pageMatch[1]}` : vocabSet.name;
+          const shortName = isBookGrouped
+            ? vocabSet.name.split("·").slice(1).join("·").trim()
+            : pageMatch ? `Trang ${pageMatch[1]}` : vocabSet.name;
           itemList.appendChild(
             createDayOption(
               String(setIndex),
@@ -6038,9 +6416,6 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         dayChecklist.appendChild(empty);
       }
 
-      const appliedAll = selectedDays.size === CONTENT_SETS.length;
-      const partText = appliedAll ? "Tất cả" : `${selectedDays.size} phần`;
-      const unit = currentUnitLabel();      
       dailyCount.textContent = `${partText} · ${filterItemsForCurrentMode(getDailyWords()).length} ${unit}`;
       draftSelectionCount.textContent = `${draftSelectedDays.size} phần được chọn`;
       btnSelectAllDays.disabled = allSelected;
@@ -6257,9 +6632,20 @@ localStorage.setItem(currentDayStoreKey(), JSON.stringify([...selectedDays]));
     });
 
     btnClearWrong.addEventListener("click", () => {
-      if (wrongSet.size === 0) return;
-      if (confirm("Xoá toàn bộ danh sách từ hay sai đã lưu?")) {
-        wrongSet.clear();
+      const currentWrongItems = contentType === "quiz"
+        ? getAllWords().filter((item) => wrongSet.has(wrongWordKey(item)))
+        : null;
+      const count = currentWrongItems ? currentWrongItems.length : wrongSet.size;
+      if (count === 0) return;
+      const msg = contentType === "quiz"
+        ? `Xoá ${count} câu hay sai của nhóm trắc nghiệm hiện tại?`
+        : "Xoá toàn bộ danh sách từ hay sai đã lưu?";
+      if (confirm(msg)) {
+        if (currentWrongItems) {
+          currentWrongItems.forEach((item) => wrongSet.delete(wrongWordKey(item)));
+        } else {
+          wrongSet.clear();
+        }
         saveWrongSet();
         updateWrongBadge();
         if (mode === "wrong") {
@@ -6331,23 +6717,29 @@ localStorage.setItem(currentDayStoreKey(), JSON.stringify([...selectedDays]));
     });
 
     function showSkippedList() {
+      if (typeof stopExamModeIfActive === "function") stopExamModeIfActive();
       quizArea.style.display = "none";
       doneArea.style.display = "block";
       doneArea.innerHTML = "";
       progressFill.style.width = "0%";
 
+      const skippedItems = getAllWords().filter((item) => skippedSet.has(wordKey(item)));
+      if (skippedItems.length === 0) {
+        mode = "all";
+        setModeButtons();
+        init();
+        return;
+      }
       const card = document.createElement("div");
       card.className = "card skipped-screen";
       const heading = document.createElement("h2");
-      heading.textContent = `Các từ đang bỏ qua (${skippedSet.size})`;
+      heading.textContent = `Các mục đang bỏ qua (${skippedItems.length})`;
       const note = document.createElement("p");
-      note.textContent = "Những từ này sẽ không xuất hiện trong các lượt học. Bấm “Hiện lại” để đưa từng từ trở lại.";
+      note.textContent = "Những mục này sẽ không xuất hiện trong các lượt học. Bấm “Hiện lại” để đưa trở lại.";
       const list = document.createElement("div");
       list.className = "skipped-list";
 
-      getAllWords()
-        .filter((item) => skippedSet.has(wordKey(item)))
-        .forEach((item) => {
+      skippedItems.forEach((item) => {
           const row = document.createElement("div");
           row.className = "skipped-row";
           const info = document.createElement("div");
@@ -6371,7 +6763,8 @@ localStorage.setItem(currentDayStoreKey(), JSON.stringify([...selectedDays]));
             skippedSet.delete(wordKey(item));
             saveSkippedSet();
             updateSkippedBadge();
-            if (skippedSet.size === 0) {
+            const remainingSkipped = getAllWords().filter((w) => skippedSet.has(wordKey(w))).length;
+            if (remainingSkipped === 0) {
               mode = "all";
               setModeButtons();
               init();
@@ -6401,6 +6794,8 @@ localStorage.setItem(currentDayStoreKey(), JSON.stringify([...selectedDays]));
     }
 
     function init(forceNew = false) {
+      if (typeof stopExamModeIfActive === "function") stopExamModeIfActive();
+      if (typeof updateQuizExtraBar === "function") updateQuizExtraBar();
       if (mode === "skipped") {
         showSkippedList();
         return;
@@ -7196,8 +7591,16 @@ const isRecall = contentType === "grammar" && grammarMode === "recall" && item.d
       quizChoices.hidden = !inChoiceQuiz;
       starBuilder.hidden = !inStarQuiz;
       btnCheck.style.display = inChoiceQuiz ? "none" : "";
-      if (inChoiceQuiz) renderQuizChoices(item);
-      if (inStarQuiz) renderStarQuestion(item);
+      if (inChoiceQuiz && !renderQuizChoices(item)) {
+        order.splice(idx, 1);
+        initialWordCount = Math.max(answeredWordKeys.size, initialWordCount - 1);
+        return loadCard();
+      }
+      if (inStarQuiz && !renderStarQuestion(item)) {
+        order.splice(idx, 1);
+        initialWordCount = Math.max(answeredWordKeys.size, initialWordCount - 1);
+        return loadCard();
+      }
 
       readingField.style.display =
         isRecall || inAnyQuiz || (studyMode === "kanaToMeaning" && contentType === "vocab") ? "none" : "block";
@@ -7282,7 +7685,7 @@ const isRecall = contentType === "grammar" && grammarMode === "recall" && item.d
 
       if ((studyMode !== "kanaToMeaning" || contentType !== "vocab") && activeVocabHint !== "kana")
         inputReading.classList.add(readingOK ? "correct" : "wrong");
-      if (!isVietnameseToRomaji && studyMode !== "meaningToRomaji" && activeVocabHint !== "meaning")
+      if (!isVietnameseToRomaji && (contentType !== "vocab" || studyMode !== "meaningToRomaji") && activeVocabHint !== "meaning")
         inputMeaning.classList.add(meaningOK ? "correct" : "wrong");
 
       const bothOK = readingOK && meaningOK;
@@ -7321,7 +7724,7 @@ const isRecall = contentType === "grammar" && grammarMode === "recall" && item.d
       ansRomaji.textContent = item.romaji;
       ansMeaning.textContent = item.meaning;
       btnAcceptMeaning.hidden =
-        isVietnameseToRomaji || studyMode === "meaningToRomaji" || activeVocabHint === "meaning" || meaningOK || !userMeaning || (isSentenceWriting && !readingOK);
+        isVietnameseToRomaji || (contentType === "vocab" && studyMode === "meaningToRomaji") || activeVocabHint === "meaning" || meaningOK || !userMeaning || (isSentenceWriting && !readingOK);
 
       if (bothOK) {
         correctCount++;
@@ -7815,13 +8218,21 @@ const isRecall = contentType === "grammar" && grammarMode === "recall" && item.d
             .join("") +
           `</div>`;
       }
-      const wrongBtnHtml = wrongSet.size
-        ? `<button id="btnPracticeWrong" class="secondary">Luyện từ hay sai (${wrongSet.size})</button>`
+      const currentWrongCount = contentType === "quiz"
+        ? filterItemsForCurrentMode(
+            getAllWords().filter((item) => wrongSet.has(wrongWordKey(item)) && !skippedSet.has(wordKey(item)))
+          ).length
+        : wrongSet.size;
+      const wrongBtnHtml = currentWrongCount
+        ? `<button id="btnPracticeWrong" class="secondary">Luyện ${itemNoun} hay sai (${currentWrongCount})</button>`
         : "";
+      const doneMessage = total === 0 && contentType === "quiz" && quizMode === "book-quiz" && BOOK_QUIZ_SETS.length === 0
+        ? "Chưa tìm thấy dữ liệu sách Point &amp; Practice. Hãy copy thư mục <code>data/de-jlpt/</code> vào thư mục <code>data/</code> rồi tải lại trang (Ctrl + F5)."
+        : "Bạn đã hoàn thành lượt luyện tập này.";
       doneArea.innerHTML = `
     <div class="card done-screen">
       <div class="big">${correctCount} / ${total}</div>
-      <p>Bạn đã hoàn thành lượt luyện tập này.</p>
+      <p>${doneMessage}</p>
       <div class="actions">
         <button id="btnRestart">Lượt từ tiếp theo</button>
         ${wrongBtnHtml}
@@ -7857,15 +8268,564 @@ const isRecall = contentType === "grammar" && grammarMode === "recall" && item.d
     btnAcceptMeaning.addEventListener("click", acceptCurrentMeaning);
     btnNext.addEventListener("click", nextCard);
 
+    /* =========== NÂNG CẤP v6: THỨ TỰ CÂU + THI THỬ + SAO LƯU TIẾN ĐỘ =========== */
+    const btnQuizOrderToggle = document.getElementById("btnQuizOrderToggle");
+    const examDurationSelect = document.getElementById("examDurationSelect");
+    const btnStartExam = document.getElementById("btnStartExam");
+    const examArea = document.getElementById("examArea");
+    const btnBackupProgress = document.getElementById("btnBackupProgress");
+    const btnRestoreProgress = document.getElementById("btnRestoreProgress");
+    const progressImportFile = document.getElementById("progressImportFile");
+    const backupStatus = document.getElementById("backupStatus");
+
+    let examState = null;
+
+    function updateQuizExtraBar() {
+      if (!btnQuizOrderToggle || !btnStartExam) return;
+      const ordered = !shouldShuffleCurrentQuiz();
+      btnQuizOrderToggle.classList.toggle("active", ordered);
+      btnQuizOrderToggle.textContent = ordered ? "Thứ tự: Đúng thứ tự bài" : "Thứ tự: Trộn ngẫu nhiên";
+      btnQuizOrderToggle.setAttribute("aria-pressed", String(ordered));
+
+      const canExam = contentType === "quiz" && isChoiceQuizMode();
+      const hasItems = canExam && (order.length > 0 || CONTENT_SETS.length > 0);
+      btnStartExam.disabled = !hasItems;
+      if (examDurationSelect) examDurationSelect.disabled = !hasItems;
+      btnStartExam.textContent = "⏱ Thi thử (chấm cuối giờ)";
+      btnStartExam.title = canExam
+        ? "Làm hết lượt rồi mới nộp bài để chấm điểm và xem giải thích"
+        : "Chế độ thi thử áp dụng cho các dạng trắc nghiệm 4 đáp án";
+    }
+
+    function getExamSourcePool() {
+      const source = getModeSource();
+      const orderedMode = !shouldShuffleCurrentQuiz();
+      const list = orderedMode ? source.slice() : shuffle(source);
+      if (mode === "all" && selectedDays.size === 1) return list;
+      if (batchSize > 0 && list.length > batchSize) return list.slice(0, batchSize);
+      return list;
+    }
+
+    btnQuizOrderToggle?.addEventListener("click", () => {
+      if (contentType !== "quiz") return;
+      if (quizMode === "book-quiz") {
+        keepOrderBook = !keepOrderBook;
+        localStorage.setItem(KEEP_ORDER_BOOK_KEY, String(keepOrderBook));
+      } else {
+        keepOrderOther = !keepOrderOther;
+        localStorage.setItem(KEEP_ORDER_OTHER_KEY, String(keepOrderOther));
+      }
+      clearQuizProgress();
+      updateQuizExtraBar();
+      init(true);
+    });
+
+    function formatExamClock(totalSeconds) {
+      const sec = Math.max(0, Math.floor(totalSeconds));
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+    }
+
+    function stopExamTimer() {
+      if (examState?.timerId) {
+        window.clearInterval(examState.timerId);
+        examState.timerId = null;
+      }
+    }
+
+    function stopExamModeIfActive() {
+      if (!examState) return;
+      stopExamTimer();
+      examState = null;
+      if (examArea) {
+        examArea.hidden = true;
+        examArea.innerHTML = "";
+      }
+    }
+
+    function startExamMode() {
+      if (contentType !== "quiz" || !isChoiceQuizMode()) return;
+      const pool = getExamSourcePool();
+      const questions = pool
+        .map((item) => ({ item, data: buildQuizData(item) }))
+        .filter((entry) => entry.data && Array.isArray(entry.data.choices) && entry.data.choices.length > 0);
+      if (!questions.length) {
+        alert("Không có câu hỏi phù hợp trong phạm vi đã chọn để thi thử.");
+        return;
+      }
+      saveCurrentSession();
+      stopExamModeIfActive();
+      const durationMinutes = Number(examDurationSelect?.value || 0);
+      examState = {
+        questions,
+        answers: new Array(questions.length).fill(-1),
+        currentIdx: 0,
+        submitted: false,
+        filterWrongOnly: false,
+        durationSeconds: durationMinutes > 0 ? durationMinutes * 60 : 0,
+        remainingSeconds: durationMinutes > 0 ? durationMinutes * 60 : 0,
+        elapsedSeconds: 0,
+        timerId: null,
+      };
+      quizArea.style.display = "none";
+      doneArea.style.display = "none";
+      examArea.hidden = false;
+
+      examState.timerId = window.setInterval(() => {
+        if (!examState || examState.submitted) {
+          stopExamTimer();
+          return;
+        }
+        examState.elapsedSeconds++;
+        if (examState.durationSeconds > 0) {
+          examState.remainingSeconds = Math.max(0, examState.remainingSeconds - 1);
+          updateExamTimerDisplay();
+          if (examState.remainingSeconds <= 0) {
+            submitExam(true);
+          }
+        } else {
+          updateExamTimerDisplay();
+        }
+      }, 1000);
+
+      renderExamQuestionView();
+    }
+
+    function updateExamTimerDisplay() {
+      const badge = document.getElementById("examTimerBadge");
+      if (!badge || !examState) return;
+      if (examState.durationSeconds > 0) {
+        badge.textContent = `⏱ ${formatExamClock(examState.remainingSeconds)}`;
+        badge.classList.toggle("warning", examState.remainingSeconds <= 120);
+      } else {
+        badge.textContent = `⏱ ${formatExamClock(examState.elapsedSeconds)}`;
+        badge.classList.remove("warning");
+      }
+    }
+
+    function renderPromptWithUnderlineInto(el, promptText, underlineText) {
+      el.replaceChildren();
+      const full = String(promptText || "");
+      const target = String(underlineText || "");
+      if (!target || !full.includes(target)) {
+        el.textContent = full;
+        return;
+      }
+      const pos = full.indexOf(target);
+      if (pos > 0) el.append(document.createTextNode(full.slice(0, pos)));
+      const span = document.createElement("span");
+      span.className = "jlpt-underline";
+      span.textContent = target;
+      el.append(span);
+      if (pos + target.length < full.length) {
+        el.append(document.createTextNode(full.slice(pos + target.length)));
+      }
+    }
+
+    function renderExamQuestionView() {
+      if (!examState || examState.submitted) return;
+      const { questions, answers, currentIdx } = examState;
+      const entry = questions[currentIdx];
+      const answeredCount = answers.filter((a) => a >= 0).length;
+
+      examArea.innerHTML = "";
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const topbar = document.createElement("div");
+      topbar.className = "exam-topbar";
+
+      const meta = document.createElement("div");
+      meta.className = "exam-meta";
+      const timerBadge = document.createElement("span");
+      timerBadge.id = "examTimerBadge";
+      timerBadge.className = "exam-timer-badge";
+      const counter = document.createElement("span");
+      counter.textContent = `Đã chọn: ${answeredCount}/${questions.length} câu`;
+      meta.append(timerBadge, counter);
+
+      const topActions = document.createElement("div");
+      topActions.className = "exam-topbar-actions";
+      const btnSubmit = document.createElement("button");
+      btnSubmit.type = "button";
+      btnSubmit.className = "exam-submit-btn";
+      btnSubmit.textContent = "Nộp bài";
+      btnSubmit.addEventListener("click", () => {
+        const unanswered = answers.filter((a) => a < 0).length;
+        if (unanswered > 0 && !confirm(`Bạn còn ${unanswered} câu chưa chọn đáp án. Vẫn nộp bài?`)) return;
+        submitExam(false);
+      });
+      const btnExit = document.createElement("button");
+      btnExit.type = "button";
+      btnExit.className = "secondary";
+      btnExit.textContent = "Thoát";
+      btnExit.addEventListener("click", () => {
+        if (!confirm("Thoát chế độ thi thử và quay về luyện từng câu?")) return;
+        stopExamModeIfActive();
+        init();
+      });
+      topActions.append(btnSubmit, btnExit);
+      topbar.append(meta, topActions);
+
+      const navGrid = document.createElement("div");
+      navGrid.className = "exam-nav-grid";
+      questions.forEach((_, qIdx) => {
+        const pill = document.createElement("button");
+        pill.type = "button";
+        pill.className = "exam-nav-pill"
+          + (answers[qIdx] >= 0 ? " answered" : "")
+          + (qIdx === currentIdx ? " current" : "");
+        pill.textContent = String(qIdx + 1);
+        pill.addEventListener("click", () => {
+          examState.currentIdx = qIdx;
+          renderExamQuestionView();
+        });
+        navGrid.append(pill);
+      });
+
+      const qHead = document.createElement("div");
+      qHead.className = "exam-q-head";
+      const qNum = document.createElement("span");
+      qNum.textContent = `Câu ${currentIdx + 1} / ${questions.length}`;
+      const qSec = document.createElement("span");
+      qSec.textContent = entry.item.bookQuiz
+        ? `${entry.item.setName || ""} · ${entry.item.bookQuiz.section || ""}`
+        : (entry.item.type || "");
+      qHead.append(qNum, qSec);
+
+      const promptEl = document.createElement("div");
+      promptEl.className = "exam-q-prompt";
+      renderPromptWithUnderlineInto(promptEl, entry.data.prompt, entry.data.underline);
+
+      const choicesWrap = document.createElement("div");
+      choicesWrap.className = "quiz-choices";
+      const nums = ["1", "2", "3", "4", "5"];
+      entry.data.choices.forEach((opt, optIdx) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "quiz-choice" + (answers[currentIdx] === optIdx ? " exam-selected" : "");
+        btn.innerHTML = `<span class="opt-key">${nums[optIdx] || (optIdx + 1)}</span><span></span>`;
+        btn.lastElementChild.textContent = opt.label;
+        btn.addEventListener("click", () => {
+          examState.answers[currentIdx] = optIdx;
+          renderExamQuestionView();
+        });
+        choicesWrap.append(btn);
+      });
+
+      const bottomActions = document.createElement("div");
+      bottomActions.className = "actions";
+      const btnPrev = document.createElement("button");
+      btnPrev.type = "button";
+      btnPrev.className = "secondary";
+      btnPrev.textContent = "← Câu trước";
+      btnPrev.disabled = currentIdx === 0;
+      btnPrev.addEventListener("click", () => {
+        if (examState.currentIdx > 0) {
+          examState.currentIdx--;
+          renderExamQuestionView();
+        }
+      });
+      const btnNextExam = document.createElement("button");
+      btnNextExam.type = "button";
+      btnNextExam.textContent = currentIdx === questions.length - 1 ? "Nộp bài ✓" : "Câu tiếp theo →";
+      btnNextExam.addEventListener("click", () => {
+        if (examState.currentIdx < questions.length - 1) {
+          examState.currentIdx++;
+          renderExamQuestionView();
+        } else {
+          const unanswered = answers.filter((a) => a < 0).length;
+          if (unanswered > 0 && !confirm(`Bạn còn ${unanswered} câu chưa chọn đáp án. Vẫn nộp bài?`)) return;
+          submitExam(false);
+        }
+      });
+      bottomActions.append(btnPrev, btnNextExam);
+
+      card.append(topbar, navGrid, qHead, promptEl, choicesWrap, bottomActions);
+      examArea.append(card);
+      updateExamTimerDisplay();
+    }
+
+    function submitExam(autoTimeout = false) {
+      if (!examState || examState.submitted) return;
+      stopExamTimer();
+      examState.submitted = true;
+      let score = 0;
+      let wrongAdded = 0;
+      examState.results = examState.questions.map((entry, i) => {
+        const chosenIdx = examState.answers[i];
+        const correctIdx = entry.data.choices.findIndex((c) => c.isCorrect);
+        const isCorrect = chosenIdx === correctIdx;
+        if (isCorrect) {
+          score++;
+        } else {
+          const wKey = wrongWordKey(entry.item);
+          if (!wrongSet.has(wKey)) {
+            wrongSet.add(wKey);
+            wrongAdded++;
+          }
+        }
+        return { entry, chosenIdx, correctIdx, isCorrect };
+      });
+      if (wrongAdded > 0) {
+        saveWrongSet();
+        updateWrongBadge();
+      }
+      examState.score = score;
+      examState.autoTimeout = autoTimeout;
+      renderExamResultView();
+    }
+
+    function renderExamResultView() {
+      if (!examState || !examState.submitted) return;
+      const { results, score, elapsedSeconds, autoTimeout, filterWrongOnly } = examState;
+      const total = results.length;
+      const pct = total ? Math.round((score / total) * 100) : 0;
+      const wrongTotal = total - score;
+
+      examArea.innerHTML = "";
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const head = document.createElement("div");
+      head.className = "exam-summary-head";
+      const scoreEl = document.createElement("div");
+      scoreEl.className = "exam-summary-score";
+      scoreEl.textContent = `${score} / ${total} (${pct}%)`;
+      const sub = document.createElement("p");
+      sub.className = "exam-summary-sub";
+      sub.textContent = (autoTimeout ? "Hết giờ làm bài · " : "Đã nộp bài · ")
+        + `Thời gian: ${formatExamClock(elapsedSeconds)} · Sai/bỏ trống: ${wrongTotal} câu (đã tự động lưu vào Câu hay sai).`;
+
+      const actionRow = document.createElement("div");
+      actionRow.className = "actions";
+      const btnRetryExam = document.createElement("button");
+      btnRetryExam.type = "button";
+      btnRetryExam.textContent = "Thi lại đề mới";
+      btnRetryExam.addEventListener("click", () => startExamMode());
+      const btnBackStudy = document.createElement("button");
+      btnBackStudy.type = "button";
+      btnBackStudy.className = "secondary";
+      btnBackStudy.textContent = "Quay về học từng câu";
+      btnBackStudy.addEventListener("click", () => {
+        stopExamModeIfActive();
+        init();
+      });
+      actionRow.append(btnRetryExam, btnBackStudy);
+      if (wrongTotal > 0) {
+        const btnDrillWrong = document.createElement("button");
+        btnDrillWrong.type = "button";
+        btnDrillWrong.className = "secondary";
+        btnDrillWrong.textContent = `Ôn câu hay sai (${wrongCountBadge.textContent})`;
+        btnDrillWrong.addEventListener("click", () => {
+          stopExamModeIfActive();
+          mode = "wrong";
+          setModeButtons();
+          init(true);
+        });
+        actionRow.append(btnDrillWrong);
+      }
+      head.append(scoreEl, sub, actionRow);
+
+      const filters = document.createElement("div");
+      filters.className = "exam-review-filters";
+      const btnAllRev = document.createElement("button");
+      btnAllRev.type = "button";
+      btnAllRev.className = "mode-btn" + (!filterWrongOnly ? " active" : "");
+      btnAllRev.textContent = `Tất cả (${total})`;
+      btnAllRev.addEventListener("click", () => {
+        examState.filterWrongOnly = false;
+        renderExamResultView();
+      });
+      const btnWrongRev = document.createElement("button");
+      btnWrongRev.type = "button";
+      btnWrongRev.className = "mode-btn" + (filterWrongOnly ? " active" : "");
+      btnWrongRev.textContent = `Chỉ câu sai (${wrongTotal})`;
+      btnWrongRev.addEventListener("click", () => {
+        examState.filterWrongOnly = true;
+        renderExamResultView();
+      });
+      filters.append(btnAllRev, btnWrongRev);
+
+      const list = document.createElement("div");
+      list.className = "exam-review-list";
+      const shown = filterWrongOnly ? results.filter((r) => !r.isCorrect) : results;
+      if (!shown.length) {
+        const empty = document.createElement("p");
+        empty.style.cssText = "text-align:center;color:var(--moss);font-weight:700;padding:16px 0;";
+        empty.textContent = "Tuyệt vời! Bạn không sai câu nào trong bài thi này.";
+        list.append(empty);
+      } else {
+        shown.forEach((r) => {
+          const origIdx = results.indexOf(r);
+          const row = document.createElement("div");
+          row.className = "exam-review-item " + (r.isCorrect ? "ok" : "bad");
+
+          const metaRow = document.createElement("div");
+          metaRow.style.cssText = "font-size:11.5px;color:var(--ink-soft);font-weight:700;";
+          metaRow.textContent = `Câu ${origIdx + 1} · ${r.isCorrect ? "✓ Đúng" : "✕ Sai"}${r.entry.item.bookQuiz?.section ? " · " + r.entry.item.bookQuiz.section : ""}`;
+
+          const promptDiv = document.createElement("div");
+          promptDiv.className = "exam-review-prompt";
+          renderPromptWithUnderlineInto(promptDiv, r.entry.data.prompt, r.entry.data.underline);
+
+          const ansDiv = document.createElement("div");
+          ansDiv.className = "exam-review-ans";
+          const chosenText = r.chosenIdx >= 0 ? `(${r.chosenIdx + 1}) ${r.entry.data.choices[r.chosenIdx]?.label || ""}` : "Chưa chọn";
+          const correctText = r.correctIdx >= 0 ? `(${r.correctIdx + 1}) ${r.entry.data.choices[r.correctIdx]?.label || ""}` : "—";
+          if (r.isCorrect) {
+            ansDiv.innerHTML = 'Đáp án: <strong class="ok"></strong>';
+            ansDiv.querySelector("strong").textContent = correctText;
+          } else {
+            ansDiv.innerHTML = 'Bạn chọn: <strong class="bad"></strong> · Đáp án đúng: <strong class="ok"></strong>';
+            const strongs = ansDiv.querySelectorAll("strong");
+            strongs[0].textContent = chosenText;
+            strongs[1].textContent = correctText;
+          }
+
+          row.append(metaRow, promptDiv, ansDiv);
+          const expText = r.entry.item.bookQuiz?.explanation || r.entry.item.meaning || "";
+          if (expText) {
+            const expDiv = document.createElement("div");
+            expDiv.className = "exam-review-exp";
+            expDiv.textContent = expText;
+            row.append(expDiv);
+          }
+          list.append(row);
+        });
+      }
+
+      card.append(head, filters, list);
+      examArea.append(card);
+    }
+
+    btnStartExam?.addEventListener("click", startExamMode);
+
+    // --- Sao lưu & Khôi phục toàn bộ tiến độ localStorage ---
+    const BACKUP_EXACT_KEYS = new Set([
+      "japanesePersonalRememberWords_v1",
+      "vocabBai2WrongWords_v1",
+      "vocabBai2SkippedWords_v1",
+      "vocabImportantWords_v1",
+      "vocabMeaningAliases_v1",
+      "japaneseGrammarRecallAnswerAliases_v1",
+      "vocabRetryWrongEnabled_v1",
+      "autoSpeechBeforeCheck_v1",
+    ]);
+
+    function isAllowedBackupKey(key) {
+      return BACKUP_EXACT_KEYS.has(key) || String(key).startsWith("japaneseQuiz");
+    }
+
+    function setBackupStatus(msg, isError = false) {
+      if (!backupStatus) return;
+      backupStatus.textContent = msg;
+      backupStatus.dataset.kind = isError ? "error" : "ok";
+    }
+
+    btnBackupProgress?.addEventListener("click", () => {
+      try {
+        saveCurrentSession();
+        const dump = {};
+        let count = 0;
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && isAllowedBackupKey(k)) {
+            dump[k] = localStorage.getItem(k);
+            count++;
+          }
+        }
+        const payload = {
+          app: "jlpt-study-app",
+          version: 1,
+          exportedAt: new Date().toISOString(),
+          keysCount: count,
+          data: dump,
+        };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        const dateTag = new Date().toISOString().slice(0, 10);
+        a.href = url;
+        a.download = `tien-do-hoc-tieng-nhat-${dateTag}.json`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        setBackupStatus(`Đã xuất sao lưu thành công (${count} mục dữ liệu tiến độ).`);
+      } catch (err) {
+        setBackupStatus(`Không thể sao lưu: ${err.message}`, true);
+      }
+    });
+
+    btnRestoreProgress?.addEventListener("click", () => progressImportFile?.click());
+    progressImportFile?.addEventListener("change", async (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      try {
+        if (file.size > 5 * 1024 * 1024) throw new Error("Tệp sao lưu quá lớn (tối đa 5 MB).");
+        const parsed = JSON.parse(await file.text());
+        const dataMap = parsed && typeof parsed === "object" && parsed.data && typeof parsed.data === "object"
+          ? parsed.data
+          : null;
+        if (!dataMap) throw new Error("Định dạng tệp sao lưu không hợp lệ.");
+        const validEntries = Object.entries(dataMap).filter(
+          ([k, v]) => isAllowedBackupKey(k) && typeof v === "string"
+        );
+        if (!validEntries.length) throw new Error("Không tìm thấy dữ liệu tiến độ hợp lệ trong tệp.");
+        if (!confirm(`Khôi phục ${validEntries.length} mục dữ liệu tiến độ học? Dữ liệu hiện tại trên trình duyệt này sẽ được cập nhật và trang sẽ tải lại.`)) {
+          return;
+        }
+        validEntries.forEach(([k, v]) => localStorage.setItem(k, v));
+        setBackupStatus(`Đã khôi phục ${validEntries.length} mục. Đang tải lại trang…`);
+        setTimeout(() => location.reload(), 300);
+      } catch (err) {
+        setBackupStatus(`Không thể khôi phục: ${err.message}`, true);
+      } finally {
+        event.target.value = "";
+      }
+    });
+
+
+
     /* Enter: ô Romaji -> ô nghĩa (nếu có). Ô cuối -> phát âm/chấm. Sau khi chấm -> câu tiếp. */
     document.addEventListener("keydown", (e) => {
+      if (examState && !examState.submitted && lookupOverlay.hidden && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || "")) {
+        if (["1", "2", "3", "4", "5"].includes(e.key)) {
+          const optIdx = Number(e.key) - 1;
+          const choices = examState.questions[examState.currentIdx]?.data?.choices || [];
+          if (optIdx < choices.length) {
+            e.preventDefault();
+            examState.answers[examState.currentIdx] = optIdx;
+            renderExamQuestionView();
+          }
+          return;
+        }
+        if (e.key === "ArrowRight" || e.key === "Enter") {
+          e.preventDefault();
+          if (examState.currentIdx < examState.questions.length - 1) {
+            examState.currentIdx++;
+            renderExamQuestionView();
+          }
+          return;
+        }
+        if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          if (examState.currentIdx > 0) {
+            examState.currentIdx--;
+            renderExamQuestionView();
+          }
+          return;
+        }
+        return;
+      }
+      if (examState && examState.submitted) return;
       if (
         contentType === "quiz" &&
         !checked &&
         quizArea.style.display !== "none" &&
         lookupOverlay.hidden &&
         !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || "") &&
-        ["1", "2", "3", "4"].includes(e.key)
+        ["1", "2", "3", "4", "5"].includes(e.key)
       ) {
         const idxKey = Number(e.key) - 1;
         const targetBtn = isChoiceQuizMode()
@@ -8557,6 +9517,7 @@ const isRecall = contentType === "grammar" && grammarMode === "recall" && item.d
       }
     });
     updateRememberBadge();
+
   </script>
   <script>
   if ("serviceWorker" in navigator) {
@@ -8593,10 +9554,13 @@ const isRecall = contentType === "grammar" && grammarMode === "recall" && item.d
       try {
         await navigator.serviceWorker.register("./sw.js");
         const reg = await navigator.serviceWorker.ready;
-        if (navigator.onLine) {
-          (reg.active || navigator.serviceWorker.controller)?.postMessage({
-            type: "START_PDF_CACHE",
-          });
+        if (navigator.onLine && !sessionStorage.getItem("pdfCacheTriggered_v1")) {
+          sessionStorage.setItem("pdfCacheTriggered_v1", "1");
+          setTimeout(() => {
+            (reg.active || navigator.serviceWorker.controller)?.postMessage({
+              type: "START_PDF_CACHE",
+            });
+          }, 1500);
         }
       } catch (_) {}
     });
