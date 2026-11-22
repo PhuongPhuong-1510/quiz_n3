@@ -108,7 +108,9 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  const isPdf = url.pathname.toLowerCase().endsWith(".pdf");
+  const pathnameLower = url.pathname.toLowerCase();
+  const isPdf = pathnameLower.endsWith(".pdf");
+  const isStaticData = pathnameLower.includes("/data/") && pathnameLower.endsWith(".js");
   const isMainPage =
     request.mode === "navigate" && request.destination === "document" && !isPdf;
   const targetCacheName = isPdf ? PDF_CACHE : DATA_CACHE;
@@ -122,8 +124,9 @@ self.addEventListener("fetch", (event) => {
         (await cache.match(url.pathname, { ignoreSearch: true }));
 
       if (cached) {
-        // File PDF đã lưu thì trả ngay, không tải lại ngầm gây tốn mạng
-        if (!isPdf) {
+        // PDF và file dữ liệu .js trong /data/ đã gắn theo OFFLINE_VERSION
+        // -> trả ngay từ cache, không tải lại ngầm gây lag trên điện thoại
+        if (!isPdf && !isStaticData) {
           event.waitUntil(
             fetch(request)
               .then((res) =>
