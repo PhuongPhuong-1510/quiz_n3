@@ -4,8 +4,14 @@ const DATA_CACHE = self.OFFLINE_VERSION || "n3-data-v1";
 const PDF_CACHE = "n3-pdfs-v1";
 
 const ALL_FILES = self.OFFLINE_FILES || [];
-const DATA_FILES = ALL_FILES.filter((u) => !u.toLowerCase().endsWith(".pdf"));
 const PDF_FILES = ALL_FILES.filter((u) => u.toLowerCase().endsWith(".pdf"));
+const PRECACHE_FILES = [
+  "./",
+  "./index.html",
+  "./hoc-lieu.html",
+  "./form_luyen_ngu_phap_3_buoc_romaji.html",
+  "./manifest.json",
+].filter((url) => ALL_FILES.includes(url));
 
 let isCachingPdfs = false;
 
@@ -61,18 +67,14 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     (async () => {
       const cache = await caches.open(DATA_CACHE);
-      const BATCH_SIZE = 10;
-      for (let i = 0; i < DATA_FILES.length; i += BATCH_SIZE) {
-        const batch = DATA_FILES.slice(i, i + BATCH_SIZE);
-        await Promise.allSettled(
-          batch.map(async (url) => {
-            try {
-              const res = await fetch(url, { cache: "no-cache" });
-              if (res.ok && res.status === 200) await cache.put(url, res);
-            } catch (_) {}
-          })
-        );
-      }
+      await Promise.allSettled(
+        PRECACHE_FILES.map(async (url) => {
+          try {
+            const res = await fetch(url, { cache: "no-cache" });
+            if (res.ok && res.status === 200) await cache.put(url, res);
+          } catch (_) {}
+        })
+      );
     })()
   );
   self.skipWaiting();

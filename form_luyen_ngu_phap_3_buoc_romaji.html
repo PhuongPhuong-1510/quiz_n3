@@ -3815,7 +3815,6 @@
   </div>
 
   <script src="./data/danh-sach-data.js"></script>
-  <script src="./data/de-jlpt/danh-sach-de-jlpt.js"></script>
   <script>
     /*
     Mỗi phần tử là một bộ từ riêng. Muốn thêm buổi học mới, chỉ cần sao chép
@@ -9553,15 +9552,6 @@ const isRecall = contentType === "grammar" && grammarMode === "recall" && item.d
     window.addEventListener("load", async () => {
       try {
         await navigator.serviceWorker.register("./sw.js");
-        const reg = await navigator.serviceWorker.ready;
-        if (navigator.onLine && !sessionStorage.getItem("pdfCacheTriggered_v1")) {
-          sessionStorage.setItem("pdfCacheTriggered_v1", "1");
-          setTimeout(() => {
-            (reg.active || navigator.serviceWorker.controller)?.postMessage({
-              type: "START_PDF_CACHE",
-            });
-          }, 1500);
-        }
       } catch (_) {}
     });
   }

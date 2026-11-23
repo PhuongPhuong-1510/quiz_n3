@@ -8,6 +8,7 @@
   const VOCAB = "./data/tu-vung/danh-sach-tu-vung.js";
   const SENTENCE = "./data/cau-vi-du/danh-sach-cau-vi-du.js";
   const GRAMMAR = "./data/ngu-phap/danh-sach-ngu-phap.js";
+  const BOOK_QUIZ = "./data/de-jlpt/danh-sach-de-jlpt.js";
 
   let sectionLists;
   if (!phan || phan === "tuvung") {
@@ -17,9 +18,11 @@
     sectionLists = [VOCAB, SENTENCE];
   } else if (phan === "nguphap") {
     sectionLists = [VOCAB, GRAMMAR];
+  } else if (phan === "tracnghiem") {
+    // Chỉ tải bộ đề Point & Practice khi người dùng mở tab trắc nghiệm.
+    sectionLists = [VOCAB, SENTENCE, GRAMMAR, BOOK_QUIZ];
   } else {
-    // Tab trắc nghiệm (?phan=tracnghiem) hoặc trang khác cần đủ cả 3 phần
-    sectionLists = [VOCAB, SENTENCE, GRAMMAR];
+    sectionLists = [VOCAB];
   }
 
   sectionLists.forEach((listFile) => {
