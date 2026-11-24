@@ -5323,6 +5323,66 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       }
     }
 
+    function hasDistinctKanjiForm(item) {
+      const written = String(item?.kanji || "").normalize("NFKC").trim();
+      const reading = String(item?.kana || "").normalize("NFKC").trim();
+      return /\p{Script=Han}/u.test(written) && normJapanese(written) !== normJapanese(reading);
+    }
+
+    function kanaScriptGroup(text) {
+      const value = String(text || "").normalize("NFKC");
+      if (/[\u30A1-\u30FA]/.test(value) && !/[\u3041-\u3096]/.test(value)) return "katakana";
+      if (/[\u3041-\u3096]/.test(value) && !/[\u30A1-\u30FA]/.test(value)) return "hiragana";
+      return "mixed";
+    }
+
+    // Từ thuần Hiragana/Katakana không có cặp Kanji -> Kana để hỏi hai chiều.
+    // Với các từ này, dùng nghĩa làm đề và vẫn tạo 1 đáp án đúng + 3 đáp án nhiễu bằng Kana.
+    function buildKanaOnlyQuizData(item) {
+      const correctLabel = String(item.kanji || item.kana || "").trim();
+      const correctNorm = normJapanese(correctLabel);
+      if (!correctLabel || !item.meaning) return null;
+
+      const targetScript = kanaScriptGroup(correctLabel);
+      const targetType = normalizeWordTypeGroup(item.type);
+      const candidates = getAllWords().filter((word) => {
+        const label = String(word.kanji || word.kana || "").trim();
+        return label && !hasDistinctKanjiForm(word) && normJapanese(label) !== correctNorm;
+      });
+      const ranked = candidates
+        .map((word) => {
+          const label = String(word.kanji || word.kana || "").trim();
+          let score = 0;
+          if (kanaScriptGroup(label) === targetScript) score += 5;
+          if (isCompatibleTypeGroup(targetType, normalizeWordTypeGroup(word.type))) score += 3;
+          if (Math.abs(label.length - correctLabel.length) <= 1) score += 2;
+          return { label, score };
+        })
+        .sort((a, b) => b.score - a.score);
+
+      const choices = [{ label: correctLabel, isCorrect: true }];
+      const seen = new Set([correctNorm]);
+      for (const candidate of [...shuffle(ranked.slice(0, 20)), ...shuffle(ranked.slice(20))]) {
+        const key = normJapanese(candidate.label);
+        if (!key || seen.has(key)) continue;
+        seen.add(key);
+        choices.push({ label: candidate.label, isCorrect: false });
+        if (choices.length === 4) break;
+      }
+      // Nếu nhóm từ thuần Kana của bài quá ít, lấy cách đọc Kana của các từ còn lại làm nhiễu.
+      if (choices.length < 4) {
+        for (const word of shuffle(getAllWords())) {
+          const label = String(word.kana || word.kanji || "").trim();
+          const key = normJapanese(label);
+          if (!key || seen.has(key)) continue;
+          seen.add(key);
+          choices.push({ label, isCorrect: false });
+          if (choices.length === 4) break;
+        }
+      }
+      return { prompt: item.meaning, isSentence: true, choices: shuffle(choices) };
+    }
+
     // --- 4. Tạo đề & chấm chung cho các chế độ 4 đáp án (thuật toán gài bẫy JLPT v5) ---
     function buildQuizData(item) {
       if (quizMode === "book-quiz" && item.bookQuiz) {
@@ -5339,6 +5399,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
         };
       }
       if (quizMode === "kanji-kana") {
+        if (!hasDistinctKanjiForm(item)) return buildKanaOnlyQuizData(item);
         const targetKana = normJapanese(item.kana);
         const generated = generateKanaDistractors(item.kana, item.kanji);
         const seen = new Set([targetKana]);
@@ -5368,6 +5429,7 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       }
 
       if (quizMode === "kana-kanji") {
+        if (!hasDistinctKanjiForm(item)) return buildKanaOnlyQuizData(item);
         const targetKana = normJapanese(item.kana);
         const targetKanji = normJapanese(item.kanji);
         const pool = getAllWords().filter(
@@ -6198,9 +6260,9 @@ const REMEMBER_WORDS_KEY = "japanesePersonalRememberWords_v1";
       if (contentType !== "quiz") return list;
 
       if (quizMode === "kanji-kana" || quizMode === "kana-kanji") {
-        return list.filter(
-          (w) => /\p{Script=Han}/u.test(String(w.kanji || "")) && w.kana && w.kanji !== w.kana
-        );
+        // Lấy toàn bộ bộ từ: Kanji, từ thuần Hiragana và từ thuần Katakana.
+        // buildQuizData sẽ tự chọn dạng câu phù hợp và trộn đáp án nhiễu.
+        return list;
       }
       if (quizMode === "vocab-vi" || quizMode === "vi-vocab") {
         // Lấy toàn bộ từ vựng: cả từ có Kanji lẫn từ thuần Hiragana / Katakana
