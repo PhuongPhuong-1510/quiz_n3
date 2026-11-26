@@ -208,8 +208,37 @@ const VOCAB_DATA_FILES = [
   "c9bai2-trang-189.js", "c9bai2-trang-190.js",
   "c9bai2-trang-191.js", "c9bai2-trang-192.js",
 
+  "c1bai1-tu-vung.js",
+"c1bai2-tu-vung.js",
+"c1bai3-tu-vung.js",
+"c2bai1-tu-vung.js",
+"c2bai2-tu-vung.js",
+"c2bai3-tu-vung.js",
+"c3bai1-tu-vung.js",
+"c3bai2-tu-vung.js",
+"c3bai3-tu-vung.js",
+"c4bai1-tu-vung.js",
+"c4bai2-tu-vung.js",
+"c4bai3-tu-vung.js",
+"c5bai1-tu-vung.js",
+"c5bai2-tu-vung.js",
+"c5bai3-tu-vung.js",
+"c6bai1-tu-vung.js",
+"c6bai2-tu-vung.js",
+"c6bai3-tu-vung.js",
+"c7bai1-tu-vung.js",
+"c7bai2-tu-vung.js",
+"c7bai3-tu-vung.js",
+"c8bai1-tu-vung.js",
+"c8bai2-tu-vung.js",
+"c8bai3-tu-vung.js",
+"c9bai1-tu-vung.js",
+"c9bai2-tu-vung.js",
+
+"n3-tu-vung-dong-nghia.js",
+"n3-pho-tu-tuong-thanh-tuong-hinh.js",
+"n3-tu-vung-katakana.js",
   // Bài tập về nhà - Bài 12 (để cuối cùng)
-  "btvn-bai12.js",
 ];
 
 VOCAB_DATA_FILES.forEach((fileName) => {

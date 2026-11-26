@@ -3575,6 +3575,56 @@
     @media (max-width: 600px) {
       #quizArea .card-tools { margin-bottom: 8px; }
     }
+    .practice-settings-open {
+      display: block;
+      width: fit-content;
+      margin: 8px 0 12px auto;
+      padding: 9px 14px;
+      border-radius: 9px;
+      font-size: 13px;
+    }
+    .practice-settings-open[hidden] { display: none !important; }
+    #practiceSettingsDialog {
+      width: min(900px, calc(100% - 24px));
+      max-width: none;
+      max-height: calc(100dvh - 32px);
+      margin: auto;
+      padding: 0;
+      overflow: auto;
+      overscroll-behavior: contain;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--paper);
+      color: var(--ink);
+      box-shadow: 0 18px 70px #0004;
+    }
+    #practiceSettingsDialog::backdrop { background: #0007; }
+    .practice-settings-heading {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+    }
+    .practice-settings-heading h2 { margin: 0; font-size: 17px; }
+    .practice-settings-heading button { flex: none; padding: 8px 12px; font-size: 12px; }
+    #practiceSettingsBody { padding: 4px 16px 16px; }
+    #practiceSettingsDialog .mode-select { flex-wrap: wrap; overflow: visible; }
+    #practiceSettingsDialog .mode-btn { white-space: normal; }
+    #practiceSettingsDialog .study-settings { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    #practiceSettingsDialog .daily-select { grid-column: 1 / -1; }
+    #practiceSettingsDialog .day-picker-panel { position: static; width: 100%; max-height: none; }
+    body.practice-settings-opened { overflow: hidden; }
+    @media (max-width: 600px) {
+      #practiceSettingsDialog { width: calc(100% - 12px); max-height: calc(100dvh - 16px); }
+      #practiceSettingsBody { padding: 4px 9px 12px; }
+      #practiceSettingsDialog .study-settings { grid-template-columns: minmax(0, 1fr); }
+    }
   </style>
 </head>
 
@@ -3601,6 +3651,16 @@
       </div>
     </header>
 
+    <button type="button" id="btnOpenPracticeSettings" class="practice-settings-open" hidden
+      aria-haspopup="dialog" aria-controls="practiceSettingsDialog">⚙ Thiết lập luyện tập</button>
+    <dialog id="practiceSettingsDialog" aria-labelledby="practiceSettingsTitle">
+      <div class="practice-settings-heading">
+        <h2 id="practiceSettingsTitle">Thiết lập luyện tập</h2>
+        <button type="button" id="btnClosePracticeSettings" aria-label="Đóng thiết lập">✕ Đóng</button>
+      </div>
+      <div id="practiceSettingsBody"></div>
+    </dialog>
+    <div id="practiceSettingsPanel">
     <div id="vocabStudyModes">
     <div class="section-label">Chọn cách luyện</div>
     <div class="mode-select" id="studyModeSelect">
@@ -3738,6 +3798,8 @@
         role="switch" aria-checked="false">OFF</button>
     </div>
     </section>
+
+    </div><!-- practiceSettingsPanel -->
 
     <div class="section-label">Phạm vi ôn tập</div>
     <div class="mode-select" id="modeSelect">
@@ -9812,6 +9874,34 @@ const isRecall = contentType === "grammar" && grammarMode === "recall" && item.d
       } catch (_) {}
     });
   }
+</script>
+<script>
+  (() => {
+    if (new URLSearchParams(location.search).get("phan") !== "tracnghiem") return;
+    const dialog = document.getElementById("practiceSettingsDialog");
+    const opener = document.getElementById("btnOpenPracticeSettings");
+    document.getElementById("practiceSettingsBody").append(document.getElementById("practiceSettingsPanel"));
+    opener.hidden = false;
+    opener.addEventListener("click", () => {
+      dialog.showModal();
+      document.body.classList.add("practice-settings-opened");
+    });
+    document.getElementById("btnClosePracticeSettings").addEventListener("click", () => dialog.close());
+    dialog.addEventListener("close", () => {
+      document.body.classList.remove("practice-settings-opened");
+      opener.focus({ preventScroll: true });
+    });
+    dialog.addEventListener("click", (event) => {
+      if (event.target !== dialog) return;
+      const rect = dialog.getBoundingClientRect();
+      if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close();
+    });
+    // Nhập số / thao tác bàn phím trong thiết lập không chọn đáp án bên dưới.
+    dialog.addEventListener("keydown", (event) => event.stopPropagation());
+    document.getElementById("btnStartExam").addEventListener("click", () => {
+      if (!document.getElementById("examArea").hidden) dialog.close();
+    });
+  })();
 </script>
 </body>
 
